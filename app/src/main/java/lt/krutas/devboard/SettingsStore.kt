@@ -80,7 +80,8 @@ internal object SettingsStore {
     fun showExtras(c: Context) = prefs(c).getBoolean("extras", true)
     fun captureClipboard(c: Context) = prefs(c).getBoolean("clipboard_opt_in", false)
 
-    fun rows(c: Context): MutableList<MutableList<String>> {
+
+    private fun legacyRows(c: Context): MutableList<MutableList<String>> {
         val stored = prefs(c).getString("keyboard_rows", null) ?: return copyDefault()
         return try {
             val outer = JSONArray(stored)
@@ -92,11 +93,180 @@ internal object SettingsStore {
         } catch (_: Exception) { copyDefault() }
     }
     fun copyDefault() = defaultRows.map { it.toMutableList() }.toMutableList()
-    fun saveRows(c: Context, rows: List<List<String>>) {
-        val arr = JSONArray()
-        rows.forEach { row -> arr.put(JSONArray(row)) }
-        prefs(c).edit().putString("keyboard_rows", arr.toString()).apply()
+
+    private fun parseRows(array: JSONArray): MutableList<MutableList<String>>? {
+        if (array.length() != defaultRows.size) return null
+        return try {
+            MutableList(array.length()) { i ->
+                val row = array.getJSONArray(i)
+                require(row.length() in 3..16)
+                MutableList(row.length()) { j ->
+                    val key = row.getString(j)
+                    require(key.isNotBlank() && key.length <= 24)
+                    key
+                }
+            }
+        } catch (_: Exception) { null }
     }
+
+    fun profiles(c: Context): LinkedHashMap<String, MutableList<MutableList<String>>> {
+        val result = linkedMapOf<String, MutableList<MutableList<String>>>()
+        try {
+            val obj = JSONObject(prefs(c).getString("layout_profiles_v2", "{}") ?: "{}")
+            val keys = obj.keys()
+            while (keys.hasNext() && result.size < 30) {
+                val name = keys.next()
+                if (name.isBlank() || name.length > 40) continue
+                val item = obj.opt(name)
+                val array = when (item) {
+                    is JSONArray -> item
+                    is JSONObject -> item.optJSONArray("Terminal")
+                    else -> null
+                } ?: continue
+                val rows = parseRows(array) ?: continue
+                result[name] = rows
+            }
+        } catch (_: Exception) {}
+        if (result.isEmpty()) result["Default"] = legacyRows(c)
+        return LinkedHashMap(result)
+    }
+
+    fun activeProfile(c: Context): String {
+        val current = prefs(c).getString("active_profile", "Default") ?: "Default"
+        val all = profiles(c)
+        return if (all.containsKey(current)) current else all.keys.first()
+    }
+
+    fun autoProfile(c: Context) = prefs(c).getBoolean("auto_profile", false)
+
+    fun appBindings(c: Context): LinkedHashMap<String, String> {
+        val map = linkedMapOf<String, String>()
+        try {
+            val obj = JSONObject(prefs(c).getString("app_bindings", "{}") ?: "{}")
+            val keys = obj.keys()
+            while (keys.hasNext() && map.size < 80) {
+                val pkg = keys.next()
+                val profile = obj.optString(pkg)
+                if (pkg.matches(Regex("[A-Za-z0-9_.]{3,160}")) && profile.isNotBlank()) map[pkg] = profile
+            }
+        } catch (_: Exception) {}
+        return LinkedHashMap(map)
+    }
+
+    fun effectiveProfile(c: Context, packageName: String? = null): String {
+        if (autoProfile(c) && packageName != null) {
+            val selected = appBindings(c)[packageName]
+            if (selected != null && profiles(c).containsKey(selected)) return selected
+        }
+        return activeProfile(c)
+    }
+
+    fun rows(c: Context, packageName: String? = null): MutableList<MutableList<String>> {
+        val all = profiles(c)
+        val name = effectiveProfile(c, packageName)
+        return all[name]?.map { it.toMutableList() }?.toMutableList() ?: copyDefault()
+    }
+
+    private fun rowsArray(rows: List<List<String>>): JSONArray {
+        val arr = JSONArray()
+        rows.forEach { arr.put(JSONArray(it)) }
+        return arr
+    }
+
+    fun saveProfiles(c: Context, all: Map<String, List<List<String>>>) {
+        val obj = JSONObject()
+        all.forEach { (name, rows) ->
+            if (name.isNotBlank() && name.length <= 40 && parseRows(rowsArray(rows)) != null) {
+                obj.put(name, JSONObject().put("Terminal", rowsArray(rows)))
+            }
+        }
+        require(obj.length() > 0)
+        prefs(c).edit().putString("layout_profiles_v2", obj.toString()).apply()
+    }
+
+    fun saveRows(c: Context, rows: List<List<String>>) {
+        require(parseRows(rowsArray(rows)) != null)
+        val all = profiles(c)
+        all[activeProfile(c)] = rows.map { it.toMutableList() }.toMutableList()
+        saveProfiles(c, all)
+    }
+
+    fun resetSelectedRows(c: Context) {
+        saveRows(c, copyDefault())
+    }
+
+    fun setActiveProfile(c: Context, name: String) {
+        require(profiles(c).containsKey(name))
+        prefs(c).edit().putString("active_profile", name).apply()
+    }
+
+    fun addProfile(c: Context, name: String) {
+        require(name.isNotBlank() && name.length <= 40)
+        val all = profiles(c)
+        require(!all.containsKey(name) && all.size < 30)
+        all[name] = rows(c)
+        saveProfiles(c, all)
+        setActiveProfile(c, name)
+    }
+
+    fun deleteProfile(c: Context, name: String) {
+        val all = profiles(c)
+        require(all.size > 1)
+        all.remove(name)
+        saveProfiles(c, all)
+        if (activeProfile(c) == name || !all.containsKey(prefs(c).getString("active_profile", ""))) {
+            prefs(c).edit().putString("active_profile", all.keys.first()).apply()
+        }
+        val map = appBindings(c).filterValues { it != name }
+        setAppBindings(c, map)
+    }
+
+    fun setAppBindings(c: Context, bindings: Map<String, String>) {
+        val obj = JSONObject()
+        bindings.forEach { (pkg, name) ->
+            if (pkg.matches(Regex("[A-Za-z0-9_.]{3,160}")) && profiles(c).containsKey(name)) {
+                obj.put(pkg, name)
+            }
+        }
+        prefs(c).edit().putString("app_bindings", obj.toString()).apply()
+    }
+
+    /** Import the simulator's {version, profiles: {name: {Terminal: [...]}}} format. */
+    fun importProfiles(c: Context, json: String): Int {
+        require(json.length <= 256_000) { "JSON file exceeds 256 KB" }
+        val root = JSONObject(json)
+        val source = root.getJSONObject("profiles")
+        val imported = linkedMapOf<String, MutableList<MutableList<String>>>()
+        val names = source.keys()
+        while (names.hasNext() && imported.size < 30) {
+            val name = names.next()
+            if (name.isBlank() || name.length > 40) continue
+            val item = source.opt(name)
+            val arr = if (item is JSONObject) item.optJSONArray("Terminal") else item as? JSONArray
+            val parsed = arr?.let { parseRows(it) } ?: continue
+            imported[name] = parsed
+        }
+        require(imported.isNotEmpty()) { "No valid Terminal layout in JSON" }
+        // Preserve existing profiles, but replace matching names with imported layouts.
+        val current = profiles(c)
+        current.putAll(imported)
+        saveProfiles(c, current)
+        return imported.size
+    }
+
+    fun exportProfiles(c: Context): String {
+        val json = JSONObject()
+        val savedProfiles = JSONObject()
+        profiles(c).forEach { (name, rows) ->
+            savedProfiles.put(name, JSONObject().put("Terminal", rowsArray(rows)))
+        }
+        json.put("version", 2)
+        json.put("profiles", savedProfiles)
+        json.put("activeProfile", activeProfile(c))
+        json.put("appBindings", JSONObject(appBindings(c) as Map<*, *>))
+        return json.toString(2)
+    }
+
     fun combos(c: Context): MutableList<Combo> {
         return try {
             val a = JSONArray(prefs(c).getString("combos", "[]"))

@@ -22,6 +22,7 @@
         <activity android:name=".ComboEditorActivity" android:exported="false" />
         <activity android:name=".SnippetsActivity" android:exported="false" />
         <activity android:name=".FileShareActivity" android:exported="false" />
+        <activity android:name=".ProfileManagerActivity" android:exported="false" />
         <activity android:name=".MicPermissionActivity" android:exported="false" />
         <service
             android:name=".DevBoardImeService"

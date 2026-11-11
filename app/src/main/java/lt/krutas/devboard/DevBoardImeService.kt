@@ -150,7 +150,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         val rows = when (symbols) {
             1 -> SettingsStore.symbols1
             2 -> SettingsStore.symbols2
-            else -> SettingsStore.rows(this)
+            else -> SettingsStore.rows(this, lastInput?.packageName)
         }
         rows.forEachIndexed { index, keys ->
             if (!SettingsStore.showExtras(this) && index < 2) return@forEachIndexed

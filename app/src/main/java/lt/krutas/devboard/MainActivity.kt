@@ -59,6 +59,9 @@ class MainActivity : Activity() {
         keyboardChoices = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         column.addView(keyboardChoices)
         renderKeyboardChoices()
+        column.addView(button("Profiles · import/export and app-specific layouts") {
+            startActivity(Intent(this, ProfileManagerActivity::class.java))
+        })
         column.addView(button("Edit keyboard layout · tap to swap") {
             startActivity(Intent(this, LayoutEditorActivity::class.java))
         })
@@ -90,6 +93,7 @@ class MainActivity : Activity() {
         slider("Key spacing (dp)", "gap", 0, 8, SettingsStore.gap(this))
         slider("Corner radius (dp)", "radius", 0, 18, SettingsStore.radius(this))
         checkbox("Terminal shortcut rows", "extras", SettingsStore.showExtras(this))
+        checkbox("Show F1–F12 / Insert / Delete bar", "function_keys", SettingsStore.prefs(this).getBoolean("function_keys", false))
         checkbox("Save clipboard history while keyboard is active", "clipboard_opt_in", SettingsStore.captureClipboard(this))
         detail("Clipboard history is opt-in. Android restricts background clipboard reads. Password fields are excluded.")
         title("Language & dictation", 17)
@@ -106,7 +110,7 @@ class MainActivity : Activity() {
         title("Privacy", 17)
         detail("Offline key input. No analytics or custom network requests. Speech recognition may use the connected recognizer's cloud services. No API key is needed.")
         column.addView(button("Reset keyboard layout", Color.rgb(109, 55, 58)) {
-            SettingsStore.prefs(this).edit().remove("keyboard_rows").apply()
+            SettingsStore.resetSelectedRows(this)
             Toast.makeText(this, "Default layout restored", Toast.LENGTH_SHORT).show()
             preview()
         })
@@ -180,7 +184,7 @@ class MainActivity : Activity() {
     private fun preview() {
         if (!::keyboardPreview.isInitialized) return
         val theme = SettingsStore.theme(this)
-        themeLabel.text = "Theme: ${theme.name} · Live preview"
+        themeLabel.text = "Theme: ${theme.name} · Profile: ${SettingsStore.activeProfile(this)} · Live preview"
         keyboardPreview.removeAllViews()
         keyboardPreview.setBackgroundColor(theme.bg())
         SettingsStore.rows(this).forEachIndexed { index, row ->
