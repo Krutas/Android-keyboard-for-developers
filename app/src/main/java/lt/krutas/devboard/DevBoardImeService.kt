@@ -346,12 +346,9 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
 
     private fun functionStrip(): View {
         val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        val names = (1..12).map { "F" + it } + listOf("Ins", "Del")
-        // Eight function keys must fit in the first viewport without horizontal scrolling.
-        // Remaining keys (F9–F12, Ins, Del) stay accessible by swiping the strip.
+        // Exactly eight equally spaced function keys, with no sideways scrolling.
+        val names = (1..8).map { "F" + it }
         val margin = dp(1)
-        val keyWidth = ((resources.displayMetrics.widthPixels - 8 * margin * 2) / 8)
-            .coerceAtLeast(dp(30))
         names.forEachIndexed { index, label ->
             val code = when (label) {
                 "Ins" -> KeyEvent.KEYCODE_INSERT
@@ -365,14 +362,11 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 hardware(code, activeModifiers())
                 releaseModifiers()
             }
-            row.addView(b, LinearLayout.LayoutParams(keyWidth, dp(31)).apply {
+            row.addView(b, LinearLayout.LayoutParams(0, dp(31), 1f).apply {
                 setMargins(margin, dp(1), margin, dp(3))
             })
         }
-        return HorizontalScrollView(this).apply {
-            isHorizontalScrollBarEnabled = false
-            addView(row)
-        }
+        return row
     }
 
     private fun deleteBackward() {
@@ -394,7 +388,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             return
         }
         if (SettingsStore.prefs(this).getBoolean("function_keys", false)) container.addView(functionStrip())
-        val combos = SettingsStore.combos(this)
+        val combos = SettingsStore.combos(this).filter { it.enabled }
         if (combos.isNotEmpty()) {
             val strip = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
             combos.forEach { combo ->
