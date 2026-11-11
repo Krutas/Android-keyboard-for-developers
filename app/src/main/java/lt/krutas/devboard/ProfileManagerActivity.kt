@@ -95,19 +95,36 @@ class ProfileManagerActivity : Activity() {
         }
         title("Import / Export")
         note("Import web simulator JSON or a previously exported Android layout. Only Terminal rows are used. Existing profiles with identical names are replaced.")
-        action("↓ Import profiles from JSON file") {
-            startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                type = "*/*"
-                addCategory(Intent.CATEGORY_OPENABLE)
-            }, importRequest)
+        // Side-by-side actions with equal width; never stack Import and Export.
+        val importExportRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
         }
-        action("↑ Export profiles as JSON file") {
-            startActivityForResult(Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                type = "application/json"
-                addCategory(Intent.CATEGORY_OPENABLE)
-                putExtra(Intent.EXTRA_TITLE, "devboard-layouts.json")
-            }, exportRequest)
-        }
+        importExportRow.addView(Button(this).apply {
+            text = "↓ Import"
+            isAllCaps = false
+            setOnClickListener {
+                startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    type = "*/*"
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                }, importRequest)
+            }
+        }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply {
+            marginEnd = dp(4)
+        })
+        importExportRow.addView(Button(this).apply {
+            text = "↑ Export"
+            isAllCaps = false
+            setOnClickListener {
+                startActivityForResult(Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                    type = "application/json"
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    putExtra(Intent.EXTRA_TITLE, "devboard-layouts.json")
+                }, exportRequest)
+            }
+        }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply {
+            marginStart = dp(4)
+        })
+        root.addView(importExportRow)
         title("App-specific layouts")
         note("Enable auto-selection to use a different profile in an app. It matches the package name reported by Android for the active text field. No accessibility permission or app usage tracking.")
         root.addView(CheckBox(this).apply {
