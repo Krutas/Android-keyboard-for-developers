@@ -17,7 +17,9 @@
 .keyboard .keyrow{gap:var(--kb-gap);margin-bottom:4px}
 .keyboard .key{height:var(--kb-height);border-radius:var(--kb-radius);font-size:var(--kb-font);border-color:var(--kb-border);color:var(--kb-text)}
 .keyboard .key{transition:transform .11s ease-out,filter .11s ease-out,box-shadow .11s ease-out;transform-origin:center;touch-action:manipulation}
-.keyboard .key:active,.keyboard .key.key-pressed{transform:translateY(2px) scale(.965);filter:brightness(1.23);box-shadow:inset 0 2px 5px #0004,0 0 0 1px #9bd8ff88}
+.keyboard .key:active,.keyboard .key.key-pressed{transform:translateY(3px) scale(.95);filter:brightness(.94);box-shadow:inset 0 4px 7px #0009,0 0 0 1px #9bd8ff88}
+#keyboard.press-animation-off .key,#keyboard.press-animation-off .key:active,#keyboard.press-animation-off .key.key-pressed{transition:none;transform:none;filter:none;box-shadow:none}
+#keyboard.press-animation-off .key:active{background:var(--kb-key)!important;color:var(--kb-text)!important}
 @media(prefers-reduced-motion:reduce){.keyboard .key{transition:none}}
 .keyboard .key.special{color:var(--kb-text)}
 .keyboard .key.small{height:calc(var(--kb-height) - 10px);font-size:calc(var(--kb-font) - 2px)}
@@ -137,6 +139,12 @@
 .combo-items span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .combo-items small{color:#637992}
 .file-summary{display:flex;gap:10px;align-items:center;min-height:65px;padding:7px 1px 10px;min-width:0}.file-summary img{width:65px!important;height:62px;object-fit:contain}.file-summary img[hidden],.file-icon[hidden]{display:none!important}.file-icon{width:54px;flex:0 0 54px;text-align:center;font-size:32px}.file-details{display:flex;flex-direction:column;gap:4px;min-width:0;font-size:11px}.file-details strong{overflow-wrap:anywhere}.file-details small{color:#60738b;font-size:10px;overflow-wrap:anywhere}.file-preview{bottom:315px}.system-ime-picker{border:1px solid #b8cbe4;background:#f1f6fe;color:#223f61;border-radius:12px;padding:10px;margin:8px 0 10px}.system-ime-picker[hidden]{display:none!important}.system-ime-picker>strong{font-size:12px}.system-ime-picker .demo-ime{display:flex;width:100%;justify-content:space-between;gap:8px;align-items:center;padding:10px 8px;margin:4px 0;border:1px solid #c5d7ed;border-radius:8px;background:white;color:#1c416c;cursor:pointer;font-size:12px}.system-ime-picker .demo-ime.active{border-color:#3078e5;background:#e3efff}.system-ime-picker .demo-ime span{font-weight:700}.system-ime-picker .demo-ime small{font-size:10px;color:#617b99}
+.layout-key-popup{position:absolute;left:27px;right:27px;z-index:55;background:#f5f8ff;color:#17304d;border:1px solid #a9bbd6;box-shadow:0 9px 30px #0008;border-radius:12px;padding:10px}
+.layout-key-popup[hidden]{display:none!important}
+.layout-key-popup strong{display:block;margin-bottom:8px;font-size:12px}
+.layout-key-actions{display:flex;flex-wrap:wrap;gap:5px}
+.layout-key-actions button{flex:1;min-width:76px;background:#dce8f8;color:#24486f;border:0;border-radius:7px;padding:8px 4px;font-size:11px}
+.layout-key-actions #layoutDelete{color:#9a2134}
 .fn-bar{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:2px;margin:0 0 5px}
 .fn-bar[hidden]{display:none!important}
 .fn-bar button{padding:4px 0;min-width:0;min-height:30px;border:1px solid var(--kb-border);border-radius:5px;background:var(--kb-special);color:var(--kb-text);font-size:10px;font-weight:700}
@@ -146,13 +154,13 @@
 .keyboard .emoji-controls{display:flex;align-items:center;justify-content:space-between;color:var(--kb-text);gap:6px;margin:4px 0 6px}
 .emoji-controls button,.emoji-cats button{background:var(--kb-special,#435575);border:1px solid var(--kb-border);color:var(--kb-text);border-radius:6px;cursor:pointer;padding:6px 12px}
 .emoji-controls span{font-size:12px;font-weight:700}.emoji-cats{display:flex;overflow-x:auto;gap:3px;padding:4px 0 7px;scrollbar-width:thin}.emoji-cats button{padding:5px 8px;font-size:17px}.emoji-cats button.active{outline:2px solid #89b5ff}.emoji-search{width:100%;padding:6px;border-radius:7px;border:1px solid var(--kb-border);background:var(--kb-bg);color:var(--kb-text);margin-bottom:6px}.emoji-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:1px;max-height:228px;overflow-y:auto;overscroll-behavior:contain}.emoji-grid button{font-size:23px;border:0;background:transparent;min-width:0;min-height:38px;cursor:pointer}.emoji-grid button:active{background:var(--kb-special)}.emoji-grid p{color:var(--kb-text);font-size:11px;grid-column:span 8}
-#toolbarMic{white-space:nowrap;min-width:57px;padding:0 5px;font-size:11px;touch-action:manipulation}#toolbarMic.speaking{color:#ff749c;outline:1px solid #ff749c}.space-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:100%;min-width:0;padding:0 3px;gap:2px;white-space:nowrap}.space-inner span:first-child{text-align:left}.space-inner span:last-child{text-align:right}.space-inner span:first-child,.space-inner span:last-child{font-weight:800;font-size:1.1em}</style></head><body><main class="shell"><section><div class="top"><div><div class="brand">⌨ Dev<span>Board</span> Studio</div><div class="muted">Interactive Android keyboard prototype · Galaxy A56 preview</div></div><div class="pill">WEB MVP · v1.5</div></div><div class="preview"><div class="phone"><div class="camera"></div><div class="status"><span>12:46</span><span>▴ ▰  ▣ 100%</span></div><div class="docbar" id="docbar"><strong>Untitled document</strong><div class="doc-actions"><button id="attachFile" title="Attach any file" aria-label="Attach file">📎</button><button id="newDoc">+ New</button></div></div><input id="attachmentFile" type="file" hidden><div class="image-preview file-preview" id="filePreview" hidden><div class="image-actions"><strong>📎 Selected file</strong><button id="closeFile" type="button" aria-label="Close attachment preview">✕</button></div><div class="file-summary"><img id="fileThumb" alt="Selected file thumbnail" hidden><div id="fileIcon" class="file-icon" aria-hidden="true">📄</div><div class="file-details"><strong id="fileName"></strong><small id="fileMeta"></small></div></div><div class="image-actions"><span>Local preview only; file is not uploaded</span><button id="insertFileLink" type="button">Insert link</button></div></div><div class="apphome" id="apphome" hidden></div><div class="paper" id="paper" contenteditable="true" spellcheck="false" aria-label="Document"></div><div class="accent-popup" id="accentPopup" hidden></div><div class="keyboard" id="keyboard"><div class="clipbar"><button id="fnOpen" type="button" title="Toggle F1-F8 keys" aria-pressed="false">Fn</button><button id="clipOpen" title="Clipboard history">📋</button><button id="snippetOpen" title="Saved snippets">⭐</button><div class="cliprecent" id="clipRecent"></div><button id="toolbarMic" type="button" title="Tap to dictate; hold to select language" aria-label="Voice dictation, long press for language">LT 🎙</button><button id="settingsOpen" title="Keyboard settings" aria-label="Settings">⚙️</button><button id="comboOpen" title="Add or manage key combinations">＋ Combo</button></div><div id="swapTip" class="swap-tip" hidden></div><div id="fnBar" class="fn-bar" hidden></div><div id="comboBar" class="combo-bar" hidden></div><div id="keys"></div></div><div class="combo-pop" id="comboPop" hidden><div class="combo-head"><strong>⌨ Add Combo</strong><button id="comboClose" type="button" aria-label="Close combo editor">✕</button></div><p class="combo-help">Save a reusable keyboard shortcut. It will appear on the shortcut bar above the keys.</p><label>Button name<input id="comboName" placeholder="e.g. Copy" maxlength="20" autocomplete="off"></label><label>Action<input id="comboAction" readonly placeholder="Tap Action, then press keys" aria-label="Record keyboard shortcut"></label><p class="combo-help">Press Ctrl, Alt, Shift and a key on the keyboard to record the shortcut.</p><div class="combo-actions"><button id="comboSave" type="button">Save combo</button><button id="comboCancel" type="button">Cancel</button></div><p class="combo-help" id="comboHelp">Some Android shortcuts cannot be simulated in a browser. This demo supports common text-editing shortcuts.</p><div class="combo-items-title">Saved combos</div><div id="comboList"></div></div><div class="voice-pop" id="voicePop" hidden aria-live="polite"><div class="voice-heading"><span class="voice-indicator" id="voiceTitle">Listening… LT</span><button class="stop" id="voiceStop">■ Stop</button></div><div class="voice-activity" id="voiceActivity">Waiting for microphone permission</div><div class="voice-meter" id="voiceMeter" aria-label="Microphone volume level"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="voice-preview" id="voicePreview">Speak now. Recognized text will appear in the document.</div></div><div class="lang-pop" id="langPop" hidden><strong>Typing and dictation language</strong><button data-lang="lt-LT">🇱🇹 Lithuanian (LT)</button><button data-lang="en-US">🇬🇧 English (EN)</button></div><div class="phone-settings" id="phoneSettings" hidden><div class="settings-head"><button id="settingsClose">←</button><strong>⚙️ DevBoard Settings</strong><span>v1.5</span></div><div class="settings-live" id="settingsLive">
+#toolbarMic{white-space:nowrap;min-width:57px;padding:0 5px;font-size:11px;touch-action:manipulation}#toolbarMic.speaking{color:#ff749c;outline:1px solid #ff749c}.space-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:100%;min-width:0;padding:0 3px;gap:2px;white-space:nowrap}.space-inner span:first-child{text-align:left}.space-inner span:last-child{text-align:right}.space-inner span:first-child,.space-inner span:last-child{font-weight:800;font-size:1.1em}</style></head><body><main class="shell"><section><div class="top"><div><div class="brand">⌨ Dev<span>Board</span> Studio</div><div class="muted">Interactive Android keyboard prototype · Galaxy A56 preview</div></div><div class="pill">WEB MVP · v1.5</div></div><div class="preview"><div class="phone"><div class="camera"></div><div class="status"><span>12:46</span><span>▴ ▰  ▣ 100%</span></div><div class="docbar" id="docbar"><strong>Untitled document</strong><div class="doc-actions"><button id="attachFile" title="Attach any file" aria-label="Attach file">📎</button><button id="newDoc">+ New</button></div></div><input id="attachmentFile" type="file" hidden><div class="image-preview file-preview" id="filePreview" hidden><div class="image-actions"><strong>📎 Selected file</strong><button id="closeFile" type="button" aria-label="Close attachment preview">✕</button></div><div class="file-summary"><img id="fileThumb" alt="Selected file thumbnail" hidden><div id="fileIcon" class="file-icon" aria-hidden="true">📄</div><div class="file-details"><strong id="fileName"></strong><small id="fileMeta"></small></div></div><div class="image-actions"><span>Local preview only; file is not uploaded</span><button id="insertFileLink" type="button">Insert link</button></div></div><div class="apphome" id="apphome" hidden></div><div class="paper" id="paper" contenteditable="true" spellcheck="false" aria-label="Document"></div><div class="accent-popup" id="accentPopup" hidden></div><div class="keyboard" id="keyboard"><div class="clipbar"><button id="fnOpen" type="button" title="Toggle F1-F8 keys" aria-pressed="false">Fn</button><button id="clipOpen" title="Clipboard history">📋</button><button id="snippetOpen" title="Saved snippets">⭐</button><div class="cliprecent" id="clipRecent"></div><button id="toolbarMic" type="button" title="Tap to dictate; hold to select language" aria-label="Voice dictation, long press for language">LT 🎙</button><button id="settingsOpen" title="Keyboard settings" aria-label="Settings">⚙️</button><button id="comboOpen" title="Add or manage key combinations">＋ Combo</button></div><div id="swapTip" class="swap-tip" hidden></div><div id="fnBar" class="fn-bar" hidden></div><div id="comboBar" class="combo-bar" hidden></div><div id="keys"></div></div><div class="layout-key-popup" id="layoutKeyPopup" hidden><strong id="layoutKeyTitle">Key options</strong><div class="layout-key-actions"><button type="button" id="layoutDelete">Delete</button><button type="button" id="layoutReset">Reset to defaults</button><button type="button" id="layoutCancel">Cancel</button></div></div><div class="combo-pop" id="comboPop" hidden><div class="combo-head"><strong>⌨ Add Combo</strong><button id="comboClose" type="button" aria-label="Close combo editor">✕</button></div><p class="combo-help">Save a reusable keyboard shortcut. It will appear on the shortcut bar above the keys.</p><label>Button name<input id="comboName" placeholder="e.g. Copy" maxlength="20" autocomplete="off"></label><label>Action<input id="comboAction" readonly placeholder="Tap Action, then press keys" aria-label="Record keyboard shortcut"></label><p class="combo-help">Press Ctrl, Alt, Shift and a key on the keyboard to record the shortcut.</p><div class="combo-actions"><button id="comboSave" type="button">Save combo</button><button id="comboCancel" type="button">Cancel</button></div><p class="combo-help" id="comboHelp">Some Android shortcuts cannot be simulated in a browser. This demo supports common text-editing shortcuts.</p><div class="combo-items-title">Saved combos</div><div id="comboList"></div></div><div class="voice-pop" id="voicePop" hidden aria-live="polite"><div class="voice-heading"><span class="voice-indicator" id="voiceTitle">Listening… LT</span><button class="stop" id="voiceStop">■ Stop</button></div><div class="voice-activity" id="voiceActivity">Waiting for microphone permission</div><div class="voice-meter" id="voiceMeter" aria-label="Microphone volume level"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="voice-preview" id="voicePreview">Speak now. Recognized text will appear in the document.</div></div><div class="lang-pop" id="langPop" hidden><strong>Typing and dictation language</strong><button data-lang="lt-LT">🇱🇹 Lithuanian (LT)</button><button data-lang="en-US">🇬🇧 English (EN)</button></div><div class="phone-settings" id="phoneSettings" hidden><div class="settings-head"><button id="settingsClose">←</button><strong>⚙️ DevBoard Settings</strong><span>v1.5</span></div><div class="settings-live" id="settingsLive">
  <div class="live-title"><span>LIVE KEYBOARD PREVIEW</span><span class="live-language" id="liveLanguage">LT · Terminal</span></div>
  <div class="live-preview-wrap"><button type="button" class="theme-navigate live-prev" id="themePrev" aria-label="Previous theme" title="Previous theme">‹</button>
  <div class="live-keyboard" id="liveKeyboard" aria-label="Live keyboard theme preview"></div>
  <button type="button" class="theme-navigate live-next" id="themeNext" aria-label="Next theme" title="Next theme">›</button></div>
  <div class="live-caption"><strong id="selectedThemeName">Midnight</strong><span>Swipe to change theme · Adjust sliders below</span></div>
-</div><div class="settings-content"><h3>Keyboard selection</h3><div class="settings-description">Choose any enabled keyboard on Android. This browser preview cannot inspect installed keyboards.</div><button type="button" class="settings-action" id="chooseSystemKeyboard" aria-expanded="false" aria-controls="systemKeyboardPicker">▸ Installed keyboards</button><div id="systemKeyboardPicker" class="system-ime-picker" hidden><strong>Keyboard picker · demo only</strong><p class="settings-description">Examples, not a list of keyboards installed on your phone. In the Android APK, the system displays the actual installed and enabled keyboards.</p><div id="demoKeyboardOptions"></div><button type="button" id="closeKeyboardPicker" class="settings-action">Close</button></div><div class="settings-description" id="keyboardPickerStatus" role="status">Currently previewing DevBoard.</div><h3>Key appearance</h3><div class="setting-row"><label for="fontSize">Font size</label><input type="range" min="9" max="18" step="1" id="fontSize"><output id="fontSizeVal"></output></div><div class="setting-row"><label for="keyHeight">Key height</label><input type="range" min="29" max="49" step="1" id="keyHeight"><output id="keyHeightVal"></output></div><div class="setting-row"><label for="keyGap">Key spacing</label><input type="range" min="1" max="7" step="1" id="keyGap"><output id="keyGapVal"></output></div><div class="setting-row"><label for="keyRadius">Corner radius</label><input type="range" min="1" max="15" step="1" id="keyRadius"><output id="keyRadiusVal"></output></div><div class="setting-row"><label for="numberOffset">Number-row offset</label><input type="range" min="0" max="14" step="1" id="numberOffset"><output id="numberOffsetVal"></output></div><div class="setting-row"><label for="showExtras">Terminal shortcut rows</label><input type="checkbox" checked id="showExtras"></div><h3>Language & dictation</h3><div class="setting-row"><label for="voiceLang">Selected language</label><select id="voiceLang"><option value="lt-LT">🇱🇹 Lithuanian (LT)</option><option value="en-US">🇬🇧 English (EN)</option></select></div><div class="setting-row"><label for="rejectCyrillic">Block Cyrillic output in LT mode</label><input type="checkbox" checked id="rejectCyrillic"></div><p id="voiceSupport"></p><h3>Privacy & storage</h3><p class="settings-description">Themes, settings, and clipboard entries are stored locally in this browser. Speech recognition is provided by the browser and may require internet access.</p><h3 class="theme-heading">Themes · Swipe to browse</h3>
+</div><div class="settings-content"><h3>Keyboard selection</h3><div class="settings-description">Choose any enabled keyboard on Android. This browser preview cannot inspect installed keyboards.</div><button type="button" class="settings-action" id="chooseSystemKeyboard" aria-expanded="false" aria-controls="systemKeyboardPicker">▸ Installed keyboards</button><div id="systemKeyboardPicker" class="system-ime-picker" hidden><strong>Keyboard picker · demo only</strong><p class="settings-description">Examples, not a list of keyboards installed on your phone. In the Android APK, the system displays the actual installed and enabled keyboards.</p><div id="demoKeyboardOptions"></div><button type="button" id="closeKeyboardPicker" class="settings-action">Close</button></div><div class="settings-description" id="keyboardPickerStatus" role="status">Currently previewing DevBoard.</div><h3>Key appearance</h3><div class="setting-row"><label for="fontSize">Font size</label><input type="range" min="9" max="18" step="1" id="fontSize"><output id="fontSizeVal"></output></div><div class="setting-row"><label for="keyHeight">Key height</label><input type="range" min="29" max="49" step="1" id="keyHeight"><output id="keyHeightVal"></output></div><div class="setting-row"><label for="keyGap">Key spacing</label><input type="range" min="1" max="7" step="1" id="keyGap"><output id="keyGapVal"></output></div><div class="setting-row"><label for="keyRadius">Corner radius</label><input type="range" min="1" max="15" step="1" id="keyRadius"><output id="keyRadiusVal"></output></div><div class="setting-row"><label for="numberOffset">Number-row offset</label><input type="range" min="0" max="14" step="1" id="numberOffset"><output id="numberOffsetVal"></output></div><div class="setting-row"><label for="showExtras">Terminal shortcut rows</label><input type="checkbox" checked id="showExtras"></div><div class="setting-row"><label for="pressAnimation">Button Press Animation</label><input type="checkbox" checked id="pressAnimation"></div><h3>Language & dictation</h3><div class="setting-row"><label for="voiceLang">Selected language</label><select id="voiceLang"><option value="lt-LT">🇱🇹 Lithuanian (LT)</option><option value="en-US">🇬🇧 English (EN)</option></select></div><div class="setting-row"><label for="rejectCyrillic">Block Cyrillic output in LT mode</label><input type="checkbox" checked id="rejectCyrillic"></div><p id="voiceSupport"></p><h3>Privacy & storage</h3><p class="settings-description">Themes, settings, and clipboard entries are stored locally in this browser. Speech recognition is provided by the browser and may require internet access.</p><h3 class="theme-heading">Themes · Swipe to browse</h3>
 <div class="settings-description">Tap Colorful ASCII or any theme, use the arrows, or swipe. Keys update immediately.</div>
 <div class="theme-rail-wrap"><button type="button" class="rail-nav" id="railPrev" aria-label="Scroll themes left">‹</button><div class="theme-grid" id="themeGrid" aria-label="Keyboard theme carousel"></div><button type="button" class="rail-nav" id="railNext" aria-label="Scroll themes right">›</button></div>
 <div class="theme-counter" id="themeCounter">1 / 19 · Colorful ASCII</div><button class="settings-action" id="saveSettings">💾 Save settings</button><button class="settings-action" id="openLayout">▦ Edit key layout</button><button class="settings-action" id="resetSettings">↺ Reset appearance</button></div></div><div class="clipdrawer" id="clipDrawer" hidden><header><strong id="drawerTitle">📋 Clipboard</strong><button id="clipClose">✕</button></header><div class="snippet-actions"><button class="cliptab active" id="tabHistory">📋 History</button><button class="cliptab" id="tabSaved">⭐ Saved snippets</button></div><div class="clipnote" id="clipNote">Tap an entry to insert it. 📌 pins; ✕ deletes.</div><div class="snippet-form" id="snippetForm" hidden><textarea id="snippetText" placeholder="Text to insert with one tap"></textarea><div class="snippet-actions"><button id="snippetSave">💾 Save</button><button id="snippetCancel">Cancel</button></div></div><div id="clipItems"></div><button id="snippetAdd" hidden>＋ New saved snippet</button><button id="clipClear">Clear unpinned</button></div><div class="navbar"></div></div><div class="foot">Galaxy A56 proportions · 360 × 780 CSS px · web preview</div></div></section><aside class="panel"><h2>Keyboard controls</h2><p>Terminal mode is always available. 📋 opens clipboard history; ⭐ lets you save and insert reusable snippets. Lithuanian letters appear above numbers 1–9 (hold a number to type its letter). Hold comma or period for punctuation alternatives. Hold Space to choose LT / EN. The top-right LT 🎙 button opens the voice dictation window (hold to change language); the bottom 😀 key opens emojis. Test the keyboard in the white document. 📎 selects any file and inserts a temporary local link.</p><p>Tap the left or right edge of Space to insert &lt; or &gt;; tap the center for a space. Tap the virtual keys to type in the white document. In Configure, tap two keys to swap positions. Use + Combo to add keyboard shortcuts.</p><div class="field"><label>Profile</label><select id="profiles"></select></div><div class="row"><button class="action secondary" id="saveProfile">Save profile</button><button class="action secondary" id="newProfile">New profile</button></div><button class="action" id="configure">⚙ Configure</button><div class="editor" id="editor" hidden><h2>Editing mode</h2><p><strong>Tap a key, then tap its new location to swap them.</strong> Works across rows. Tap the selected key again to cancel. You can also drag keys on desktop.</p><div class="field"><label>Selected key</label><input type="text" id="keyValue" placeholder="Select a key" maxlength="16"></div><button class="action secondary" id="applyKey">Update key</button><div class="field"><label class="check"><input type="checkbox" id="extraRows" checked> Show extra keys</label></div><button class="action secondary" id="resetLayout">Reset Terminal layout</button></div><div class="editor"><h2>Export</h2><p>Keyboard profiles are stored in this browser. Export JSON for a future Android build.</p><div class="row"><button class="action secondary" id="exportJson">↓ JSON</button><button class="action secondary" id="importJson">↑ Import</button></div><input id="file" type="file" accept="application/json" hidden></div><p class="hint" id="status">Ready. Try the keys in the phone preview.</p><p class="hint">Note: this is an interactive web prototype, not an Android OS emulator. Physical key sizes depend on your screen density.</p><p class="hint"><a href="https://github.com/Krutas/Android-keyboard-for-developers" target="_blank" rel="noopener noreferrer" style="color:#9fd7ff">Android source, README and APK on GitHub</a></p></aside></main><script>
@@ -238,6 +246,45 @@ for(const p of Object.values(profiles)){
 persist();
 if(!profiles[profile]||!profiles[profile].Terminal){profile='Default';profiles.Default=clone(defaults)}
 let longTimer=null,longTriggered=false,skipClick=false,spaceTimer=null,shiftTimer=null;
+let layoutLongTimer=null,layoutKeyTarget=null,arrowRepeatTimeout=null,arrowRepeatInterval=null;
+const arrowKeys=new Set(['←','→','↑','↓']);
+function stopArrowRepeat(){
+ clearTimeout(arrowRepeatTimeout);clearInterval(arrowRepeatInterval);
+ arrowRepeatTimeout=null;arrowRepeatInterval=null;
+}
+function moveArrowOnce(key){
+ focusPaper();
+ const selection=window.getSelection();
+ if(selection&&selection.modify){
+  try{selection.modify('move',key==='←'||key==='↑'?'backward':'forward',key==='↑'||key==='↓'?'line':'character')}catch{}
+ }
+}
+function closeLayoutOptions(){$('layoutKeyPopup').hidden=true;layoutKeyTarget=null}
+function showLayoutOptions(row,col,button){
+ if(!editing)return;
+ longTriggered=true;selected=null;layoutKeyTarget=[row,col];
+ const pop=$('layoutKeyPopup');
+ $('layoutKeyTitle').textContent='Key: '+layout()[row][col];
+ $('layoutDelete').disabled=layout()[row].length<=3;
+ pop.hidden=false;
+ const rect=button.getBoundingClientRect(),phone=document.querySelector('.phone').getBoundingClientRect();
+ pop.style.top=Math.max(39,rect.top-phone.top-pop.offsetHeight-44)+'px';
+}
+$('layoutDelete').onclick=()=>{
+ if(!layoutKeyTarget)return;
+ const [row,col]=layoutKeyTarget;if(layout()[row].length<=3)return;
+ layout()[row].splice(col,1);persist();closeLayoutOptions();render();renderLiveKeyboard();setStatus('Key deleted');
+};
+$('layoutReset').onclick=()=>{
+ if(!confirm('Reset this layout to defaults? Custom key positions will be lost.'))return;
+ profiles[profile][mode]=clone(defaults[mode]);
+ persist();selected=null;closeLayoutOptions();render();renderLiveKeyboard();setStatus('Layout reset to defaults');
+};
+$('layoutCancel').onclick=closeLayoutOptions;
+document.addEventListener('pointerdown',e=>{
+ if(!$('layoutKeyPopup').hidden&&!$('layoutKeyPopup').contains(e.target)&&!e.target.closest('.key'))closeLayoutOptions();
+});
+
 function closeAccents(){$('accentPopup').hidden=true}
 function showAccents(key,button){
  const variants=accents[key.toLowerCase()]||punctuation[key];
@@ -315,6 +362,7 @@ function renderProfiles(){$('profiles').innerHTML=Object.keys(profiles).map(p=>`
 function render(){
  updateToolbarMic();
  renderFunctionBar();
+ $('keyboard').classList.toggle('press-animation-off',pref.pressAnimation===false);
  renderProfiles();
  $('keys').replaceChildren();
  // Preserve original row indices even when extra rows are hidden.
@@ -335,10 +383,43 @@ function render(){
    else if(key==='space')btn.innerHTML='<span class="space-inner"><span>&lt;</span><span>Space</span><span>&gt;</span></span>';
    else btn.textContent=displayed;
    let spaceTapZone='center';
-   btn.onpointerdown=e=>{btn.classList.add('key-pressed');if(key==='space'){const rect=btn.getBoundingClientRect();const f=(e.clientX-rect.left)/Math.max(1,rect.width);spaceTapZone=f<0.22?'left':f>0.78?'right':'center'}longTriggered=false;if(!editing){if(accents[key.toLowerCase()]||punctuation[key]){clearTimeout(longTimer);longTimer=setTimeout(()=>showAccents(key,btn),450)}if(key==='space'&&spaceTapZone==='center'){clearTimeout(spaceTimer);spaceTimer=setTimeout(()=>openLangPopup(),520)}if(key==='⇧'){clearTimeout(shiftTimer);shiftTimer=setTimeout(()=>{capsLock=!capsLock;shift=capsLock;lastShiftTap=0;longTriggered=true;render();renderLiveKeyboard();setStatus(capsLock?'Caps Lock on':'Caps Lock off')},520)}}};
-   btn.onpointerup=()=>{clearTimeout(longTimer);clearTimeout(spaceTimer);clearTimeout(shiftTimer);setTimeout(()=>btn.classList.remove('key-pressed'),90)};
-   btn.onpointercancel=()=>{clearTimeout(longTimer);clearTimeout(spaceTimer);clearTimeout(shiftTimer);btn.classList.remove('key-pressed')};
-   btn.onpointerleave=()=>{clearTimeout(longTimer);clearTimeout(spaceTimer);clearTimeout(shiftTimer);btn.classList.remove('key-pressed')};
+   btn.onpointerdown=e=>{
+    if(pref.pressAnimation!==false)btn.classList.add('key-pressed');
+    longTriggered=false;
+    if(editing){
+     clearTimeout(layoutLongTimer);
+     layoutLongTimer=setTimeout(()=>showLayoutOptions(ri,ki,btn),520);
+    }else{
+     if(accents[key.toLowerCase()]||punctuation[key]){
+      clearTimeout(longTimer);longTimer=setTimeout(()=>showAccents(key,btn),450);
+     }
+     if(key==='space'){clearTimeout(spaceTimer);spaceTimer=setTimeout(()=>openLangPopup(),520)}
+     if(arrowKeys.has(key)){
+      stopArrowRepeat();
+      arrowRepeatTimeout=setTimeout(()=>{
+       longTriggered=true;moveArrowOnce(key);
+       arrowRepeatInterval=setInterval(()=>moveArrowOnce(key),75);
+      },430);
+     }
+     if(key==='⇧'){
+      clearTimeout(shiftTimer);
+      shiftTimer=setTimeout(()=>{
+       capsLock=!capsLock;shift=capsLock;lastShiftTap=0;longTriggered=true;
+       render();renderLiveKeyboard();setStatus(capsLock?'Caps Lock on':'Caps Lock off')
+      },520);
+     }
+    }
+   };
+   const cancelKeyTimers=()=>{
+    clearTimeout(longTimer);clearTimeout(spaceTimer);clearTimeout(shiftTimer);
+    clearTimeout(layoutLongTimer);stopArrowRepeat();
+   };
+   btn.onpointerup=()=>{
+    cancelKeyTimers();
+    setTimeout(()=>btn.classList.remove('key-pressed'),90);
+   };
+   btn.onpointercancel=()=>{cancelKeyTimers();btn.classList.remove('key-pressed')};
+   btn.onpointerleave=()=>{cancelKeyTimers();btn.classList.remove('key-pressed')};
    btn.draggable=editing;
    btn.onclick=()=>{
     if(longTriggered){longTriggered=false;return}closeAccents();
@@ -347,7 +428,7 @@ function render(){
      if(!selected){selected=[ri,ki];$('keyValue').value=key;render();setStatus('Selected '+key+'. Tap destination to swap.');}
      else if(selected[0]===ri&&selected[1]===ki){selected=null;$('keyValue').value='';render();setStatus('Selection cleared');}
      else switchKeys(selected,[ri,ki]);
-    }else if(key==='space'&&spaceTapZone!=='center'){insert(spaceTapZone==='left'?'<':'>');updateAutoShift()}else press(key);
+    }else press(key);
    };
    btn.ondragstart=()=>{if(editing)dragFrom=[ri,ki]};
    btn.ondragover=e=>{if(editing)e.preventDefault()};
@@ -474,22 +555,33 @@ const keyboardThemes=[
 
 function renderLiveKeyboard(){
  const root=$('liveKeyboard');if(!root)return;root.replaceChildren();
- const rows=emojiOpen?(emojiCatalog.length ? Array.from({length:4},(_,i)=>emojiOptions().slice(i*8,i*8+8).map(x=>x[0])) : emojiRows):symbolPage?symbolPages[symbolsSecondPage?1:0]:layout();
- const content=(extras||emojiOpen)?rows:rows.filter((_,i)=>mode==='Code'?i!==0:i>1);
- for(const row of content){
-  const div=document.createElement('div');div.className='mini-keyrow'+(row.join('')==='1234567890'?' numbers':'');
-  for(const val of row){
-   const key=document.createElement('div');key.className='mini-key'+(val==='space'?' space':'')+(val.length>1||['⇧','⌫','↵','🎙️'].includes(val)?' special':'')+(['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn','End','Delete','←','↓','↑','→'].includes(val)?' terminal':'');
+ function miniRow(values,extraClass=''){
+  if(!values.length)return;
+  const div=document.createElement('div');div.className='mini-keyrow '+extraClass;
+  for(const val of values){
+   const key=document.createElement('div');
+   key.className='mini-key'+(val==='space'?' space':'')+(val.length>1||['⇧','⌫','↵'].includes(val)?' special':'')+
+    (extraClass==='preview-toolbar'||extraClass==='preview-fn'||extraClass==='preview-combo'?' terminal':'');
    if(val==='space')key.innerHTML='<span class="space-inner"><span>&lt;</span><span>Space</span><span>&gt;</span></span>';
    else key.textContent=val.length===1&&/[a-z]/i.test(val)?((shift||capsLock)?val.toUpperCase():val.toLowerCase()):val;
-   if(accents[val]&&pref.lang==='lt-LT'){
+   if(accents[val]&&pref.lang==='lt-LT'&&pref.layoutVariant!=='qwerty'){
     const hint=document.createElement('span');hint.className='mini-accent';hint.textContent=accents[val][0];key.appendChild(hint);
    }
    div.appendChild(key);
   }
   root.appendChild(div);
  }
- $('liveLanguage').textContent=(pref.lang==='lt-LT'?'LT':'EN')+' · '+(emojiOpen?'Emoji':symbolPage?'Symbols':mode);
+ miniRow(['⚙','+ Combo','Fn','📎','📋','⭐',pref.lang==='lt-LT'?'LT 🎙':'EN 🎙'],'preview-toolbar');
+ if(functionKeys)miniRow(Array.from({length:8},(_,i)=>'F'+(i+1)),'preview-fn');
+ const activeCombos=currentCombos().filter(c=>c.enabled!==false);
+ for(let i=0;i<activeCombos.length;i+=4)
+  miniRow(activeCombos.slice(i,i+4).map(c=>c.name||comboSummary(c)),'preview-combo');
+ const rows=emojiOpen?(emojiCatalog.length?Array.from({length:4},(_,i)=>emojiOptions().slice(i*8,i*8+8).map(x=>x[0])):emojiRows):
+  symbolPage?symbolPages[symbolsSecondPage?1:0]:layout();
+ const content=(extras||emojiOpen)?rows:rows.filter((_,i)=>mode==='Code'?i!==0:i>1);
+ for(const row of content)miniRow(row,row.join('')==='1234567890'?'numbers':'');
+ $('liveLanguage').textContent=(pref.lang==='lt-LT'?'LT':'EN')+' · '+(emojiOpen?'Emoji':symbolPage?'Symbols':mode)+
+  (functionKeys?' · Fn':'')+(activeCombos.length?' · '+activeCombos.length+' Combo':'');
 }
 function themeIndex(){return Math.max(0,keyboardThemes.findIndex(x=>x[0]===pref.theme))}
 function updateLiveThemeName(){
@@ -513,7 +605,7 @@ $('themeNext').onclick=()=>changeTheme(1);
 $('railPrev').onclick=()=>$('themeGrid').scrollBy({left:-235,behavior:'smooth'});
 $('railNext').onclick=()=>$('themeGrid').scrollBy({left:235,behavior:'smooth'});
 swipeTheme($('liveKeyboard'));
-const defaultPref={theme:'ascii',fontSize:12,keyHeight:38,keyGap:3,keyRadius:6,numberOffset:8,lang:'lt-LT',rejectCyrillic:true};
+const defaultPref={theme:'ascii',fontSize:12,keyHeight:38,keyGap:3,keyRadius:6,numberOffset:8,lang:'lt-LT',rejectCyrillic:true,pressAnimation:true};
 let pref={...defaultPref};try{pref={...pref,...JSON.parse(localStorage.getItem('devboard-settings-v09')||'{}')};if(!localStorage.getItem('devboard-v11-ascii-initialized')){pref.theme='ascii';localStorage.setItem('devboard-v11-ascii-initialized','1')}}catch{}
 let recognition=null,listening=false,voiceRequested=false,lastCaret=null;
 function persistSettings(){try{localStorage.setItem('devboard-settings-v09',JSON.stringify(pref))}catch{}}
@@ -525,7 +617,7 @@ function applyTheme(theme){
  pref.theme=selected[0];$('keyboard').classList.toggle('ascii-theme',pref.theme==='ascii');$('liveKeyboard').classList.toggle('ascii-theme',pref.theme==='ascii');document.documentElement.style.setProperty('--kb-font',pref.fontSize+'px');document.documentElement.style.setProperty('--kb-height',pref.keyHeight+'px');document.documentElement.style.setProperty('--kb-gap',pref.keyGap+'px');document.documentElement.style.setProperty('--kb-radius',pref.keyRadius+'px');document.documentElement.style.setProperty('--number-offset',pref.numberOffset+'px');
  persistSettings();updateLiveThemeName();
 }
-function syncSettingControls(){for(const key of ['fontSize','keyHeight','keyGap','keyRadius','numberOffset']){$(key).value=pref[key];$(key+'Val').textContent=pref[key]+' px'}$('voiceLang').value=pref.lang;$('rejectCyrillic').checked=pref.rejectCyrillic;$('showExtras').checked=extras;renderLiveKeyboard();renderThemeGrid();const supported=!!(window.SpeechRecognition||window.webkitSpeechRecognition);$('voiceSupport').textContent=supported?'🎙️ This browser provides speech recognition. Actual language support depends on the device.':'⚠️ This browser does not support speech recognition. Try the latest Chrome on Android.'}
+function syncSettingControls(){for(const key of ['fontSize','keyHeight','keyGap','keyRadius','numberOffset']){$(key).value=pref[key];$(key+'Val').textContent=pref[key]+' px'}$('voiceLang').value=pref.lang;$('rejectCyrillic').checked=pref.rejectCyrillic;$('showExtras').checked=extras;$('pressAnimation').checked=pref.pressAnimation!==false;render();renderLiveKeyboard();renderThemeGrid();const supported=!!(window.SpeechRecognition||window.webkitSpeechRecognition);$('voiceSupport').textContent=supported?'🎙️ This browser provides speech recognition. Actual language support depends on the device.':'⚠️ This browser does not support speech recognition. Try the latest Chrome on Android.'}
 $('settingsOpen').onclick=()=>{closeAccents();$('clipDrawer').hidden=true;$('langPop').hidden=true;$('phoneSettings').hidden=false;syncSettingControls()};
 $('settingsClose').onclick=()=>{$('phoneSettings').hidden=true;focusPaper()};
 
@@ -562,6 +654,7 @@ for(const key of ['fontSize','keyHeight','keyGap','keyRadius','numberOffset'])$(
 $('voiceLang').onchange=e=>setLang(e.target.value);
 $('rejectCyrillic').onchange=e=>{pref.rejectCyrillic=e.target.checked;persistSettings()};
 $('showExtras').onchange=e=>{extras=e.target.checked;$('extraRows').checked=extras;render();renderLiveKeyboard()};
+$('pressAnimation').onchange=e=>{pref.pressAnimation=e.target.checked;persistSettings();render()};
 $('saveSettings').onclick=()=>{persistSettings();setStatus('Settings saved');$('phoneSettings').hidden=true};
 $('openLayout').onclick=()=>{$('phoneSettings').hidden=true;if(!editing)$('configure').click()};
 $('resetSettings').onclick=()=>{pref={...defaultPref};applyTheme(pref.theme);syncSettingControls();render();setStatus('Appearance reset')};
