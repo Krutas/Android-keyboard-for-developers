@@ -440,7 +440,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 val weight = if (label == "Space") 4f else 1f
                 row.addView(b, LinearLayout.LayoutParams(0, dp(SettingsStore.keyHeight(this)), weight).apply {
                     val margin = dp(SettingsStore.gap(this@DevBoardImeService))
-                    setMargins(margin, margin, margin, 0)
+                    setMargins(margin, margin, margin, margin)
                 })
             }
             container.addView(row)

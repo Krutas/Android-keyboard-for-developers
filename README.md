@@ -4,7 +4,7 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Version:** 0.2.1 · [Download APK](releases/DevBoard-v0.2.1.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
+**Version:** 0.2.1 · [Download APK](releases/DevBoard-v0.2.2.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
 
 ## What it does
 
@@ -32,11 +32,17 @@ Emoji appearance depends on OS font support; newly released Unicode 18.0 symbols
 ## New in 0.2.1
 
 - Emoji picker expanded to 3,963 Unicode emoji variants in 9 categories, plus recent emoji.
-- APK filename changed to `DevBoard-v0.2.1.apk`.
+- APK filename changed to `DevBoard-v0.2.2.apk`.
+
+## New in 0.2.2
+
+- Fixed overlapping keyboard rows: added bottom spacing so lower key edges remain visible.
+- Android version updated to 0.2.2 (versionCode 4).
+- iOS source version set to 0.1 (not yet built or signed).
 
 ## Install on Android
 
-1. [Download the APK](releases/DevBoard-v0.2.1.apk) and install it.
+1. [Download the APK](releases/DevBoard-v0.2.2.apk) and install it.
 2. Open **DevBoard**, enable it in Android keyboard settings, and select it as your keyboard.
 3. Open any text field. Use **Settings** to customize it or **Profiles** to import layouts.
 
@@ -52,7 +58,7 @@ export ANDROID_HOME="/path/to/android-sdk"
 ./gradlew :app:assembleDebug :app:lintDebug
 ```
 
-Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.1.apk`.
+Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.2.apk`.
 
 ## Privacy
 
