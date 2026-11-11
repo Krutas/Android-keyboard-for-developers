@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.graphics.Color
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -43,6 +44,17 @@ class ComboEditorActivity : Activity() {
                 text = "${combo.label}  ·  ${combo.action}"; isAllCaps = false
                 setOnClickListener { editing = index; labelField.setText(combo.label); comboField.setText(combo.action) }
             }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            line.addView(CheckBox(this).apply {
+                isChecked = combo.enabled
+                contentDescription = "Show ${combo.label} on keyboard"
+                setOnCheckedChangeListener { _, enabled ->
+                    val combos = SettingsStore.combos(this@ComboEditorActivity)
+                    if (index in combos.indices) {
+                        combos[index] = combos[index].copy(enabled = enabled)
+                        SettingsStore.saveCombos(this@ComboEditorActivity, combos)
+                    }
+                }
+            })
             line.addView(Button(this).apply {
                 text = "✕"; setOnClickListener {
                     val combos = SettingsStore.combos(this@ComboEditorActivity)
@@ -58,8 +70,8 @@ class ComboEditorActivity : Activity() {
         val action = comboField.text.toString().trim().take(150)
         if (title.isBlank() || action.isBlank()) { Toast.makeText(this, "Enter name and action", Toast.LENGTH_SHORT).show(); return }
         val combos = SettingsStore.combos(this)
-        if (editing >= 0 && editing < combos.size) combos[editing] = Combo(title, action)
-        else combos.add(Combo(title, action))
+        if (editing >= 0 && editing < combos.size) combos[editing] = Combo(title, action, combos[editing].enabled)
+        else combos.add(Combo(title, action, true)
         SettingsStore.saveCombos(this, combos.take(24))
         editing = -1; render()
     }
