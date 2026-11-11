@@ -58,6 +58,14 @@ Emoji appearance depends on OS font support; newly released Unicode 18.0 symbols
 
 The emoji catalog includes Unicode 18.0 entries, but **some emoji can appear as boxes or incomplete sequences when the device OS lacks matching glyphs**. This release does not ship an emoji font or claim to fix that device-dependent limitation.
 
+## Unreleased fixes (source after v0.2.4 / iOS v0.2)
+
+- Raised the Android punctuation choices for long-press `.` and `,` by an additional key height so the holding finger cannot cover the menu; the web simulator now uses the same clearance.
+- Added long-press Shift to toggle Caps Lock on Android, iOS and the simulator. Double-tap Shift remains available, with `⇪` visibly indicating the locked state.
+- Reduced extra spacing inside the simulator's one-line `< Space >` label.
+
+These changes are in source control but are **not included in the v0.2.4 Android APK or the existing iOS v0.2 packages**. A new build and on-device verification are required.
+
 See [release history](docs/CHANGELOG.md) and [test checklist](docs/TESTING.md).
 
 ## Install on Android
