@@ -85,7 +85,12 @@ class ProfileManagerActivity : Activity() {
             }
             root.addView(line)
         }
-        val name = EditText(this).apply { hint = "New profile name"; setSingleLine(true) }
+        val name = EditText(this).apply {
+            hint = "New profile name"
+            setSingleLine(true)
+            setTextColor(Color.WHITE)
+            setHintTextColor(Color.LTGRAY)
+        }
         root.addView(name)
         action("+ Clone active layout as new profile") {
             try {
