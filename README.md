@@ -4,7 +4,7 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Android:** 0.2.4 · **iOS:** 0.2 · [Download APK](releases/DevBoard-v0.2.4.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
+**Android:** 0.2.4 · **iOS:** 0.2 · [Android APK](releases/DevBoard-v0.2.4.apk) · [iOS v0.2 packages](https://github.com/Krutas/Android-keyboard-for-developers/releases/tag/ios-v0.2) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
 
 ## What it does
 
@@ -88,4 +88,4 @@ See [testing checklist](docs/TESTING.md) and [source code](app/src/main/java/lt/
 
 ## iPhone version
 
-The native iOS keyboard extension and SwiftUI companion app are in [ios/](ios/README.md). **iOS v0.2** adds a single-line `<  space  >` key with three touch zones. Its [macOS CI workflow](https://github.com/Krutas/Android-keyboard-for-developers/actions/workflows/ios.yml) builds an iOS Simulator package and an **unsigned** iPhone IPA. The latter requires Apple signing/provisioning to install on a real iPhone. Android-only features (native voice input and unrestricted file selection from the keyboard) are restricted by iOS.
+The native iOS keyboard extension and SwiftUI companion app are in [ios/](ios/README.md). **iOS v0.2** adds a single-line `<  space  >` key with three touch zones. Its [macOS CI run](https://github.com/Krutas/Android-keyboard-for-developers/actions/runs/43094577722) **successfully built** an [iOS Simulator ZIP](https://github.com/Krutas/Android-keyboard-for-developers/releases/download/ios-v0.2/DevBoard-iOS-v0.2-Simulator.zip) and an [**unsigned** iPhone IPA](https://github.com/Krutas/Android-keyboard-for-developers/releases/download/ios-v0.2/DevBoard-iOS-v0.2-unsigned.ipa). Both archives were verified to contain app **and** keyboard extension with version `0.2` (build `2`). The latter requires Apple signing/provisioning to install on a real iPhone. Android-only features (native voice input and unrestricted file selection from the keyboard) are restricted by iOS.

@@ -69,5 +69,5 @@ Known constraint: Android apps decide which hardware key events and content MIME
 - [ ] iOS: Space key still triggers sentence capitalization after punctuation. App and keyboard extension both advertise `0.2` / build `2`.
 - [ ] Web simulator: browser Space label uses a three-column single-line layout; click the three zones and inspect typed text.
 - [ ] Run Android Gradle `assembleDebug` (and `lintDebug` if available); verify `DevBoard-v0.2.4.apk` signature and version.
-- [ ] Confirm GitHub Actions builds both iOS v0.2 Simulator ZIP and unsigned IPA. Unsigned IPA **does not install on an iPhone** without valid Apple signing.
+- [x] GitHub Actions [run 43094577722](https://github.com/Krutas/Android-keyboard-for-developers/actions/runs/43094577722) built iOS v0.2 Simulator ZIP and unsigned IPA. Verified app **and** keyboard extension version `0.2` / build `2` in both archives. Unsigned IPA **does not install on an iPhone** without valid Apple signing.
 - [ ] Real hardware: test emoji display and note any missing glyphs or ZWJ sequences. App uses OS emoji fonts; Unicode 18.0 appearance is not guaranteed.

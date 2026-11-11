@@ -12,7 +12,7 @@
 
 **Known limitation:** Unicode 18.0 glyphs are not bundled as a font. Certain emoji may render incorrectly on operating systems whose emoji fonts are too old. Not addressed in this version.
 
-**Builds:** Android v0.2.4 uses Gradle on Linux/WSL (debug-signed test APK). iOS v0.2 is built by macOS GitHub Actions (Simulator ZIP and unsigned iPhone IPA). An unsigned IPA needs Apple signing before device installation.
+**Builds verified:** Android v0.2.4 passed Gradle `assembleDebug` and `lintDebug`; the APK version and signing block were checked ([release](https://github.com/Krutas/Android-keyboard-for-developers/releases/tag/v0.2.4)). iOS v0.2 passed [macOS GitHub Actions](https://github.com/Krutas/Android-keyboard-for-developers/actions/runs/43094577722); the Simulator ZIP and unsigned IPA both include version `0.2` (build `2`) for the app and extension ([iOS release](https://github.com/Krutas/Android-keyboard-for-developers/releases/tag/ios-v0.2)). An unsigned IPA still needs Apple signing before device installation.
 
 ## Android 0.2.3
 - Top-right combined LT/EN voice input, microphone removed from terminal shortcut row.
