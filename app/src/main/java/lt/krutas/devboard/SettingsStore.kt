@@ -17,7 +17,7 @@ internal data class Palette(
     fun borderColor() = Color.parseColor(border)
 }
 
-internal data class Combo(val label: String, val action: String)
+internal data class Combo(val label: String, val action: String, val enabled: Boolean = true)
 internal data class SavedSnippet(val title: String, val text: String)
 
 internal object SettingsStore {
@@ -291,13 +291,13 @@ internal object SettingsStore {
             val a = JSONArray(prefs(c).getString("combos", "[]"))
             MutableList(a.length()) { i ->
                 val o = a.getJSONObject(i)
-                Combo(o.getString("label"), o.getString("action"))
+                Combo(o.getString("label"), o.getString("action"), o.optBoolean("enabled", true))
             }
         } catch (_: Exception) { mutableListOf() }
     }
     fun saveCombos(c: Context, combos: List<Combo>) {
         val a = JSONArray()
-        combos.forEach { a.put(JSONObject().put("label", it.label).put("action", it.action)) }
+        combos.forEach { a.put(JSONObject().put("label", it.label).put("action", it.action).put("enabled", it.enabled)) }
         prefs(c).edit().putString("combos", a.toString()).apply()
     }
     fun clipboardHistory(c: Context): MutableList<String> = try {
