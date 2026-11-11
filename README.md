@@ -10,6 +10,8 @@ An experimental **Android system keyboard (v0.2.0 developer preview)** for progr
 - **[Simulator HTML source](docs/simulator.html)**. For local use, download the single HTML file and open it in a browser. Microphone dictation generally requires an HTTPS/localhost origin and a supporting browser.
 - **[Preview APK](releases/devboard-debug.apk)** (compiled and debug-signed). The APK is a development/debug build, not a Play Store release.
 
+> **Source-only changes (11 Nov 2026):** the upper microphone now opens dictation controls, the bottom 😀 key opens an emoji panel, and keyboard-layout / capitalization fixes are committed in source. The linked v0.2.0 APK predates these fixes; no new APK was generated.
+
 > GitHub README pages do not execute embedded JavaScript or allow interactive iframes. The animated GIF above is therefore the in-README review. The full interactive simulator runs on GitHub Pages (or a local web server).
 
 ## Android features (initial native preview)
@@ -48,7 +50,7 @@ An experimental **Android system keyboard (v0.2.0 developer preview)** for progr
 3. Open **DevBoard** → **Enable DevBoard in Android settings**, then **Choose any enabled keyboard** and select DevBoard.
 4. In any text field, the DevBoard keyboard will appear. Try `123`, long-press a number, or long-press **Space** to switch LT / EN.
 5. Tap **📎** to choose any file with Android's system file picker, then select a destination app in the Android share chooser. **This is not an automatic upload to the currently focused chat.**
-6. Tap 🎙 for dictation. The app requests Android's standard microphone permission. The recognition engine might use a network service; no OpenAI API is used.
+6. Tap the upper 🎙 beside Alt to open dictation controls (**Baigti** / **Atšaukti**). Tap the bottom 😀 to choose emoji. The app requests Android microphone permission when needed. Recognition may use a network service; no OpenAI API is used.
 7. Open **Profiles** to clone a keyboard layout or import a `devboard-layouts.json` file exported from the simulator. Toggle **Automatically choose profile per app** and enter app package names (for example `com.termux`) to assign a profile.
 8. Tap **Fn** on the keyboard to show or hide F1–F12, Insert and forward Delete. Long-press Backspace to repeat deletion. Enable haptics or click sounds under Appearance.
 

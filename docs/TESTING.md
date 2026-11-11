@@ -9,7 +9,7 @@
 - [ ] + Combo: create, invoke, edit and delete a shortcut.
 - [ ] Clipboard recent items and named saved snippets insert into the document.
 - [ ] 📎 accepts a TXT/PDF/ZIP/image and displays name, MIME type, and size; the link is local only.
-- [ ] 🎙 asks for microphone permission if needed, shows voice level, transcribes into the document in a supported browser.
+- [ ] Upper 🎙 opens microphone recording controls in the browser; bottom 😀 opens emoji picker. Dictation asks for permission, shows voice level, and transcribes in a supporting browser.
 - [ ] Settings → Choose keyboard opens a clearly marked demo picker, not a fabricated installed-keyboard list.
 - [ ] Export web JSON for import on Android.
 
@@ -18,13 +18,14 @@
 - [ ] Select DevBoard from the system IME picker; use it in a normal text field.
 - [ ] Installed keyboards list shows enabled and disabled IMEs; tapping invokes Android's picker/settings.
 - [ ] Settings appearance changes update native keyboard layout and font.
-- [ ] 123, 1/2, ABC, Shift, Backspace hold, Ctrl/Alt, arrow keys, Tab, Esc, Home/End, PgUp/PgDn behave as expected.
+- [ ] 123, 1/2, ABC, Shift, Backspace hold, Ctrl/Alt, arrow keys, Tab, Esc, Home/Del, PgUp/PgDn behave as expected.
 - [ ] Fn toolbar sends F1–F12, Insert and forward Delete where the target app supports them.
 - [ ] Named snippets insert text; clipboard capture is opt-in, can be cleared, and is unavailable in password fields.
 - [ ] Profiles clone/select/delete; JSON Terminal layout imports and exports; 'space' from web JSON becomes Space.
 - [ ] Per-app mapping activates a named profile only for configured packages (e.g. com.termux).
 - [ ] 📎 invokes Android's file picker and share chooser. It does **not** silently attach a file to an app.
-- [ ] 🎙 requests microphone access, shows RMS activity, recognizes Lithuanian or English where supported, and blocks Cyrillic in Lithuanian mode.
+- [ ] Upper 🎙 (next to Alt) opens speech panel; Baigti finishes and Atšaukti discards dictation. Verify LT/EN, live microphone level, and Cyrillic blocking in LT mode.
+- [ ] Bottom 😀 opens emoji picker, inserts emoji into focused field, and ABC closes picker. Test saved layouts migrated from old microphone placement.
 - [ ] Rotate phone and test portrait/landscape, return from Settings, disable/reenable keyboard, and reopen apps.
 
 ## Release gate

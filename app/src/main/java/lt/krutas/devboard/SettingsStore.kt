@@ -45,22 +45,22 @@ internal object SettingsStore {
     )
 
     val defaultRows = listOf(
-        listOf("Esc", "Ctrl", "Alt", "Tab", "/", "Home", "PgUp"),
-        listOf("←", "↑", "↓", "→", "Enter", "End", "PgDn"),
+        listOf("Esc", "Ctrl", "Alt", "🎙", "Tab", "/", "Home", "PgUp"),
+        listOf("←", "↑", "↓", "→", "Enter", "Del", "PgDn"),
         listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "0"),
         listOf("Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"),
         listOf("A", "S", "D", "F", "G", "H", "J", "K", "L"),
         listOf("⇧", "Z", "X", "C", "V", "B", "N", "M", "⌫"),
-        listOf("123", "🎙", ",", "Space", ".", "↵")
+        listOf("123", "😀", ",", "Space", ".", "↵")
     )
     val symbols1 = listOf(
-        listOf("Esc", "Ctrl", "Alt", "Tab", "/", "Home", "PgUp"),
-        listOf("←", "↑", "↓", "→", "Enter", "End", "PgDn"),
+        listOf("Esc", "Ctrl", "Alt", "🎙", "Tab", "/", "Home", "PgUp"),
+        listOf("←", "↑", "↓", "→", "Enter", "Del", "PgDn"),
         listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "0"),
         listOf("!", "@", "#", "$", "%", "^", "&", "*", "(", ")"),
         listOf("-", "_", "=", "+", "[", "]", "{", "}", "\\"),
         listOf("1/2", ";", ":", "'", "\"", "<", ">", "?", "⌫"),
-        listOf("ABC", "🎙", ",", "Space", ".", "↵")
+        listOf("ABC", "😀", ",", "Space", ".", "↵")
     )
     val symbols2 = listOf(
         symbols1[0], symbols1[1], symbols1[2],
@@ -84,21 +84,15 @@ internal object SettingsStore {
 
     private fun legacyRows(c: Context): MutableList<MutableList<String>> {
         val stored = prefs(c).getString("keyboard_rows", null) ?: return copyDefault()
-        return try {
-            val outer = JSONArray(stored)
-            if (outer.length() != defaultRows.size) return copyDefault()
-            MutableList(outer.length()) { row ->
-                val inner = outer.getJSONArray(row)
-                MutableList(inner.length()) { col -> inner.getString(col) }
-            }
-        } catch (_: Exception) { copyDefault() }
+        return try { parseRows(JSONArray(stored)) ?: copyDefault() }
+        catch (_: Exception) { copyDefault() }
     }
     fun copyDefault() = defaultRows.map { it.toMutableList() }.toMutableList()
 
     private fun parseRows(array: JSONArray): MutableList<MutableList<String>>? {
         if (array.length() != defaultRows.size) return null
         return try {
-            MutableList(array.length()) { i ->
+            val parsed = MutableList(array.length()) { i ->
                 val row = array.getJSONArray(i)
                 require(row.length() in 3..16)
                 MutableList(row.length()) { j ->
@@ -111,14 +105,27 @@ internal object SettingsStore {
                         "esc" -> "Esc"
                         "tab" -> "Tab"
                         "home" -> "Home"
-                        "end" -> "End"
+                        "end", "del", "delete" -> "Del"
                         "pgup" -> "PgUp"
                         "pgdn" -> "PgDn"
                         "enter" -> "Enter"
+                        "🎙️" -> "🎙"
                         else -> key
                     }
                 }
             }
+            // Migrate old layouts without discarding any user-customized key positions.
+            // The microphone now lives next to Alt; End is replaced by forward Delete.
+            for (row in parsed.drop(1)) row.removeAll { it == "🎙" }
+            val bottom = parsed.last()
+            if ("😀" !in bottom && bottom.size < 16) {
+                val after = bottom.indexOfFirst { it in listOf("123", "ABC") }
+                bottom.add(if (after >= 0) after + 1 else 1, "😀")
+            }
+            val shortcuts = parsed[0]
+            if ("Alt" in shortcuts && "🎙" !in shortcuts && shortcuts.size < 16)
+                shortcuts.add(shortcuts.indexOf("Alt") + 1, "🎙")
+            parsed
         } catch (_: Exception) { null }
     }
 

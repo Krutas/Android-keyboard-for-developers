@@ -14,6 +14,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.RelativeSizeSpan
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -29,6 +32,8 @@ import android.widget.Button
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.PopupMenu
+import android.widget.PopupWindow
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import kotlin.math.roundToInt
@@ -40,6 +45,9 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     private var ctrl = false
     private var alt = false
     private var shifted = false
+    private var capsLock = false
+    private var lastShiftTap = 0L
+    private var punctuationPopup: PopupWindow? = null
     private var deleteRepeated = false
     private var repeatingDelete = false
     private val repeatHandler = Handler(Looper.getMainLooper())
@@ -55,6 +63,10 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     private var passwordField = false
     private var mic: SpeechRecognizer? = null
     private var listening = false
+    private var micPanelVisible = false
+    private var micStatus = "🎙 Pasiruošęs"
+    private var micStatusView: TextView? = null
+    private var emojiOpen = false
     private var micIndicator: TextView? = null
     private var lastInput: EditorInfo? = null
     private val clipboard by lazy { getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager }
@@ -72,21 +84,27 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     override fun onCreateInputView(): View {
         container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(3), dp(5), dp(3), dp(7))
+            setPadding(dp(3), dp(5), dp(3), dp(17))
         }
         render()
-        return container
+        // Let the final row scroll into view on phones with limited IME height.
+        return ScrollView(this).apply {
+            isFillViewport = true
+            isVerticalScrollBarEnabled = false
+            addView(container, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
     }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         lastInput = info
-        ctrl = false; alt = false; shifted = false; symbols = 0
+        ctrl = false; alt = false; shifted = false; capsLock = false; symbols = 0; emojiOpen = false
         val variation = (info?.inputType ?: 0) and InputType.TYPE_MASK_VARIATION
         passwordField = variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
             variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
             variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD ||
             variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD
+        shifted = shouldCapitalize()
         if (SettingsStore.captureClipboard(this) && !clipboardListenerAdded) {
             clipboard.addPrimaryClipChangedListener(clipboardListener)
             clipboardListenerAdded = true
@@ -99,6 +117,8 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
 
     override fun onFinishInputView(finishingInput: Boolean) {
         stopMic()
+        punctuationPopup?.dismiss()
+        punctuationPopup = null
         repeatingDelete = false
         repeatHandler.removeCallbacks(repeatDeletion)
         super.onFinishInputView(finishingInput)
@@ -154,10 +174,93 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     }
 
 
+    private fun micPanel(): View {
+        val panel = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(8), dp(5), dp(8), dp(5))
+            background = shape(palette.specialColor())
+        }
+        val micIcon = TextView(this).apply {
+            text = "🎙"
+            textSize = 23f
+            gravity = Gravity.CENTER
+            setTextColor(palette.textColor())
+        }
+        panel.addView(micIcon, LinearLayout.LayoutParams(dp(43), dp(43)))
+        micStatusView = TextView(this).apply {
+            text = micStatus
+            textSize = 12f
+            maxLines = 2
+            setTextColor(palette.textColor())
+        }
+        panel.addView(micStatusView, LinearLayout.LayoutParams(0, dp(48), 1f))
+        fun control(label: String, onTap: () -> Unit) {
+            val b = Button(this).apply {
+                text = label
+                isAllCaps = false
+                textSize = 12f
+                setTextColor(palette.textColor())
+                background = shape(palette.keyColor())
+                minHeight = 0; minimumHeight = 0
+                setPadding(dp(3), 0, dp(3), 0)
+                setOnClickListener { onTap() }
+            }
+            panel.addView(b, LinearLayout.LayoutParams(dp(68), dp(41)))
+        }
+        control("Baigti") {
+            if (listening) {
+                updateMicStatus("🎙 Atpažįstu...")
+                mic?.stopListening()
+            }
+        }
+        control("Atšaukti") { stopMic() }
+        return panel
+    }
+
+    private fun emojiPanel(): View {
+        val panel = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        val close = Button(this).apply {
+            text = "ABC   ← Grįžti į klaviatūrą"
+            isAllCaps = false
+            textSize = 14f
+            setTextColor(palette.textColor())
+            background = shape(palette.specialColor())
+            setOnClickListener { emojiOpen = false; render() }
+        }
+        panel.addView(close, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(39)))
+        val choices = listOf(
+            listOf("😀", "😃", "😄", "😁", "😅", "😂", "🤣", "😊"),
+            listOf("😍", "🥰", "😘", "😎", "🤔", "😢", "😭", "😡"),
+            listOf("👍", "👎", "👏", "🙏", "🤝", "💪", "🔥", "❤️"),
+            listOf("✅", "❌", "⭐", "🎉", "💯", "👀", "💻", "🚀")
+        )
+        choices.forEachIndexed { rowIndex, items ->
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            items.forEachIndexed { index, emoji ->
+                val b = button(emoji, false, rowIndex * 8 + index).apply {
+                    textSize = 22f
+                    setOnClickListener { commit(emoji) }
+                }
+                row.addView(b, LinearLayout.LayoutParams(0, dp(SettingsStore.keyHeight(this)), 1f).apply {
+                    setMargins(dp(1), dp(2), dp(1), 0)
+                })
+            }
+            panel.addView(row)
+        }
+        return panel
+    }
+
+    private fun updateMicStatus(status: String) {
+        micStatus = status
+        micStatusView?.text = status
+        micIndicator?.text = if (listening) "🎙 LIVE" else if (SettingsStore.language(this) == "lt-LT") "LT" else "EN"
+    }
+
     private fun activeModifiers(): Int =
         (if (ctrl) KeyEvent.META_CTRL_ON else 0) or
         (if (alt) KeyEvent.META_ALT_ON else 0) or
-        (if (shifted) KeyEvent.META_SHIFT_ON else 0)
+        (if (shifted || capsLock) KeyEvent.META_SHIFT_ON else 0)
 
     private fun releaseModifiers() {
         ctrl = false; alt = false; shifted = false
@@ -203,6 +306,11 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         container.setBackgroundColor(palette.bg())
         container.removeAllViews()
         container.addView(bar())
+        if (micPanelVisible) container.addView(micPanel())
+        if (emojiOpen) {
+            container.addView(emojiPanel())
+            return
+        }
         if (SettingsStore.prefs(this).getBoolean("function_keys", false)) container.addView(functionStrip())
         val combos = SettingsStore.combos(this)
         if (combos.isNotEmpty()) {
@@ -224,7 +332,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             if (!SettingsStore.showExtras(this) && index < 2) return@forEachIndexed
             val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER }
             keys.forEachIndexed { col, label ->
-                val special = index < 2 || label.length > 1 || label in listOf("⇧", "⌫", "↵", "🎙")
+                val special = index < 2 || label.length > 1 || label in listOf("⇧", "⌫", "↵", "🎙", "😀")
                 val b = button(label, special, index * 13 + col)
                 b.isSoundEffectsEnabled = SettingsStore.prefs(this).getBoolean("sound", false)
                 b.setOnClickListener {
@@ -256,6 +364,14 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                     }
                 }
                 if (label == "Space") b.setOnLongClickListener { v -> showLanguagePopup(v); true }
+                if (label == "," || label == ".") {
+                    b.setOnLongClickListener { v ->
+                        val choices = if (label == ",") listOf(",", ";", ":", "„", "'")
+                                      else listOf(".", "?", "!", "…", ":")
+                        showPunctuationPopup(v, choices)
+                        true
+                    }
+                }
                 val weight = if (label == "Space") 4f else 1f
                 row.addView(b, LinearLayout.LayoutParams(0, dp(SettingsStore.keyHeight(this)), weight).apply {
                     val margin = dp(SettingsStore.gap(this@DevBoardImeService))
@@ -268,14 +384,25 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
 
     private fun button(label: String, special: Boolean, position: Int): Button {
         return Button(this).apply {
-            text = label
+            val digitHint = if (symbols == 0 && SettingsStore.language(this@DevBoardImeService) == "lt-LT")
+                SettingsStore.ltNumbers[label] else null
+            val effective = if (label.length == 1 && label[0].isLetter()) {
+                if (shifted || capsLock) label.uppercase() else label.lowercase()
+            } else label
+            text = if (digitHint != null) SpannableString("$digitHint\n$label").apply {
+                setSpan(RelativeSizeSpan(0.69f), 0, digitHint.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            } else effective
+            if (digitHint != null) {
+                setLineSpacing(-dp(3).toFloat(), 1f)
+                gravity = Gravity.CENTER
+            }
             isAllCaps = false
             textSize = SettingsStore.font(this@DevBoardImeService).toFloat()
             typeface = Typeface.MONOSPACE
             setPadding(0, 0, 0, 0)
             setTextColor(if (palette.colorful) colorful(position) else palette.textColor())
             minWidth = 0; minimumWidth = 0; minHeight = 0; minimumHeight = 0
-            val selected = (label == "Ctrl" && ctrl) || (label == "Alt" && alt) || (label == "⇧" && shifted)
+            val selected = (label == "Ctrl" && ctrl) || (label == "Alt" && alt) || (label == "⇧" && (shifted || capsLock))
             background = shape(if (selected) Color.rgb(35, 124, 186) else if (special) palette.specialColor() else palette.keyColor())
             if (label == "Space") contentDescription = "Space. Long press to change language"
         }
@@ -290,6 +417,40 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         menu.setOnMenuItemClickListener { item -> commit(item.title.toString()); true }
         menu.show()
     }
+    private fun showPunctuationPopup(anchor: View, choices: List<String>) {
+        punctuationPopup?.dismiss()
+        val strip = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(dp(3), dp(3), dp(3), dp(3))
+            background = shape(palette.specialColor())
+        }
+        choices.forEachIndexed { index, mark ->
+            val key = button(mark, true, index).apply {
+                textSize = 18f
+                setOnClickListener {
+                    punctuationPopup?.dismiss()
+                    punctuationPopup = null
+                    commit(mark)
+                }
+            }
+            strip.addView(key, LinearLayout.LayoutParams(dp(43), dp(42)).apply {
+                setMargins(dp(1), 0, dp(1), 0)
+            })
+        }
+        val width = dp(choices.size * 45 + 6)
+        val popup = PopupWindow(strip, width, dp(48), true).apply {
+            isOutsideTouchable = true
+            elevation = dp(5).toFloat()
+            setBackgroundDrawable(shape(palette.specialColor()))
+        }
+        val xy = IntArray(2)
+        anchor.getLocationOnScreen(xy)
+        val x = (xy[0] + anchor.width / 2 - width / 2)
+            .coerceIn(0, (resources.displayMetrics.widthPixels - width).coerceAtLeast(0))
+        popup.showAtLocation(anchor, Gravity.NO_GRAVITY, x, (xy[1] - dp(53)).coerceAtLeast(0))
+        punctuationPopup = popup
+    }
+
     private fun showLanguagePopup(anchor: View) {
         val menu = PopupMenu(this, anchor)
         menu.menu.add("🇱🇹 Lithuanian")
@@ -300,7 +461,19 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         }
         menu.show()
     }
-    private fun commit(text: String) { currentInputConnection?.commitText(text, 1) }
+    private fun shouldCapitalize(): Boolean {
+        if (passwordField || symbols != 0) return false
+        if (((lastInput?.inputType ?: 0) and InputType.TYPE_MASK_CLASS) != InputType.TYPE_CLASS_TEXT) return false
+        // Do not force sentence capitalization into command-line sessions.
+        if (lastInput?.packageName == "com.termux") return false
+        val previous = currentInputConnection?.getTextBeforeCursor(80, 0)?.toString() ?: return false
+        return previous.isBlank() || Regex("[.!?][\\s]+$").containsMatchIn(previous)
+    }
+    private fun commit(text: String) {
+        currentInputConnection?.commitText(text, 1) ?: return
+        if (!capsLock) shifted = shouldCapitalize()
+        if (::container.isInitialized) render()
+    }
     private fun hardware(key: Int, mods: Int = 0) {
         val ic = currentInputConnection ?: return
         val now = SystemClock.uptimeMillis()
@@ -313,9 +486,25 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         when (value) {
             "Ctrl" -> { ctrl = !ctrl; render(); return }
             "Alt" -> { alt = !alt; render(); return }
-            "⇧" -> { shifted = !shifted; render(); return }
+            "⇧" -> {
+                val now = SystemClock.uptimeMillis()
+                if (capsLock) {
+                    capsLock = false
+                    shifted = false
+                    lastShiftTap = 0L
+                } else if (now - lastShiftTap <= 420L) {
+                    capsLock = true
+                    shifted = false
+                    lastShiftTap = 0L
+                } else {
+                    shifted = !shifted
+                    lastShiftTap = now
+                }
+                render()
+                return
+            }
             "⌫" -> { deleteBackward(); return }
-            "Space" -> { commit(" "); releaseModifiers(); return }
+            "Space" -> { ctrl = false; alt = false; commit(" "); return }
             "Esc" -> { hardware(KeyEvent.KEYCODE_ESCAPE, activeModifiers()); releaseModifiers(); return }
             "↵", "Enter" -> { hardware(KeyEvent.KEYCODE_ENTER, activeModifiers()); releaseModifiers(); return }
             "Tab" -> { hardware(KeyEvent.KEYCODE_TAB, activeModifiers()); releaseModifiers(); return }
@@ -324,7 +513,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             "PgUp" -> { hardware(KeyEvent.KEYCODE_PAGE_UP, activeModifiers()); releaseModifiers(); return }
             "PgDn" -> { hardware(KeyEvent.KEYCODE_PAGE_DOWN, activeModifiers()); releaseModifiers(); return }
             "Ins" -> { hardware(KeyEvent.KEYCODE_INSERT, activeModifiers()); releaseModifiers(); return }
-            "Del" -> { hardware(KeyEvent.KEYCODE_FORWARD_DEL, activeModifiers()); releaseModifiers(); return }
+            "Del", "Delete" -> { hardware(KeyEvent.KEYCODE_FORWARD_DEL, activeModifiers()); releaseModifiers(); return }
             "←" -> { hardware(KeyEvent.KEYCODE_DPAD_LEFT, activeModifiers()); releaseModifiers(); return }
             "→" -> { hardware(KeyEvent.KEYCODE_DPAD_RIGHT, activeModifiers()); releaseModifiers(); return }
             "↑" -> { hardware(KeyEvent.KEYCODE_DPAD_UP, activeModifiers()); releaseModifiers(); return }
@@ -334,6 +523,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             "1/2" -> { symbols = 2; render(); return }
             "2/2" -> { symbols = 1; render(); return }
             "🎙", "🎙️" -> { startMic(); return }
+            "😀", "😊", "Emoji" -> { emojiOpen = !emojiOpen; render(); return }
         }
         val functionMatch = Regex("^F([1-9]|1[0-2])$").matchEntire(value)
         if (functionMatch != null) {
@@ -350,8 +540,9 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             releaseModifiers()
             return
         }
-        commit(if (shifted) value.uppercase() else if (value.length == 1 && value[0].isLetter()) value.lowercase() else value)
-        if (shifted) releaseModifiers()
+        commit(if (shifted || capsLock) value.uppercase() else if (value.length == 1 && value[0].isLetter()) value.lowercase() else value)
+        ctrl = false
+        alt = false
     }
 
     private fun applyCombo(raw: String) {
@@ -413,13 +604,20 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     private fun toast(s: String) { Toast.makeText(this, s, Toast.LENGTH_SHORT).show() }
 
     private fun startMic() {
-        if (listening) { stopMic(); return }
-        if (passwordField) { toast("Dictation disabled in password fields"); return }
+        if (listening) {
+            micPanelVisible = true
+            render()
+            return
+        }
+        if (passwordField) { toast("Diktavimas negalimas slaptažodžio lauke"); return }
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             startActivity(Intent(this, MicPermissionActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             return
         }
-        if (!SpeechRecognizer.isRecognitionAvailable(this)) { toast("No speech recognition service installed"); return }
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+            toast("Telefone nėra kalbos atpažinimo paslaugos")
+            return
+        }
         try {
             mic?.destroy()
             mic = SpeechRecognizer.createSpeechRecognizer(this).also { it.setRecognitionListener(this) }
@@ -431,39 +629,74 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
             }
             listening = true
-            micIndicator?.text = "🎙 ▂▂▂▂"
+            micPanelVisible = true
+            updateMicStatus("🎙 Kalbėkite...")
+            render()
             mic?.startListening(intent)
         } catch (error: Exception) {
             listening = false
-            micIndicator?.text = "MIC ERROR"
-            toast(error.message ?: "Speech service failed")
+            micPanelVisible = false
+            updateMicStatus("Mikrofono klaida")
+            render()
+            toast(error.message ?: "Nepavyko paleisti mikrofono")
         }
     }
+
+    /** Cancels recording without inserting a late speech recognition result. */
     private fun stopMic() {
-        if (listening) mic?.stopListening()
+        if (listening) mic?.cancel()
         listening = false
-        micIndicator?.text = if (SettingsStore.language(this) == "lt-LT") "LT" else "EN"
+        micPanelVisible = false
+        micStatusView = null
+        updateMicStatus("🎙 Pasiruošęs")
+        if (::container.isInitialized) render()
     }
-    override fun onReadyForSpeech(params: Bundle?) { micIndicator?.text = "🎙 READY" }
-    override fun onBeginningOfSpeech() { micIndicator?.text = "🎙 LISTENING" }
+
+    override fun onReadyForSpeech(params: Bundle?) {
+        if (listening) updateMicStatus("🎙 Kalbėkite...")
+    }
+    override fun onBeginningOfSpeech() {
+        if (listening) updateMicStatus("🎙 Klausau...")
+    }
     override fun onRmsChanged(rmsdB: Float) {
+        if (!listening) return
         val count = (rmsdB.coerceIn(0f, 10f) / 2f).roundToInt().coerceIn(1, 5)
-        micIndicator?.text = "🎙 " + "▮".repeat(count) + "▯".repeat(5 - count)
+        updateMicStatus("🎙 " + "▮".repeat(count) + "▯".repeat(5 - count))
     }
     override fun onBufferReceived(buffer: ByteArray?) {}
-    override fun onEndOfSpeech() { micIndicator?.text = "🎙 PROCESSING" }
-    override fun onError(error: Int) { listening = false; micIndicator?.text = "MIC ERROR"; toast("Dictation error $error. Check language, microphone and connection.") }
-    override fun onResults(results: Bundle?) {
+    override fun onEndOfSpeech() {
+        if (listening) updateMicStatus("🎙 Atpažįstu...")
+    }
+    override fun onError(error: Int) {
+        if (!listening) return // Ignore callbacks after the user cancels.
         listening = false
+        micPanelVisible = false
+        micStatusView = null
+        render()
+        toast("Diktavimo klaida $error. Patikrinkite kalbą ir mikrofoną.")
+    }
+    override fun onResults(results: Bundle?) {
+        if (!listening) return // A cancelled session must never insert text.
+        listening = false
+        micPanelVisible = false
+        micStatusView = null
         val text = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
-        if (text.isNullOrBlank()) { micIndicator?.text = "NO SPEECH"; return }
+        if (text.isNullOrBlank()) {
+            render()
+            toast("Kalba neatpažinta")
+            return
+        }
         if (SettingsStore.language(this) == "lt-LT" && Regex("[\\u0400-\\u052F]").containsMatchIn(text)) {
-            micIndicator?.text = "LANGUAGE ERROR"; toast("Cyrillic blocked in LT mode")
-        } else { commit(text + " "); micIndicator?.text = "✓ DONE" }
+            render()
+            toast("LT režime kirilicos tekstas neįterpiamas")
+        } else {
+            commit(text + " ")
+        }
     }
     override fun onPartialResults(partialResults: Bundle?) {
-        val value = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull() ?: return
-        micIndicator?.text = "🎙 ${value.take(14)}"
+        if (!listening) return
+        val text = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull() ?: return
+        updateMicStatus("🎙 " + text.take(32))
     }
     override fun onEvent(eventType: Int, params: Bundle?) {}
 }
