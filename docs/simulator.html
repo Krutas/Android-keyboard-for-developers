@@ -1,0 +1,523 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DevBoard • Galaxy A56 Studio v1.2</title><style>
+:root{font-family:Inter,system-ui,Arial,sans-serif;color:#e9eef7;background:#0b1019}*{box-sizing:border-box}body{margin:0}.shell{min-height:100vh;display:grid;grid-template-columns:minmax(360px,1fr) 360px;gap:26px;padding:25px;max-width:1350px;margin:auto}.brand{font-weight:800;font-size:23px;letter-spacing:-.6px}.brand span{color:#76aaff}.muted{color:#8b99ae;font-size:12px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.pill{border:1px solid #31425a;border-radius:40px;padding:7px 12px;color:#a9c7f7;font-size:12px}.preview{display:flex;align-items:center;flex-direction:column}.phone{width:360px;height:780px;border:7px solid #303b4e;border-radius:42px;box-shadow:0 25px 80px #0009,0 0 0 2px #121822;overflow:hidden;background:#f7f8fa;display:flex;flex-direction:column;position:relative;color:#1c2430}.status{height:34px;background:#fff;display:flex;justify-content:space-between;padding:9px 20px 3px;font-size:11px;font-weight:700}.camera{position:absolute;top:10px;left:50%;width:10px;height:10px;background:#161a20;border-radius:50%}.docbar{height:48px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #e8eaf0;padding:0 15px;font-size:13px}.docbar button{background:#f0f2f5;color:#29394d;border:0;border-radius:7px;padding:7px 10px;cursor:pointer}.paper{flex:1;min-height:0;background:#fff;margin:12px 10px 0;padding:18px 16px;box-shadow:0 1px 7px #0001;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.5;outline:none;caret-color:#2563eb}.keyboard{background:var(--kb-bg,#151d2b);padding:7px 5px 10px;user-select:none;touch-action:manipulation}.modebar{display:flex;gap:5px;margin-bottom:7px}.modebar button{flex:1;border:0;border-radius:7px;padding:8px 2px;background:#273449;color:#9baec9;font-size:11px;font-weight:700;cursor:pointer}.modebar button.active{background:#3b73d4;color:white}.keyrow{display:flex;justify-content:center;gap:3px;margin-bottom:4px}.key{flex:1;min-width:0;height:38px;border:1px solid #40516a;border-bottom:2px solid #10151e;border-radius:6px;background:var(--kb-key,#303e54);color:#f5f7fc;font-size:12px;font-weight:650;cursor:pointer;padding:0 1px}.key:active,.key.pressed{background:#5888d6}.key.special{background:var(--kb-special,#435575);color:#e7f0ff}.key.space{flex:4}.key.small{height:28px;font-size:10px}.key.selected{outline:2px solid #ffb75d}.navbar{height:17px;background:#151d2b;display:flex;justify-content:center;align-items:center}.navbar:after{content:'';height:4px;width:90px;background:#b8c4d5;border-radius:10px}.panel{background:#151d2b;border:1px solid #29374b;border-radius:18px;padding:20px;align-self:start}.panel h2{font-size:17px;margin:0 0 10px}.panel p{font-size:13px;color:#a2b1c7;line-height:1.6}.field{margin:18px 0}.field label{display:block;color:#9baec9;font-size:12px;margin-bottom:7px}select,input[type=text]{width:100%;background:#0d1521;border:1px solid #34465d;color:#eaf1ff;border-radius:8px;padding:11px;font:inherit}.action{width:100%;padding:11px;border-radius:9px;background:#3c73d0;color:white;border:0;font-weight:700;cursor:pointer;margin-top:8px}.action.secondary{background:#26354a}.action:disabled{opacity:.45;cursor:not-allowed}.hint{font-size:12px;color:#91a3ba;margin-top:14px}.editor{border-top:1px solid #33445c;margin-top:20px;padding-top:14px}.editor[hidden]{display:none}.row{display:flex;gap:8px}.row>*{flex:1}.foot{font-size:12px;color:#8e9eb6;margin-top:15px;text-align:center}.check{display:flex;gap:9px;align-items:center;font-size:13px;color:#b4c2d6}.check input{accent-color:#4e86e7}@media(max-width:850px){.shell{grid-template-columns:1fr;padding:14px;gap:20px}.phone{width:min(360px,96vw);height:min(780px,calc(96vw * 2.167))}.panel{max-width:600px;width:100%;margin:auto}.top{margin-bottom:15px}}  
+.apphome{flex:1;min-height:0;overflow:auto;background:#101827;color:#eaf1ff;padding:15px 14px}
+.apphome[hidden],.docbar[hidden],.paper[hidden],.keyboard[hidden]{display:none!important}
+.apphero{background:linear-gradient(130deg,#243d64,#162338);padding:18px;border-radius:16px;margin-bottom:15px}
+.apphero h2{font-size:22px;margin:7px 0}.apphero p{font-size:12px;color:#b8c9df;line-height:1.5;margin:0}
+.appsection{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#879ab5;margin:16px 0 8px}
+.apptile{width:100%;display:flex;align-items:center;justify-content:space-between;background:#202d41;border:1px solid #35445a;color:#e9f2ff;border-radius:12px;padding:13px;margin-bottom:8px;text-align:left;cursor:pointer}
+.apptile small{display:block;color:#a5b5ce;margin-top:4px}.appbadge{color:#9cc4ff;font-size:11px}
+.appnav{display:flex;gap:5px;margin:7px 0}.appnav button{flex:1;background:#26364e;border:0;color:#e8f0ff;border-radius:8px;padding:9px 2px;font-size:11px;cursor:pointer}.appnav button.active{background:#4279db}
+.settingline{display:flex;align-items:center;justify-content:space-between;background:#202d41;border-radius:10px;padding:12px;margin:8px 0;font-size:12px;gap:8px}
+.settingline select,.settingline input{max-width:120px;background:#111d2c;color:white;border:1px solid #4a5c76;border-radius:6px;padding:5px}
+.appbottom{display:flex;background:#121c2a;padding:8px;gap:6px}.appbottom button{flex:1;border:0;border-radius:8px;padding:9px 3px;background:#2b3c55;color:#eaf2ff;cursor:pointer;font-size:11px}.appbottom button.active{background:#3b73d4}
+.image-preview{position:absolute;left:16px;right:16px;bottom:315px;background:#fff;border:1px solid #d4dae3;box-shadow:0 5px 22px #0003;border-radius:12px;padding:9px;z-index:5;color:#24354c}.image-preview[hidden]{display:none}.image-preview img{width:100%;max-height:120px;object-fit:contain;background:#f4f6fa;border-radius:7px}.image-preview .image-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px}.image-preview button{border:0;border-radius:6px;padding:6px 9px;background:#e7ecf5;color:#263b58;cursor:pointer}.image-preview code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;font-size:10px;color:#61748c} .docbar .doc-actions{display:flex;gap:5px} .accent-popup{position:absolute;z-index:30;display:flex;gap:4px;background:#eef4ff;border:1px solid #8da9d7;padding:7px;border-radius:10px;box-shadow:0 5px 20px #0006;max-width:95%;left:50%;transform:translateX(-50%)}.accent-popup[hidden]{display:none}.accent-popup button{border:0;background:#d9e5fb;color:#152743;border-radius:7px;padding:10px 13px;font-weight:800;font-size:17px;cursor:pointer}.accent-popup button:focus{background:#8db7f6}.key .hintchar{display:block;font-size:9px;opacity:.7;line-height:9px}.key .mainchar{display:block;line-height:20px}.key{position:relative} .clipbar{display:flex;gap:4px;align-items:center;background:#1d2b3f;padding:5px;min-height:37px;overflow:hidden}.clipbar button{border:1px solid #405572;background:#30445e;color:white;border-radius:6px;padding:6px;font-size:10px;cursor:pointer;white-space:nowrap}.clipbar .cliprecent{flex:1;overflow-x:auto;display:flex;gap:4px;scrollbar-width:none}.clipdrawer{position:absolute;z-index:22;left:8px;right:8px;bottom:170px;max-height:320px;overflow:auto;background:#eaf0fa;color:#1b2b43;border-radius:13px;box-shadow:0 8px 32px #0008;padding:10px}.clipdrawer[hidden]{display:none}.clipdrawer header{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}.clipdrawer button{border:0;background:#d4e1f4;color:#1c3555;border-radius:6px;padding:6px;cursor:pointer}.clipitem{display:flex;gap:7px;align-items:center;padding:7px 0;border-top:1px solid #c7d4e8}.clipitem .cliptext{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}.clipitem .pinned{color:#a26710}.clipnote{font-size:10px;color:#5c718c;margin:8px 0} .snippet-actions{display:flex;gap:5px;margin:9px 0}.snippet-actions input,.snippet-actions textarea{width:100%;box-sizing:border-box;border:1px solid #b6c6de;border-radius:7px;padding:8px;background:white;color:#172940;font:12px sans-serif}.snippet-actions textarea{min-height:64px;resize:vertical}.snippet-form{display:grid;gap:7px;margin-bottom:12px;padding:9px;background:#d9e5f6;border-radius:9px}.cliptab.active{background:#7ca7e6!important;color:#12243c!important}.clipdrawer{bottom:165px;max-height:390px}.clipitem .cliptext{text-align:left}.snippet-preview{font-size:10px;color:#667b95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* DevBoard v1.0: integrated keyboard settings, microphone and language selection */
+:root{--kb-text:#f5f7fc;--kb-border:#40516a;--kb-radius:6px;--kb-font:12px;--kb-height:38px;--kb-gap:3px;--number-offset:8px}
+.keyboard .keyrow{gap:var(--kb-gap);margin-bottom:4px}
+.keyboard .key{height:var(--kb-height);border-radius:var(--kb-radius);font-size:var(--kb-font);border-color:var(--kb-border);color:var(--kb-text)}
+.keyboard .key.special{color:var(--kb-text)}
+.keyboard .key.small{height:calc(var(--kb-height) - 10px);font-size:calc(var(--kb-font) - 2px)}
+.keyboard .keyrow.numbers{margin-top:var(--number-offset)}
+.keyboard .key .mainchar{font-size:var(--kb-font)}
+.keyboard .key .hintchar{font-size:9px;line-height:10px}
+.keyboard .key.speaking{background:#c03458!important;box-shadow:0 0 0 2px #fe8eaa}
+.keyboard .key.space .mainchar{font-size:calc(var(--kb-font) - 1px)}
+.clipbar #settingsOpen{font-size:15px;padding:5px 7px}
+.voice-pop,.lang-pop{position:absolute;z-index:25;left:10px;right:10px;bottom:calc(18px + 315px);background:#f5f8ff;border:1px solid #b6c4dc;border-radius:13px;padding:13px;color:#1c304c;box-shadow:0 10px 35px #0008}
+.voice-pop[hidden],.lang-pop[hidden]{display:none!important}
+.voice-heading{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:13px;margin-bottom:8px}
+.voice-indicator{display:inline-flex;align-items:center;gap:7px;color:#ba3156}
+.voice-indicator:before{content:'';width:8px;height:8px;background:#df3257;border-radius:50%;animation:micpulse .9s ease-in-out infinite alternate}
+@keyframes micpulse{to{opacity:.25;transform:scale(.65)}}
+.voice-preview{font-size:12px;color:#516782;min-height:36px;line-height:1.4;word-break:break-word}
+.voice-pop button,.lang-pop button{background:#dce8fb;color:#1c3457;border:0;border-radius:8px;padding:8px 11px;cursor:pointer;font-size:12px}
+.voice-pop button.stop{background:#b82b50;color:white}
+.lang-pop{bottom:220px;max-width:240px;left:57px;right:auto}
+.lang-pop strong{display:block;margin-bottom:7px;font-size:12px}.lang-pop button{display:block;width:100%;margin:4px 0;text-align:left}
+.phone-settings{position:absolute;inset:34px 0 18px;background:#f3f6fc;z-index:40;overflow-y:auto;color:#192b45;box-shadow:0 0 20px #0005}
+.phone-settings[hidden]{display:none!important}
+.settings-head{display:flex;align-items:center;gap:10px;background:#fff;border-bottom:1px solid #dce3f1;padding:12px 14px;position:sticky;top:0;z-index:2}
+.settings-head strong{flex:1}.settings-head button{border:0;background:#e7edf8;border-radius:8px;padding:8px 11px;color:#243959}
+.settings-content{padding:12px 14px 22px}.settings-content h3{font-size:11px;letter-spacing:.7px;color:#577193;text-transform:uppercase;margin:16px 0 8px}
+.setting-row{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:12px 10px;background:#fff;border:1px solid #e0e7f3;border-radius:10px;margin:7px 0;font-size:12px}
+.setting-row label{flex:1}.setting-row input[type=range]{width:107px;accent-color:#3776cc}.setting-row output{width:39px;text-align:right;font-variant-numeric:tabular-nums;color:#496683}.setting-row select{background:#f6f9ff;color:#1a365c;padding:6px;border-radius:7px;border:1px solid #c9d5e8;max-width:135px}
+.setting-row input[type=checkbox]{accent-color:#2d6ccc}
+.theme-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.theme-option{background:#fff;color:#283c59;border:2px solid #dae3f0;padding:6px;border-radius:10px;text-align:center;font-size:10px;min-width:0;cursor:pointer}
+.theme-option.active{border-color:#377dda;background:#eaf2ff}.theme-option .swatch{height:35px;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:5px;overflow:hidden}
+.theme-option .swatch span{display:block;width:20%;height:25px;border-radius:4px;text-align:center;padding-top:6px;font-weight:700}
+.settings-description{font-size:11px;color:#607794;line-height:1.4;margin:7px 0 15px}
+.settings-action{padding:10px 12px;background:#dceaff;color:#1d467a;border:0;border-radius:9px;margin:3px;cursor:pointer}
+#voiceSupport{font-size:11px;color:#536b89;margin:5px 0}
+
+/* DevBoard v1.0 live, swipeable theme preview */
+.phone-settings{scrollbar-width:thin}
+.settings-live{position:sticky;top:47px;z-index:3;background:linear-gradient(#f6f9fe,#edf3fc);padding:9px 12px 10px;box-shadow:0 5px 12px #20355718;border-bottom:1px solid #d3dfed}
+.live-title,.live-caption{display:flex;justify-content:space-between;align-items:center;gap:7px}
+.live-title{font-size:10px;font-weight:800;letter-spacing:.55px;color:#405c7b;margin-bottom:6px}
+.live-language{font-size:9px;padding:3px 7px;background:#dce8f8;color:#304d71;border-radius:20px}
+.live-preview-wrap{position:relative;display:flex;align-items:center;justify-content:center;gap:3px}
+.live-keyboard{flex:1;min-width:0;border-radius:11px;border:1px solid var(--kb-border);padding:5px 4px;background:var(--kb-bg);transition:background .15s,border-color .15s;touch-action:pan-y;user-select:none;cursor:grab}
+.live-keyboard:active{cursor:grabbing}
+.mini-keyrow{display:flex;justify-content:center;gap:calc(var(--kb-gap) * .72);margin-bottom:3px;min-width:0}
+.mini-keyrow:last-child{margin-bottom:0}
+.mini-key{flex:1;min-width:0;height:calc(var(--kb-height) * .57);border:1px solid var(--kb-border);border-bottom-width:2px;border-radius:var(--kb-radius);background:var(--kb-key);color:var(--kb-text);font-size:clamp(7px,calc(var(--kb-font) * .7),13px);font-weight:700;display:flex;justify-content:center;align-items:center;position:relative;line-height:1;overflow:hidden}
+.mini-key.special{background:var(--kb-special)}
+.mini-key.space{flex:4}
+.mini-key.terminal{font-size:clamp(6px,calc(var(--kb-font) * .55),11px);height:calc(var(--kb-height) * .42)}
+.mini-key .mini-accent{position:absolute;right:1px;top:1px;font-size:6px;opacity:.85}
+.mini-keyrow.numbers{margin-top:calc(var(--number-offset) * .45)}
+.theme-navigate{height:38px;width:21px;flex:0 0 21px;background:#dbe6f6;border:0;color:#244d84;border-radius:9px;font-size:27px;font-weight:700;cursor:pointer;padding:0;line-height:1}
+.theme-navigate:active,.rail-nav:active{background:#8fb6ed}
+.live-caption{font-size:9px;color:#6a829e;margin-top:6px}
+.live-caption strong{font-size:11px;color:#24456c}
+.theme-rail-wrap{display:flex;align-items:center;gap:4px}
+.theme-grid{display:flex;flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;scroll-behavior:smooth;gap:7px;padding:5px 0 7px;min-width:0;flex:1}
+.theme-option{scroll-snap-align:start;flex:0 0 113px;min-width:113px;min-height:86px;display:flex;flex-direction:column;gap:3px;justify-content:center;align-items:stretch;text-align:center}
+.theme-option .swatch{height:42px;padding:4px;gap:3px;align-items:stretch}
+.theme-option .swatch span{height:auto;flex:1;width:auto;display:grid;place-items:center;padding:0;font-size:10px;border:1px solid #ffffff20}
+.rail-nav{height:45px;width:23px;flex:0 0 23px;background:#dce8f8;border:0;border-radius:9px;color:#244d84;font-size:27px;font-weight:800;cursor:pointer}
+.theme-option:focus-visible,.theme-navigate:focus-visible,.rail-nav:focus-visible{outline:2px solid #3071db;outline-offset:2px}
+.theme-counter{font-size:10px;text-align:center;color:#55718f;margin:7px 0 16px}
+.settings-content{padding-bottom:25px}
+@media(max-height:680px){.settings-live{position:relative;top:0}}
+
+/* v1.1: Colorful ASCII, real audio input meter, and symbolic pages */
+.keyboard.ascii-theme,.live-keyboard.ascii-theme{background:radial-gradient(circle at 20% -10%,#16264a 0,transparent 65%),#080d1c;}
+.ascii-theme .key,.ascii-theme .mini-key{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace!important;letter-spacing:-.35px;background:linear-gradient(145deg,#1a2942,#10192a)!important;color:var(--ascii-ink,#67e8f9)!important;border:1px solid var(--ascii-edge,#286a88)!important;border-bottom:2px solid var(--ascii-edge,#286a88)!important;text-shadow:0 0 7px color-mix(in srgb,var(--ascii-ink) 48%,transparent);font-weight:800;}
+.ascii-theme .key.special,.ascii-theme .mini-key.special{background:linear-gradient(145deg,#263955,#172238)!important}
+.ascii-theme .key:active{background:var(--ascii-edge)!important;color:#070b12!important}
+.ascii-theme .keyrow .key:nth-child(7n+1),.ascii-theme .mini-keyrow .mini-key:nth-child(7n+1){--ascii-ink:#73e6ff;--ascii-edge:#1f809b}
+.ascii-theme .keyrow .key:nth-child(7n+2),.ascii-theme .mini-keyrow .mini-key:nth-child(7n+2){--ascii-ink:#a1f27c;--ascii-edge:#417f4c}
+.ascii-theme .keyrow .key:nth-child(7n+3),.ascii-theme .mini-keyrow .mini-key:nth-child(7n+3){--ascii-ink:#ffe16b;--ascii-edge:#9f7b2c}
+.ascii-theme .keyrow .key:nth-child(7n+4),.ascii-theme .mini-keyrow .mini-key:nth-child(7n+4){--ascii-ink:#ffa867;--ascii-edge:#a65b35}
+.ascii-theme .keyrow .key:nth-child(7n+5),.ascii-theme .mini-keyrow .mini-key:nth-child(7n+5){--ascii-ink:#ff79b2;--ascii-edge:#a14577}
+.ascii-theme .keyrow .key:nth-child(7n+6),.ascii-theme .mini-keyrow .mini-key:nth-child(7n+6){--ascii-ink:#d2a0ff;--ascii-edge:#8050aa}
+.ascii-theme .keyrow .key:nth-child(7n),.ascii-theme .mini-keyrow .mini-key:nth-child(7n){--ascii-ink:#62f3d8;--ascii-edge:#277e70}
+.ascii-theme .key.space,.ascii-theme .mini-key.space{--ascii-ink:#e9fbff;--ascii-edge:#3a7f9b}
+.ascii-theme .clipbar{background:#101c30;border-bottom:1px solid #374c6e}
+.ascii-theme .clipbar button{background:#1b2d48;border-color:#36597e;color:#6af7de;font-family:ui-monospace,monospace}
+.ascii-theme .hintchar{opacity:.9}
+.theme-option.ascii-swatch .swatch span:nth-child(1){background:#19374e!important;color:#69eafa!important}
+.theme-option.ascii-swatch .swatch span:nth-child(2){background:#39304c!important;color:#fd8ebc!important}
+.theme-option.ascii-swatch .swatch span:nth-child(3){background:#264b3e!important;color:#a2ff88!important}
+.voice-meter{height:42px;display:flex;align-items:center;justify-content:center;gap:5px;background:#ecf2fc;border:1px solid #cfdef0;border-radius:10px;margin:9px 0 6px;padding:5px}
+.voice-meter span{width:6px;min-height:3px;height:5px;border-radius:5px;background:#93a9c6;transition:height .08s linear,background .08s linear}
+.voice-meter.active span{background:linear-gradient(180deg,#fc6895,#ba3156)}
+.voice-activity{font-size:11px;letter-spacing:.2px;text-align:center;color:#7187a5;margin-bottom:6px;min-height:14px}
+.voice-activity.hearing{font-weight:800;color:#b42c55}
+.keyboard .key.symbol-switch{background:var(--kb-special,#435575);box-shadow:inset 0 0 0 1px #ffffff22}
+/* DevBoard v1.2: tap-to-swap editor and configurable shortcut combos */
+.keyboard .clipbar #comboOpen{font-size:10px;background:#35649b;border-color:#548ccf;color:#fff;font-weight:800;padding:6px 7px}
+.keyboard .clipbar #settingsOpen{flex:0 0 auto}
+.keyboard .key.selected{outline:3px solid #ffc66c;outline-offset:-2px;box-shadow:0 0 0 2px #ffcc77cc,0 0 17px #ffb85288;position:relative;z-index:1}
+.swap-tip{color:#e5eeff;background:#274775;font-size:10px;line-height:1.4;text-align:center;padding:7px;margin-bottom:5px;border:1px solid #557cb4;border-radius:7px}
+.swap-tip[hidden],.combo-bar[hidden],.combo-pop[hidden]{display:none!important}
+.combo-bar{display:flex;gap:5px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin}
+.combo-bar button{background:var(--kb-special,#435575);border:1px solid var(--kb-border,#53657d);border-radius:7px;color:var(--kb-text,#fff);font-size:10px;font-weight:700;white-space:nowrap;padding:6px 9px;min-height:27px;cursor:pointer}
+.combo-bar button:active{filter:brightness(1.3)}
+.combo-pop{position:absolute;left:9px;right:9px;bottom:31px;z-index:40;max-height:calc(100% - 58px);overflow:auto;color:#17304d;background:#f5f8ff;border-radius:14px;box-shadow:0 12px 44px #0009;border:1px solid #aebed7;padding:13px;font-size:12px}
+.combo-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px;margin-bottom:5px}
+.combo-head button,.combo-items button{border:0;background:#e1eaf8;color:#24466c;padding:7px;border-radius:7px;cursor:pointer}
+.combo-help{font-size:10px;color:#60758f;line-height:1.5;margin:7px 0 10px}
+.combo-pop>label{display:block;font-weight:700;margin:9px 0 7px}
+.combo-pop>label input,.combo-pop>label select{display:block;width:100%;max-width:none;color:#1d385b;background:#fff;border:1px solid #aebfd7;border-radius:8px;padding:9px;font:inherit;margin-top:5px}
+.combo-mods{display:flex;gap:7px;justify-content:space-between;margin:12px 0}
+.combo-mods label{display:flex;align-items:center;gap:4px;border:1px solid #cad6e7;border-radius:7px;padding:7px;background:white;font-size:11px;flex:1}
+.combo-mods input{accent-color:#336dbf}
+.combo-actions{display:flex;gap:8px;margin-top:9px}
+.combo-actions button{flex:1;border:0;background:#306dc4;color:white;border-radius:8px;padding:10px 7px;cursor:pointer;font-size:12px;font-weight:800}
+.combo-actions button:last-child{background:#e3ebf5;color:#315173}
+.combo-items-title{font-weight:800;margin:14px 0 4px}
+.combo-items{display:flex;align-items:center;gap:5px;padding:6px 0;border-top:1px solid #d6e0ed}
+.combo-items span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.combo-items small{color:#637992}
+</style></head><body><main class="shell"><section><div class="top"><div><div class="brand">⌨ Dev<span>Board</span> Studio</div><div class="muted">Interactive Android keyboard prototype · Galaxy A56 preview</div></div><div class="pill">WEB MVP · v1.3</div></div><div class="preview"><div class="phone"><div class="camera"></div><div class="status"><span>12:46</span><span>▴ ▰  ▣ 100%</span></div><div class="docbar" id="docbar"><strong>Untitled document</strong><div class="doc-actions"><button id="attachImage" title="Attach image">📷</button><button id="newDoc">+ New</button></div></div><input id="imageFile" type="file" accept="image/*" hidden><div class="image-preview" id="imagePreview" hidden><div class="image-actions"><strong>📷 Temporary image</strong><button id="closeImage">✕</button></div><img id="imageThumb" alt="Selected image preview"><code id="imageUrl"></code><div class="image-actions"><span>Link works only in this browser session</span><button id="insertImageLink">Insert link</button></div></div><div class="apphome" id="apphome" hidden></div><div class="paper" id="paper" contenteditable="true" spellcheck="false" aria-label="Document"></div><div class="accent-popup" id="accentPopup" hidden></div><div class="keyboard" id="keyboard"><div class="clipbar"><button id="clipOpen" title="Clipboard history">📋</button><button id="snippetOpen" title="Saved snippets">⭐</button><div class="cliprecent" id="clipRecent"></div><button id="settingsOpen" title="Keyboard settings" aria-label="Settings">⚙️</button><button id="comboOpen" title="Add or manage key combinations">＋ Combo</button></div><div id="swapTip" class="swap-tip" hidden></div><div id="comboBar" class="combo-bar" hidden></div><div id="keys"></div></div><div class="combo-pop" id="comboPop" hidden><div class="combo-head"><strong>⌨ Add Combo</strong><button id="comboClose" type="button" aria-label="Close combo editor">✕</button></div><p class="combo-help">Save a reusable keyboard shortcut. It will appear on the shortcut bar above the keys.</p><label>Button name<input id="comboName" placeholder="e.g. Copy" maxlength="20" autocomplete="off"></label><div class="combo-mods"><label><input id="comboCtrl" type="checkbox"> Ctrl</label><label><input id="comboAlt" type="checkbox"> Alt</label><label><input id="comboShift" type="checkbox"> Shift</label></div><label>Key<select id="comboKey"></select></label><div class="combo-actions"><button id="comboSave" type="button">Save combo</button><button id="comboCancel" type="button">Cancel</button></div><p class="combo-help" id="comboHelp">Some Android shortcuts cannot be simulated in a browser. This demo supports common text-editing shortcuts.</p><div class="combo-items-title">Saved combos</div><div id="comboList"></div></div><div class="voice-pop" id="voicePop" hidden aria-live="polite"><div class="voice-heading"><span class="voice-indicator" id="voiceTitle">Listening… LT</span><button class="stop" id="voiceStop">■ Stop</button></div><div class="voice-activity" id="voiceActivity">Waiting for microphone permission</div><div class="voice-meter" id="voiceMeter" aria-label="Microphone volume level"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="voice-preview" id="voicePreview">Speak now. Recognized text will appear in the document.</div></div><div class="lang-pop" id="langPop" hidden><strong>Typing and dictation language</strong><button data-lang="lt-LT">🇱🇹 Lithuanian (LT)</button><button data-lang="en-US">🇬🇧 English (EN)</button></div><div class="phone-settings" id="phoneSettings" hidden><div class="settings-head"><button id="settingsClose">←</button><strong>⚙️ DevBoard Settings</strong><span>v1.3</span></div><div class="settings-live" id="settingsLive">
+ <div class="live-title"><span>LIVE KEYBOARD PREVIEW</span><span class="live-language" id="liveLanguage">LT · Terminal</span></div>
+ <div class="live-preview-wrap"><button type="button" class="theme-navigate live-prev" id="themePrev" aria-label="Previous theme" title="Previous theme">‹</button>
+ <div class="live-keyboard" id="liveKeyboard" aria-label="Live keyboard theme preview"></div>
+ <button type="button" class="theme-navigate live-next" id="themeNext" aria-label="Next theme" title="Next theme">›</button></div>
+ <div class="live-caption"><strong id="selectedThemeName">Midnight</strong><span>Swipe to change theme · Adjust sliders below</span></div>
+</div><div class="settings-content"><h3>Key appearance</h3><div class="setting-row"><label for="fontSize">Font size</label><input type="range" min="9" max="18" step="1" id="fontSize"><output id="fontSizeVal"></output></div><div class="setting-row"><label for="keyHeight">Key height</label><input type="range" min="29" max="49" step="1" id="keyHeight"><output id="keyHeightVal"></output></div><div class="setting-row"><label for="keyGap">Key spacing</label><input type="range" min="1" max="7" step="1" id="keyGap"><output id="keyGapVal"></output></div><div class="setting-row"><label for="keyRadius">Corner radius</label><input type="range" min="1" max="15" step="1" id="keyRadius"><output id="keyRadiusVal"></output></div><div class="setting-row"><label for="numberOffset">Number-row offset</label><input type="range" min="0" max="14" step="1" id="numberOffset"><output id="numberOffsetVal"></output></div><div class="setting-row"><label for="showExtras">Terminal shortcut rows</label><input type="checkbox" checked id="showExtras"></div><h3>Language & dictation</h3><div class="setting-row"><label for="voiceLang">Selected language</label><select id="voiceLang"><option value="lt-LT">🇱🇹 Lithuanian (LT)</option><option value="en-US">🇬🇧 English (EN)</option></select></div><div class="setting-row"><label for="rejectCyrillic">Block Cyrillic output in LT mode</label><input type="checkbox" checked id="rejectCyrillic"></div><p id="voiceSupport"></p><h3>Privacy & storage</h3><p class="settings-description">Themes, settings, and clipboard entries are stored locally in this browser. Speech recognition is provided by the browser and may require internet access.</p><h3 class="theme-heading">Themes · Swipe to browse</h3>
+<div class="settings-description">Tap Colorful ASCII or any theme, use the arrows, or swipe. Keys update immediately.</div>
+<div class="theme-rail-wrap"><button type="button" class="rail-nav" id="railPrev" aria-label="Scroll themes left">‹</button><div class="theme-grid" id="themeGrid" aria-label="Keyboard theme carousel"></div><button type="button" class="rail-nav" id="railNext" aria-label="Scroll themes right">›</button></div>
+<div class="theme-counter" id="themeCounter">1 / 19 · Colorful ASCII</div><button class="settings-action" id="saveSettings">💾 Save settings</button><button class="settings-action" id="openLayout">▦ Edit key layout</button><button class="settings-action" id="resetSettings">↺ Reset appearance</button></div></div><div class="clipdrawer" id="clipDrawer" hidden><header><strong id="drawerTitle">📋 Clipboard</strong><button id="clipClose">✕</button></header><div class="snippet-actions"><button class="cliptab active" id="tabHistory">📋 History</button><button class="cliptab" id="tabSaved">⭐ Saved snippets</button></div><div class="clipnote" id="clipNote">Tap an entry to insert it. 📌 pins; ✕ deletes.</div><div class="snippet-form" id="snippetForm" hidden><input id="snippetTitle" placeholder="Title, e.g. SSH command" maxlength="80"><textarea id="snippetText" placeholder="Text to insert with one tap"></textarea><div class="snippet-actions"><button id="snippetSave">💾 Save</button><button id="snippetCancel">Cancel</button></div></div><div id="clipItems"></div><button id="snippetAdd" hidden>＋ New saved snippet</button><button id="clipClear">Clear unpinned</button></div><div class="navbar"></div></div><div class="foot">Galaxy A56 proportions · 360 × 780 CSS px · web preview</div></div></section><aside class="panel"><h2>Keyboard controls</h2><p>Terminal mode is always available. 📋 opens clipboard history; ⭐ lets you save and insert reusable snippets. Hold numbers 1–9 for Lithuanian letters, or hold Space to choose LT / EN. 🎙️ starts speech-to-text. Test the keyboard in the white document. 📷 inserts a temporary image link.</p><p>Tap the virtual keys to type in the white document. In Configure, tap two keys to swap positions. Use + Combo to add keyboard shortcuts.</p><div class="field"><label>Profile</label><select id="profiles"></select></div><div class="row"><button class="action secondary" id="saveProfile">Save profile</button><button class="action secondary" id="newProfile">New profile</button></div><button class="action" id="configure">⚙ Configure</button><div class="editor" id="editor" hidden><h2>Editing mode</h2><p><strong>Tap a key, then tap its new location to swap them.</strong> Works across rows. Tap the selected key again to cancel. You can also drag keys on desktop.</p><div class="field"><label>Selected key</label><input type="text" id="keyValue" placeholder="Select a key" maxlength="16"></div><button class="action secondary" id="applyKey">Update key</button><div class="field"><label class="check"><input type="checkbox" id="extraRows" checked> Show extra keys</label></div><button class="action secondary" id="resetLayout">Reset Terminal layout</button></div><div class="editor"><h2>Export</h2><p>Keyboard profiles are stored in this browser. Export JSON for a future Android build.</p><div class="row"><button class="action secondary" id="exportJson">↓ JSON</button><button class="action secondary" id="importJson">↑ Import</button></div><input id="file" type="file" accept="application/json" hidden></div><p class="hint" id="status">Ready. Try the keys in the phone preview.</p><p class="hint">Note: this is an interactive web prototype, not an Android OS emulator. Physical key sizes depend on your screen density.</p></aside></main><script>
+const defaults={Normal:[['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['123','🎙️',',','space','.','↵']],Code:[['Esc','Tab','{','}','[',']','/','\\','|','~'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['Ctrl','Alt','<','>','space','↵']],Terminal:[['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','End','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['123','🎙️','space','.','↵']]};
+// Upgrade previously stored layouts so that older saved profiles also have a microphone.
+const clone=x=>JSON.parse(JSON.stringify(x));let profiles;try{profiles=JSON.parse(localStorage.getItem('devboard-profiles'))||{Default:clone(defaults)}}catch{profiles={Default:clone(defaults)}};let profile='Default',mode='Terminal',editing=false,selected=null,shift=false,ctrl=false,alt=false,extras=true,dragFrom=null;const $=id=>document.getElementById(id),paper=$('paper');function persist(){localStorage.setItem('devboard-profiles',JSON.stringify(profiles))}function layout(){return profiles[profile][mode]}const symbolPages=[
+ [ ['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','End','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','-','+','(',')','/'],['*','\"',"'",':',';','!','?','=','_','\\'],['{','}','[',']','<','>','|','~','^','`'],['ABC','🎙️','space','1/2','↵'] ],
+ [ ['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','End','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['€','£','¥','¢','©','®','™','§','¶','°'],['±','×','÷','≠','≤','≥','∞','µ','•','…'],['<','>','[',']','{','}','|','\\','~','^'],['ABC','🎙️','space','2/2','↵'] ]
+];
+let symbolPage=false, symbolsSecondPage=false;
+const accents={'1':['ą'],'2':['č'],'3':['ę'],'4':['ė'],'5':['į'],'6':['š'],'7':['ų'],'8':['ū'],'9':['ž']};
+for(const p of Object.values(profiles)){const r=p.Terminal;if(!Array.isArray(r))continue;if(!r.some(row=>row.join('')==='1234567890'))r.splice(2,0,['1','2','3','4','5','6','7','8','9','0']);for(const row of r)for(let i=0;i<row.length;i++)if(row[i]==='🌐')row[i]='🎙️';}
+if(!profiles[profile]||!profiles[profile].Terminal){profile='Default';profiles.Default=clone(defaults)}
+let longTimer=null,longTriggered=false,skipClick=false,spaceTimer=null;
+function closeAccents(){$('accentPopup').hidden=true}
+function showAccents(key,button){const variants=accents[key.toLowerCase()];if(!variants||editing)return;const pop=$('accentPopup');pop.innerHTML='';const options=shift?variants.map(v=>v.toUpperCase()):variants;options.forEach(ch=>{const b=document.createElement('button');b.textContent=ch;b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{insert(ch);shift=false;closeAccents()};pop.appendChild(b)});pop.hidden=false;const phone=document.querySelector('.phone');const rect=button.getBoundingClientRect(),pr=phone.getBoundingClientRect();pop.style.top=Math.max(40,rect.top-pr.top-57)+'px';longTriggered=true}
+document.addEventListener('pointerdown',e=>{if(!$('accentPopup').contains(e.target)&&!e.target.closest('.key'))closeAccents()});
+const snippetStoreKey='devboard-snippets-v07';let snippets=[];let drawerTab='history',editingSnippet=-1;
+try{const raw=JSON.parse(localStorage.getItem(snippetStoreKey)||'[]');if(Array.isArray(raw))snippets=raw.filter(x=>x&&typeof x.title==='string'&&typeof x.text==='string').slice(0,100)}catch{}
+function saveSnippets(){localStorage.setItem(snippetStoreKey,JSON.stringify(snippets));renderClips()}
+function setDrawerTab(tab){drawerTab=tab;$('clipDrawer').hidden=false;$('snippetForm').hidden=true;renderClips()}
+function editSnippet(index){editingSnippet=index;const item=snippets[index];$('snippetTitle').value=item?.title||'';$('snippetText').value=item?.text||'';$('snippetForm').hidden=false;$('snippetTitle').focus()}
+$('snippetOpen').onclick=()=>setDrawerTab('saved');
+$('tabHistory').onclick=()=>setDrawerTab('history');
+$('tabSaved').onclick=()=>setDrawerTab('saved');
+$('snippetAdd').onclick=()=>editSnippet(-1);
+$('snippetCancel').onclick=()=>{$('snippetForm').hidden=true};
+$('snippetSave').onclick=()=>{const title=$('snippetTitle').value.trim(),value=$('snippetText').value;if(!title||!value.trim()){setStatus('Enter a title and some text');return}if(editingSnippet>=0)snippets[editingSnippet]={title,text:value};else snippets.unshift({title,text:value});$('snippetForm').hidden=true;saveSnippets();setStatus('Saved snippet is ready to insert')};
+const clipStoreKey='devboard-clips-v06';
+let clips=[];
+try{clips=JSON.parse(localStorage.getItem(clipStoreKey)||'[]');if(!Array.isArray(clips))clips=[]}catch{clips=[]}
+function persistClips(){localStorage.setItem(clipStoreKey,JSON.stringify(clips));renderClips()}
+function addClip(t){t=String(t||'').trim();if(!t)return;const old=clips.find(c=>c.text===t);clips=clips.filter(c=>c.text!==t);clips.unshift({text:t,pinned:!!old?.pinned});clips=clips.filter((c,i)=>c.pinned||i<20).slice(0,40);persistClips();setStatus('Text added to clipboard history')}
+function copySelection(cut){const sel=window.getSelection();const t=sel?sel.toString():'';if(!t){setStatus('Select some text in the document first');return}addClip(t);if(cut)command('delete');if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).catch(()=>{});}
+function pasteLatest(){if(!clips.length){setStatus('Clipboard is empty');return}insert(clips[0].text)}
+function renderClips(){
+ const recent=$('clipRecent'),items=$('clipItems');if(!recent||!items)return;
+ recent.replaceChildren();items.replaceChildren();
+ for(const c of clips.slice(0,3)){const b=document.createElement('button');b.textContent=(c.pinned?'📌 ':'')+c.text.slice(0,12);b.title=c.text;b.onclick=()=>insert(c.text);recent.appendChild(b)}
+ const saved=drawerTab==='saved';
+ $('drawerTitle').textContent=saved?'⭐ Saved snippets':'📋 Clipboard history';
+ $('tabHistory').classList.toggle('active',!saved);$('tabSaved').classList.toggle('active',saved);
+ $('snippetAdd').hidden=!saved;$('clipClear').hidden=saved;
+ $('clipNote').textContent=saved?'Create reusable text, commands, and templates. Tap an item to insert it.':'Tap an entry to insert it. 📌 pins; ✕ deletes.';
+ const data=saved?snippets:clips;
+ if(!data.length){items.textContent=saved?'No saved snippets yet. Tap New to add one.':'Nothing copied yet.';return}
+ data.forEach((c,i)=>{
+ const line=document.createElement('div');line.className='clipitem';
+ const t=document.createElement('button');t.className='cliptext';
+ if(saved){const title=document.createElement('strong');title.textContent=c.title;const preview=document.createElement('div');preview.className='snippet-preview';preview.textContent=c.text;t.append(title,preview)}else t.textContent=c.text;
+ t.title=c.text;t.onclick=()=>{insert(c.text);$('clipDrawer').hidden=true};
+ line.appendChild(t);
+ if(saved){const edit=document.createElement('button');edit.textContent='✎';edit.title='Edit';edit.onclick=()=>editSnippet(i);line.appendChild(edit)}
+ else {const pin=document.createElement('button');pin.textContent=c.pinned?'📌':'📍';pin.title='Pin / unpin';pin.onclick=()=>{c.pinned=!c.pinned;persistClips()};line.appendChild(pin)}
+ const del=document.createElement('button');del.textContent='✕';del.title='Delete';del.onclick=()=>{if(saved){snippets.splice(i,1);saveSnippets()}else{clips.splice(i,1);persistClips()}};line.appendChild(del);items.appendChild(line)
+ })
+}
+$('clipOpen').onclick=()=>{if($('clipDrawer').hidden||drawerTab!=='history')setDrawerTab('history');else $('clipDrawer').hidden=true};
+$('clipClose').onclick=()=>{$('clipDrawer').hidden=true};
+$('clipClear').onclick=()=>{clips=clips.filter(c=>c.pinned);persistClips()};
+document.addEventListener('copy',e=>{const sel=window.getSelection();if(sel&&paper.contains(sel.anchorNode)&&sel.toString())addClip(sel.toString())});
+document.addEventListener('cut',e=>{const sel=window.getSelection();if(sel&&paper.contains(sel.anchorNode)&&sel.toString())addClip(sel.toString())});
+renderClips();
+function renderProfiles(){$('profiles').innerHTML=Object.keys(profiles).map(p=>`<option ${p===profile?'selected':''}>${p.replaceAll('&','&amp;').replaceAll('<','&lt;')}</option>`).join('')}function switchKeys(source, destination){
+ const keys=layout();
+ const a=keys[source[0]],b=keys[destination[0]];
+ if(!a||!b||source[1]>=a.length||destination[1]>=b.length)return;
+ [a[source[1]],b[destination[1]]]=[b[destination[1]],a[source[1]]];
+ selected=null;dragFrom=null;
+ persist();render();renderLiveKeyboard();
+ setStatus('Key positions swapped and saved');
+}
+function render(){
+ renderProfiles();
+ $('keys').replaceChildren();
+ // Preserve original row indices even when extra rows are hidden.
+ let rows=(symbolPage?symbolPages[symbolsSecondPage?1:0]:layout()).map((r,index)=>({row:r,index}));
+ if(!extras&&mode!=='Normal'&&!editing)rows=rows.filter(({index})=>mode==='Code'?index!==0:index>1);
+ const tip=$('swapTip');tip.hidden=!editing;
+ if(editing)tip.textContent=selected?`Selected: ${layout()[selected[0]][selected[1]]}  ·  Tap the destination key to swap  ·  Tap again to cancel`:'Swap keys: tap the first key, then tap its new location';
+ rows.forEach(({row:r,index:ri})=>{
+  const div=document.createElement('div');div.className='keyrow'+(r.join('')==='1234567890'?' numbers':'');
+  r.forEach((key,ki)=>{
+   const btn=document.createElement('button');btn.type='button';
+   btn.className='key'+(key==='space'?' space':'')+(key.length>1?' special':'')+(ri<2&&mode==='Terminal'||ri===0&&mode==='Code'?' small':'')+(selected&&selected[0]===ri&&selected[1]===ki?' selected':'')+(key==='🎙️'&&listening?' speaking':'')+(['123','ABC','1/2','2/2'].includes(key)?' symbol-switch':'');
+   if(accents[key.toLowerCase()]){btn.innerHTML='<span class="hintchar">'+accents[key.toLowerCase()].join(' ')+'</span><span class="mainchar">'+key+'</span>'}
+   else btn.textContent=key==='space'?('Space · '+(pref.lang==='lt-LT'?'LT':'EN')):key;
+   btn.onpointerdown=e=>{longTriggered=false;if(!editing){if(accents[key.toLowerCase()]){clearTimeout(longTimer);longTimer=setTimeout(()=>showAccents(key,btn),450)}if(key==='space'){clearTimeout(spaceTimer);spaceTimer=setTimeout(()=>openLangPopup(),520)}}};
+   btn.onpointerup=()=>{clearTimeout(longTimer);clearTimeout(spaceTimer)};
+   btn.onpointercancel=()=>{clearTimeout(longTimer);clearTimeout(spaceTimer)};
+   btn.onpointerleave=()=>{clearTimeout(longTimer);clearTimeout(spaceTimer)};
+   btn.draggable=editing;
+   btn.onclick=()=>{
+    if(longTriggered){longTriggered=false;return}closeAccents();
+    if(editing){
+     if(!selected){selected=[ri,ki];$('keyValue').value=key;render();setStatus('Selected '+key+'. Tap destination to swap.');}
+     else if(selected[0]===ri&&selected[1]===ki){selected=null;$('keyValue').value='';render();setStatus('Selection cleared');}
+     else switchKeys(selected,[ri,ki]);
+    }else press(key);
+   };
+   btn.ondragstart=()=>{if(editing)dragFrom=[ri,ki]};
+   btn.ondragover=e=>{if(editing)e.preventDefault()};
+   btn.ondrop=e=>{e.preventDefault();if(!editing||!dragFrom)return;const from=dragFrom;dragFrom=null;switchKeys(from,[ri,ki])};
+   div.appendChild(btn);
+  });$('keys').appendChild(div)
+ });
+ renderComboBar();
+}function setStatus(s){$('status').textContent=s}function focusPaper(){paper.focus();if(lastCaret&&paper.contains(lastCaret.commonAncestorContainer)){const saved=window.getSelection();saved.removeAllRanges();saved.addRange(lastCaret.cloneRange());lastCaret=null;return;}const sel=window.getSelection();if(!sel.rangeCount||!paper.contains(sel.anchorNode)){const r=document.createRange();r.selectNodeContents(paper);r.collapse(false);sel.removeAllRanges();sel.addRange(r)}}document.addEventListener('selectionchange',()=>{const sel=window.getSelection();if(sel.rangeCount&&paper.contains(sel.anchorNode))lastCaret=sel.getRangeAt(0).cloneRange()});function command(cmd,value){focusPaper();try{document.execCommand(cmd,false,value)}catch{}}function insert(t){command('insertText',t)}function press(k){closeAccents();if(k==='Ctrl'){ctrl=!ctrl;setStatus('Ctrl '+(ctrl?'on':'off'));return}if(k==='Alt'){alt=!alt;setStatus('Alt '+(alt?'on':'off'));return}if(k==='⇧'){shift=!shift;setStatus('Shift '+(shift?'on':'off'));return}if(k==='Esc'){ctrl=false;alt=false;shift=false;setStatus('Esc');return}if(k==='🎙️'||k==='🌐'){toggleVoice();return}if(k==='123'||k==='ABC'){symbolPage=k==='123';symbolsSecondPage=false;render();renderLiveKeyboard();setStatus(symbolPage?'Symbol keyboard open. Tap ABC to return.':'Letter keyboard open.');return}
+if(k==='1/2'||k==='2/2'){symbolPage=true;symbolsSecondPage=k==='1/2';render();renderLiveKeyboard();setStatus('Symbol page '+(symbolsSecondPage?'2':'1')+'/2');return}if(ctrl){const c=k.toLowerCase();if(c==='a')command('selectAll');else if(c==='c')copySelection(false);else if(c==='x')copySelection(true);else if(c==='v')pasteLatest();else if(c==='z')command('undo');else if(c==='y')command('redo');else setStatus('Ctrl+'+k+' may not be supported in the browser');ctrl=false;return}if(k==='⌫'){command('delete');return}if(k==='Delete'){command('forwardDelete');return}if(k==='↵'){insert('\n');return}if(k==='Tab'){insert('\t');return}if(k==='space'){insert(' ');return}if(k==='Home'||k==='End'||k==='←'||k==='→'||k==='↑'||k==='↓'||k==='PgUp'||k==='PgDn'){focusPaper();const map={Home:'Home',End:'End','←':'ArrowLeft','→':'ArrowRight','↑':'ArrowUp','↓':'ArrowDown',PgUp:'PageUp',PgDn:'PageDown'};let s=window.getSelection();if(s&&s.modify){const direction=k==='←'||k==='↑'||k==='Home'||k==='PgUp'?'backward':'forward';const granularity=k==='Home'||k==='End'?'lineboundary':k==='PgUp'||k==='PgDn'?'paragraph':k==='↑'||k==='↓'?'line':'character';try{s.modify('move',direction,granularity)}catch{}}return}insert(shift?k.toUpperCase():k);shift=false;alt=false}
+$('configure').onclick=()=>{editing=!editing;if(editing){symbolPage=false;symbolsSecondPage=false;$('comboPop').hidden=true} $('editor').hidden=!editing;$('configure').textContent=editing?'✓ Finish configuring':'⚙ Configure';selected=null;render();setStatus(editing?'Tap a key, then tap a second key to swap positions.':'Test mode enabled')};$('applyKey').onclick=()=>{if(!selected)return setStatus('Select a key first');let v=$('keyValue').value.trim();if(!v)return;layout()[selected[0]][selected[1]]=v;selected=null;persist();render();renderLiveKeyboard();setStatus('Key updated')};$('extraRows').onchange=e=>{extras=e.target.checked;render()};$('resetLayout').onclick=()=>{profiles[profile][mode]=clone(defaults[mode]);persist();selected=null;render()};$('profiles').onchange=e=>{profile=e.target.value;render()};$('saveProfile').onclick=()=>{persist();setStatus('Profile saved')};$('newProfile').onclick=()=>{const name=prompt('New profile name');if(!name||!name.trim())return;profile=name.trim();profiles[profile]=clone(profiles.Default);persist();render()};$('newDoc').onclick=()=>{if(paper.textContent&&!confirm('Start a new blank document?'))return;paper.innerHTML='';focusPaper()};$('exportJson').onclick=()=>{const blob=new Blob([JSON.stringify({version:2,profiles,combosByProfile},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='devboard-layouts.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};$('importJson').onclick=()=>$('file').click();$('file').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!data.profiles||typeof data.profiles!=='object')throw Error('Invalid JSON');profiles=data.profiles;profile=Object.keys(profiles)[0];if(data.combosByProfile&&typeof data.combosByProfile==='object')combosByProfile=data.combosByProfile;persist();storeCombos();render();setStatus('JSON imported')}catch(err){setStatus('Import error: '+err.message)}};
+let screen='test',appTab='home';
+function setScreen(next){
+ screen=next;
+ $('apphome').hidden=next!=='app';
+ $('docbar').hidden=next!=='test';
+ paper.hidden=next!=='test';
+ $('keyboard').hidden=next!=='test';
+ 
+ 
+ if(next==='app')renderApp();else {render();focusPaper()}
+}
+function renderApp(){
+ const root=$('apphome');
+ const nav=`<div class="appnav">${[['home','Home'],['layout','Layout'],['style','Appearance']].map(([id,label])=>`<button data-tab="${id}" class="${appTab===id?'active':''}">${label}</button>`).join('')}</div>`;
+ let body='';
+ if(appTab==='home')body=`<div class="apphero"><div class="appbadge">DEVBOARD • ANDROID KEYBOARD</div><h2>Your keyboard.<br>Your rules.</h2><p>Coding, terminal, and everyday writing in one keyboard.</p></div><div class="appsection">Quick actions</div><button class="apptile" id="quickTest"><span>⌨ Try keyboard<small>Type in the blank document</small></span>›</button><button class="apptile" id="quickLayout"><span>▦ Edit keys<small>Configure ir drag & drop</small></span>›</button><div class="appsection">Active settings</div><div class="settingline"><span>Profile</span><strong>${escapeHtml(profile)}</strong></div><div class="settingline"><span>Mode</span><strong>${mode}</strong></div><div class="settingline"><span>Privacy</span><strong>Offline</strong></div>`;
+ if(appTab==='layout')body=`<div class="appsection">Keyboard layout</div><div class="settingline"><span>Active mode</span><select id="appMode">${['Normal','Code','Terminal'].map(m=>`<option ${m===mode?'selected':''}>${m}</option>`).join('')}</select></div><div class="settingline"><span>Profile</span><select id="appProfile">${Object.keys(profiles).map(p=>`<option ${p===profile?'selected':''}>${escapeHtml(p)}</option>`).join('')}</select></div><button class="apptile" id="quickLayout"><span>⚙ Configure<small>Edit keys in the layout editor</small></span>›</button><button class="apptile" id="quickTest"><span>⌨ Test changes<small>Open blank document</small></span>›</button>`;
+ if(appTab==='style')body=`<div class="appsection">Keyboard theme</div><div class="settingline"><span>Color theme</span><select id="appTheme">${keyboardThemes.map(([id,name])=>`<option value="${id}">${name}</option>`).join('')}</select></div><div class="settingline"><span>Extra keys</span><input id="appExtras" type="checkbox" ${extras?'checked':''}></div><button class="apptile" id="quickTest"><span>👁 Preview keyboard<small>Changes appear instantly in the preview</small></span>›</button>`;
+ root.innerHTML=nav+body;
+ root.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{appTab=b.dataset.tab;renderApp()});
+ if($('quickTest'))$('quickTest').onclick=()=>setScreen('test');
+ if($('quickLayout'))$('quickLayout').onclick=()=>{setScreen('test');if(!editing)$('configure').click()};
+ 
+ if($('appProfile'))$('appProfile').onchange=e=>{profile=e.target.value;renderApp()};
+ if($('appExtras'))$('appExtras').onchange=e=>{extras=e.target.checked;$('extraRows').checked=extras};
+ if($('appTheme')){$('appTheme').value=pref.theme;$('appTheme').onchange=e=>{applyTheme(e.target.value)}}
+}
+function escapeHtml(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const keyboardThemes=[
+ ['navy','Midnight','#151d2b','#303e54','#435575','#f5f7fc','#40516a'],
+ ['graphite','Graphite','#18191e','#383a42','#51545e','#f3f3f3','#666973'],
+ ['terminal','Terminal Green','#071b15','#154b38','#267d57','#96ffce','#247959'],
+ ['cyber','Neon Cyan','#071d29','#11445c','#187f9e','#d9faff','#31a4c9'],
+ ['violet','Cyber Violet','#1b142b','#45335f','#6c4d9c','#f7edff','#7a62b0'],
+ ['amber','Amber Console','#271a10','#57402b','#936a37','#ffebbd','#a37942'],
+ ['ice','Frost','#dae4ef','#f6faff','#bcd3e7','#1b3558','#9bb4cc'],
+ ['rose','Neon Pink','#241225','#592852','#a3468c','#fff0fd','#b451a1'],
+ ['slate','Steel','#121f2e','#33475a','#506e89','#eff7ff','#5a7897'],
+ ['carbon','Carbon','#0e0f11','#25272b','#41444c','#ededed','#4c4f58'],
+ ['cobalt','Cobalt','#101d44','#24488a','#4264a5','#f3f8ff','#5578bc'],
+ ['forest','Forest','#101e17','#2f4f38','#426e4e','#edffeb','#5d885e'],
+ ['copper','Copper','#251918','#503734','#8b5247','#ffe9df','#a46b61'],
+ ['sunset','Sunset','#2b1723','#70394c','#b76a5e','#ffede4','#c07a77'],
+ ['sakura','Sakura','#332132','#684966','#9b658b','#fff0f8','#bf93ad'],
+ ['sand','Sand','#ddd3bc','#f9f1dd','#c6b595','#363126','#ac9d83'],
+ ['ocean','Ocean','#0c2530','#1a5963','#2d7982','#e2fcff','#4194a2'],
+ ['mono','Monochrome','#1a1a1a','#eeeeee','#aaaaaa','#181818','#999999'],
+ ['ascii','Colorful ASCII','#080e1c','#152139','#25334f','#f0f7ff','#445575']
+];
+
+function renderLiveKeyboard(){
+ const root=$('liveKeyboard');if(!root)return;root.replaceChildren();
+ const rows=symbolPage?symbolPages[symbolsSecondPage?1:0]:layout();
+ const content=extras?rows:rows.filter((_,i)=>mode==='Code'?i!==0:i>1);
+ for(const row of content){
+  const div=document.createElement('div');div.className='mini-keyrow'+(row.join('')==='1234567890'?' numbers':'');
+  for(const val of row){
+   const key=document.createElement('div');key.className='mini-key'+(val==='space'?' space':'')+(val.length>1||['⇧','⌫','↵','🎙️'].includes(val)?' special':'')+(['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn','End','←','↓','↑','→'].includes(val)?' terminal':'');
+   key.textContent=val==='space'?'Space · '+(pref.lang==='lt-LT'?'LT':'EN'):val;
+   if(accents[val]&&pref.lang==='lt-LT'){
+    const hint=document.createElement('span');hint.className='mini-accent';hint.textContent=accents[val][0];key.appendChild(hint);
+   }
+   div.appendChild(key);
+  }
+  root.appendChild(div);
+ }
+ $('liveLanguage').textContent=(pref.lang==='lt-LT'?'LT':'EN')+' · '+(symbolPage?'Symbols':mode);
+}
+function themeIndex(){return Math.max(0,keyboardThemes.findIndex(x=>x[0]===pref.theme))}
+function updateLiveThemeName(){
+ const selected=keyboardThemes[themeIndex()];if(!selected)return;
+ $('selectedThemeName').textContent=selected[1];
+ $('themeCounter').textContent=(themeIndex()+1)+' / '+keyboardThemes.length+' · '+selected[1];
+}
+function changeTheme(delta){
+ const next=(themeIndex()+delta+keyboardThemes.length)%keyboardThemes.length;
+ applyTheme(keyboardThemes[next][0]);renderThemeGrid();
+ const active=$('themeGrid')?.querySelector('.theme-option.active');active?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function swipeTheme(element){
+ let startX=null,startY=null;
+ element.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY},{passive:true});
+ element.addEventListener('touchend',e=>{if(startX===null)return;const dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;startX=null;
+ if(Math.abs(dx)>35&&Math.abs(dx)>Math.abs(dy)*1.3)changeTheme(dx<0?1:-1)},{passive:true});
+}
+$('themePrev').onclick=()=>changeTheme(-1);
+$('themeNext').onclick=()=>changeTheme(1);
+$('railPrev').onclick=()=>$('themeGrid').scrollBy({left:-235,behavior:'smooth'});
+$('railNext').onclick=()=>$('themeGrid').scrollBy({left:235,behavior:'smooth'});
+swipeTheme($('liveKeyboard'));
+const defaultPref={theme:'ascii',fontSize:12,keyHeight:38,keyGap:3,keyRadius:6,numberOffset:8,lang:'lt-LT',rejectCyrillic:true};
+let pref={...defaultPref};try{pref={...pref,...JSON.parse(localStorage.getItem('devboard-settings-v09')||'{}')};if(!localStorage.getItem('devboard-v11-ascii-initialized')){pref.theme='ascii';localStorage.setItem('devboard-v11-ascii-initialized','1')}}catch{}
+let recognition=null,listening=false,voiceRequested=false,lastCaret=null;
+function persistSettings(){try{localStorage.setItem('devboard-settings-v09',JSON.stringify(pref))}catch{}}
+function renderThemeGrid(){const grid=$('themeGrid');grid.replaceChildren();for(const [id,name,bg,key,special,fg] of keyboardThemes){const btn=document.createElement('button');btn.className='theme-option'+(pref.theme===id?' active':'')+(id==='ascii'?' ascii-swatch':'');btn.type='button';btn.setAttribute('aria-pressed',pref.theme===id?'true':'false');const swatch=document.createElement('div');swatch.className='swatch';swatch.style.background=bg;for(const chr of ['A','1','↵']){const item=document.createElement('span');item.style.background=chr==='↵'?special:key;item.style.color=fg;item.textContent=chr;swatch.append(item)}const label=document.createElement('span');label.textContent=name;btn.append(swatch,label);btn.onclick=()=>{applyTheme(id);renderThemeGrid()};grid.append(btn)}updateLiveThemeName();requestAnimationFrame(()=>{const active=grid.querySelector('.theme-option.active');if(active&&grid.clientWidth){grid.scrollTo({left:Math.max(0,active.offsetLeft-grid.offsetLeft-(grid.clientWidth-active.offsetWidth)/2),behavior:'instant'})}})}
+function applyTheme(theme){
+ const selected=keyboardThemes.find(t=>t[0]===theme)||keyboardThemes[0];
+ const [, ,bg,key,special,fg,border]=selected;
+ for(const [cssvar,value] of [['--kb-bg',bg],['--kb-key',key],['--kb-special',special],['--kb-text',fg],['--kb-border',border]])document.documentElement.style.setProperty(cssvar,value);
+ pref.theme=selected[0];$('keyboard').classList.toggle('ascii-theme',pref.theme==='ascii');$('liveKeyboard').classList.toggle('ascii-theme',pref.theme==='ascii');document.documentElement.style.setProperty('--kb-font',pref.fontSize+'px');document.documentElement.style.setProperty('--kb-height',pref.keyHeight+'px');document.documentElement.style.setProperty('--kb-gap',pref.keyGap+'px');document.documentElement.style.setProperty('--kb-radius',pref.keyRadius+'px');document.documentElement.style.setProperty('--number-offset',pref.numberOffset+'px');
+ persistSettings();updateLiveThemeName();
+}
+function syncSettingControls(){for(const key of ['fontSize','keyHeight','keyGap','keyRadius','numberOffset']){$(key).value=pref[key];$(key+'Val').textContent=pref[key]+' px'}$('voiceLang').value=pref.lang;$('rejectCyrillic').checked=pref.rejectCyrillic;$('showExtras').checked=extras;renderLiveKeyboard();renderThemeGrid();const supported=!!(window.SpeechRecognition||window.webkitSpeechRecognition);$('voiceSupport').textContent=supported?'🎙️ This browser provides speech recognition. Actual language support depends on the device.':'⚠️ This browser does not support speech recognition. Try the latest Chrome on Android.'}
+$('settingsOpen').onclick=()=>{closeAccents();$('clipDrawer').hidden=true;$('langPop').hidden=true;$('phoneSettings').hidden=false;syncSettingControls()};
+$('settingsClose').onclick=()=>{$('phoneSettings').hidden=true;focusPaper()};
+for(const key of ['fontSize','keyHeight','keyGap','keyRadius','numberOffset'])$(key).oninput=e=>{pref[key]=Number(e.target.value);$(key+'Val').textContent=pref[key]+' px';applyTheme(pref.theme)};
+$('voiceLang').onchange=e=>setLang(e.target.value);
+$('rejectCyrillic').onchange=e=>{pref.rejectCyrillic=e.target.checked;persistSettings()};
+$('showExtras').onchange=e=>{extras=e.target.checked;$('extraRows').checked=extras;render();renderLiveKeyboard()};
+$('saveSettings').onclick=()=>{persistSettings();setStatus('Settings saved');$('phoneSettings').hidden=true};
+$('openLayout').onclick=()=>{$('phoneSettings').hidden=true;if(!editing)$('configure').click()};
+$('resetSettings').onclick=()=>{pref={...defaultPref};applyTheme(pref.theme);syncSettingControls();render();setStatus('Appearance reset')};
+function setLang(lang){if(!['lt-LT','en-US'].includes(lang))return;pref.lang=lang;persistSettings();$('langPop').hidden=true;$('voiceLang').value=lang;render();renderLiveKeyboard();setStatus('Language: '+(lang==='lt-LT'?'Lithuanian':'English'))}
+function openLangPopup(){if(editing)return;longTriggered=true;$('langPop').hidden=false;closeAccents();for(const b of $('langPop').querySelectorAll('[data-lang]'))b.textContent=(b.dataset.lang===pref.lang?'✓ ':'')+(b.dataset.lang==='lt-LT'?'🇱🇹 Lithuanian (LT)':'🇬🇧 English (EN)')}
+for(const b of $('langPop').querySelectorAll('[data-lang]')){b.onpointerdown=e=>e.preventDefault();b.onclick=()=>setLang(b.dataset.lang)}
+document.addEventListener('pointerdown',e=>{if(!$('langPop').contains(e.target)&&!e.target.closest('.key.space'))$('langPop').hidden=true});
+let micStream=null,audioContext=null,micAnalyser=null,voiceFrame=null,voiceError='';
+function voiceSignal(level){
+ const bar=$('voiceMeter');const bars=Array.from(bar.children);const detected=level>.045;
+ bar.classList.toggle('active',detected);
+ $('voiceActivity').classList.toggle('hearing',detected);
+ $('voiceActivity').textContent=detected?'● Voice detected':'● Listening for voice…';
+ bars.forEach((el,i)=>{const wave=Math.pow(Math.abs(Math.sin(i*.72+performance.now()*.006)),1.4);el.style.height=Math.max(4,Math.min(32,3+level*180*(.35+.65*wave)))+'px'});
+}
+function beginVoiceMeter(stream){
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  audioContext=new AC();const source=audioContext.createMediaStreamSource(stream);
+  micAnalyser=audioContext.createAnalyser();micAnalyser.fftSize=512;micAnalyser.smoothingTimeConstant=.72;source.connect(micAnalyser);
+  const data=new Uint8Array(micAnalyser.fftSize);
+  function update(){if(!micAnalyser)return;micAnalyser.getByteTimeDomainData(data);let energy=0;for(const v of data){const x=(v-128)/128;energy+=x*x}voiceSignal(Math.sqrt(energy/data.length));voiceFrame=requestAnimationFrame(update)}
+  update();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+ }catch(e){$('voiceActivity').textContent='Audio level meter unavailable'}
+}
+function releaseVoiceAudio(){
+ if(voiceFrame!==null){cancelAnimationFrame(voiceFrame);voiceFrame=null}
+ micAnalyser=null;
+ if(micStream){for(const track of micStream.getTracks())track.stop();micStream=null}
+ if(audioContext){audioContext.close().catch(()=>{});audioContext=null}
+ $('voiceMeter').classList.remove('active');for(const b of $('voiceMeter').children)b.style.height='5px';
+}
+async function startVoice(){
+ if(editing){setStatus('Exit Configure mode before dictating');return}
+ const API=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!API){setStatus('Speech-to-text is unavailable in this browser. Try Chrome on Android over HTTPS.');$('voicePop').hidden=false;$('voiceTitle').textContent='Dictation unavailable';$('voiceActivity').textContent='Speech recognition not supported';$('voicePreview').textContent='Try Chrome on Android using an HTTPS page.';return}
+ if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){
+  $('voicePop').hidden=false;$('voiceTitle').textContent='Secure connection required';$('voiceActivity').textContent='Microphone not available';$('voicePreview').textContent='Open this simulator from an HTTPS web address (or localhost). A downloaded HTML preview may not request microphone access.';
+  setStatus('Microphone requires HTTPS/localhost and browser permission');return
+ }
+ if(recognition)try{recognition.abort()}catch{}
+ voiceRequested=true;listening=false;voiceError='';
+ $('voicePop').hidden=false;$('voiceTitle').textContent='Microphone permission';$('voiceActivity').textContent='Waiting for permission…';$('voicePreview').textContent='Tap Allow when the browser requests microphone access.';
+ setStatus('Requesting microphone permission…');
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+  if(!voiceRequested){stream.getTracks().forEach(t=>t.stop());return}
+  micStream=stream;beginVoiceMeter(stream);
+  recognition=new API();recognition.lang=pref.lang;recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=1;
+  recognition.onstart=()=>{if(!voiceRequested)return;listening=true;$('voiceTitle').textContent='Listening… '+(pref.lang==='lt-LT'?'LT':'EN');$('voiceActivity').textContent='● Listening for voice…';$('voicePreview').textContent='Speak now. Recognized text will appear in the document.';render();setStatus('Microphone on · listening')};
+  recognition.onresult=ev=>{let temporary='';for(let i=ev.resultIndex;i<ev.results.length;i++){const result=ev.results[i];const text=result[0]?.transcript?.trim()||'';if(!text)continue;
+    if(result.isFinal){if(pref.lang==='lt-LT'&&pref.rejectCyrillic&&/[\u0400-\u052f]/u.test(text)){$('voicePreview').textContent='Cyrillic detected. Text was not inserted.';setStatus('Cyrillic output blocked in LT mode');continue}insert(text+' ');$('voicePreview').textContent='✓ '+text}
+    else temporary+=text+' ';
+  }if(temporary)$('voicePreview').textContent=temporary};
+  recognition.onerror=e=>{
+   const messages={'not-allowed':'Microphone permission denied. Enable it in browser settings.','service-not-allowed':'Speech recognition service is unavailable.','language-not-supported':'Selected language is not supported in this browser.','no-speech':'No speech detected. Try again.','network':'Speech recognition network error.','audio-capture':'Microphone is unavailable.'};
+   voiceError=messages[e.error]||('Dictation error: '+e.error);$('voicePreview').textContent=voiceError;setStatus(voiceError);
+   if(e.error!=='no-speech')voiceRequested=false;
+  };
+  recognition.onend=()=>{listening=false;voiceRequested=false;releaseVoiceAudio();render();if(!voiceError){$('voiceActivity').textContent='Microphone off';setStatus('Dictation stopped')}else $('voiceActivity').textContent='Dictation error';};
+  recognition.start();
+ }catch(e){
+  voiceRequested=false;listening=false;voiceError='';releaseVoiceAudio();
+  const msg=e?.name==='NotAllowedError'?'Microphone permission denied. Use browser site settings to allow it.':e?.name==='NotFoundError'?'No microphone was found.':'Unable to access microphone: '+(e.message||e.name);
+  $('voiceTitle').textContent='Microphone unavailable';$('voiceActivity').textContent='Permission or device error';$('voicePreview').textContent=msg;setStatus(msg);render();
+ }
+}
+function stopVoice(){voiceRequested=false;if(recognition){try{recognition.abort()}catch{}}listening=false;releaseVoiceAudio();render();$('voicePop').hidden=true;setStatus('Dictation stopped')}
+function toggleVoice(){if(listening||voiceRequested){stopVoice()}else startVoice()}
+$('voiceStop').onclick=stopVoice;
+
+
+// Saved keyboard combos, shared between the current profile and JSON export.
+const comboStorageKey='devboard-combos-v12';
+let combosByProfile={};
+try{const saved=JSON.parse(localStorage.getItem(comboStorageKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))combosByProfile=saved}catch{}
+function currentCombos(){return Array.isArray(combosByProfile[profile])?combosByProfile[profile]:[]}
+function storeCombos(){try{localStorage.setItem(comboStorageKey,JSON.stringify(combosByProfile))}catch{}renderComboBar();renderComboList()}
+const comboKeyOptions=[...Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ'),...Array.from('0123456789'),'Tab','Enter','Escape','Space','Backspace','Delete','Home','End','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','PageUp','PageDown','/','\\','[',']','{','}','-','=','.',',',';'];
+for(const key of comboKeyOptions){const opt=document.createElement('option');opt.value=key;opt.textContent=key;$('comboKey').appendChild(opt)}
+let comboEditIndex=-1;
+function comboSummary(c){return `${[c.ctrl?'Ctrl':null,c.alt?'Alt':null,c.shift?'Shift':null,c.key].filter(Boolean).join(' + ')}`}
+function renderComboBar(){
+ const strip=$('comboBar');if(!strip)return;strip.replaceChildren();const data=currentCombos();
+ strip.hidden=!data.length;
+ for(const combo of data){const b=document.createElement('button');b.type='button';b.title=comboSummary(combo);b.textContent=combo.name||comboSummary(combo);b.onpointerdown=e=>e.preventDefault();b.onclick=()=>runCombo(combo);strip.appendChild(b)}
+}
+function renderComboList(){
+ const root=$('comboList');if(!root)return;root.replaceChildren();const data=currentCombos();
+ if(!data.length){const p=document.createElement('p');p.className='combo-help';p.textContent='No saved combos yet.';root.append(p);return}
+ data.forEach((combo,index)=>{
+  const row=document.createElement('div');row.className='combo-items';
+  const label=document.createElement('span');label.textContent=combo.name||'Combo';const detail=document.createElement('small');detail.textContent=comboSummary(combo);label.append(document.createElement('br'),detail);
+  const edit=document.createElement('button');edit.textContent='Edit';edit.onclick=()=>editCombo(index);
+  const del=document.createElement('button');del.textContent='✕';del.title='Delete combo';del.onclick=()=>{combosByProfile[profile].splice(index,1);storeCombos();setStatus('Combo deleted')};
+  row.append(label,edit,del);root.append(row)
+ });
+}
+function editCombo(i){
+ comboEditIndex=i;const c=currentCombos()[i];$('comboName').value=c?.name||'';$('comboCtrl').checked=c?.ctrl??true;$('comboAlt').checked=c?.alt||false;$('comboShift').checked=c?.shift||false;$('comboKey').value=c?.key||'C';
+ $('comboPop').hidden=false;$('comboSave').textContent=i<0?'Save combo':'Update combo';
+ renderComboList();
+}
+$('comboOpen').onclick=()=>{closeAccents();$('langPop').hidden=true;$('phoneSettings').hidden=true;$('clipDrawer').hidden=true;editCombo(-1)};
+$('comboClose').onclick=()=>{$('comboPop').hidden=true};
+$('comboCancel').onclick=()=>{$('comboPop').hidden=true};
+$('comboSave').onclick=()=>{
+ const name=$('comboName').value.trim();const key=$('comboKey').value;
+ if(!name){setStatus('Enter a combo name');$('comboName').focus();return}
+ if(!comboKeyOptions.includes(key)){setStatus('Invalid key');return}
+ const item={name,key,ctrl:$('comboCtrl').checked,alt:$('comboAlt').checked,shift:$('comboShift').checked};
+ if(!(item.ctrl||item.alt||item.shift)){setStatus('Select Ctrl, Alt, or Shift for the combo');return}
+ if(!Array.isArray(combosByProfile[profile]))combosByProfile[profile]=[];
+ if(comboEditIndex<0){if(currentCombos().length>=15){setStatus('Maximum 15 combos per profile');return}currentCombos().push(item)}else currentCombos()[comboEditIndex]=item;
+ storeCombos();$('comboPop').hidden=true;setStatus('Saved '+name+' ('+comboSummary(item)+')');
+};
+function runCombo(combo){
+ if(editing){setStatus('Finish Configure before running combos');return}
+ const key=combo.key,lower=key.toLowerCase(),chord=comboSummary(combo);
+ // Browser-only simulation of popular text-editing chords.
+ if(combo.ctrl&&!combo.alt){
+  if(lower==='a')command('selectAll');
+  else if(lower==='c')copySelection(false);
+  else if(lower==='x')copySelection(true);
+  else if(lower==='v')pasteLatest();
+  else if(lower==='z')command(combo.shift?'redo':'undo');
+  else if(lower==='y')command('redo');
+  else{setStatus(chord+' saved. This shortcut requires an Android target app to execute.');return}
+  setStatus('Combo: '+chord);return;
+ }
+ if(!combo.ctrl&&!combo.alt){
+  if(key==='Tab'){insert('\t');setStatus('Combo: '+chord);return}
+  if(key==='Enter'){insert('\n');setStatus('Combo: '+chord);return}
+  if(key==='Space'){insert(' ');setStatus('Combo: '+chord);return}
+  if(key.length===1){insert(combo.shift?key.toUpperCase():key.toLowerCase());setStatus('Combo: '+chord);return}
+  const lookup={ArrowLeft:'←',ArrowRight:'→',ArrowUp:'↑',ArrowDown:'↓',PageUp:'PgUp',PageDown:'PgDn',Escape:'Esc',Backspace:'⌫'};
+  if(lookup[key]){press(lookup[key]);setStatus('Combo: '+chord);return}
+ }
+ setStatus(chord+' saved. OS-level shortcuts will work only in the Android app when supported by the target.');
+}
+applyTheme(pref.theme);
+let imageObjectUrl=null;
+$('attachImage').onclick=()=>$('imageFile').click();
+$('imageFile').onchange=e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ if(!file.type.startsWith('image/'))return setStatus('Please choose an image file');
+ if(imageObjectUrl)URL.revokeObjectURL(imageObjectUrl);
+ imageObjectUrl=URL.createObjectURL(file);
+ $('imageThumb').src=imageObjectUrl;
+ $('imageUrl').textContent=imageObjectUrl;
+ $('imagePreview').hidden=false;
+ setStatus('Image selected. You can insert a temporary link into the document.');
+};
+$('closeImage').onclick=()=>{$('imagePreview').hidden=true};
+$('insertImageLink').onclick=()=>{
+ if(!imageObjectUrl)return;
+ insert(imageObjectUrl);
+ $('imagePreview').hidden=true;
+ setStatus('Temporary blob: link inserted. It will not work on another device or after closing this page.');
+};
+render();
+</script></body></html>
