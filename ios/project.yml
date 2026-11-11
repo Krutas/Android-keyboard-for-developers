@@ -24,6 +24,8 @@ targets:
       path: DevBoardApp/Info.plist
       properties:
         CFBundleDisplayName: DevBoard
+        CFBundleShortVersionString: "0.2"
+        CFBundleVersion: "2"
         UILaunchScreen: {}
     dependencies:
       - target: DevBoardKeyboard
@@ -42,6 +44,8 @@ targets:
       path: DevBoardKeyboard/Info.plist
       properties:
         CFBundleDisplayName: DevBoard Keyboard
+        CFBundleShortVersionString: "0.2"
+        CFBundleVersion: "2"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.keyboard-service
           NSExtensionPrincipalClass: "$(PRODUCT_MODULE_NAME).KeyboardViewController"

@@ -46,6 +46,19 @@ jobs:
             "$GITHUB_WORKSPACE/releases/DevBoard-iOS-v0.2-unsigned.ipa" Payload)
           unzip -l releases/DevBoard-iOS-v0.2-unsigned.ipa | grep -F \
             "Payload/DevBoard.app/PlugIns/DevBoardKeyboard.appex/Info.plist"
+      - name: Verify iOS app and extension versions
+        run: |
+          python3 - <<'PY'
+          import os, plistlib
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP']) / 'DevBoardDevice/Build/Products/Release-iphoneos/DevBoard.app'
+          for target in [root / 'Info.plist', root / 'PlugIns/DevBoardKeyboard.appex/Info.plist']:
+              metadata = plistlib.loads(target.read_bytes())
+              version = metadata.get('CFBundleShortVersionString')
+              build = metadata.get('CFBundleVersion')
+              print(f'{target}: {version} ({build})')
+              assert version == '0.2' and build == '2', f'Wrong iOS metadata: {target}: {version} ({build})'
+          PY
       - name: Upload iOS packages
         uses: actions/upload-artifact@v4
         with:
