@@ -164,15 +164,24 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         action("📎", 39) { startActivity(Intent(this, FileShareActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
         action("📋", 39) { openClipboard(false) }
         action("⭐", 39) { openClipboard(true) }
+        // Show the mic icon directly next to LT/EN, in one top-right control.
         micIndicator = TextView(this).apply {
-            text = if (listening) "🎙 LISTENING" else if (SettingsStore.language(this@DevBoardImeService) == "lt-LT") "LT" else "EN"
-            textSize = 11f
+            text = (if (SettingsStore.language(this@DevBoardImeService) == "lt-LT") "LT" else "EN") +
+                (if (listening) " 🎙 LIVE" else " 🎙")
+            textSize = 12f
             setTextColor(palette.textColor())
             gravity = Gravity.CENTER
-            setOnClickListener { startMic() }
+            contentDescription = "Voice input. Long press to change language"
             background = shape(palette.specialColor())
+            setOnClickListener { startMic() }
+            setOnLongClickListener {
+                showLanguagePopup(it)
+                true
+            }
         }
-        line.addView(micIndicator, LinearLayout.LayoutParams(0, dp(34), 1f).apply { setMargins(dp(2), 0, dp(2), 0) })
+        line.addView(micIndicator, LinearLayout.LayoutParams(0, dp(34), 1f).apply {
+            setMargins(dp(2), 0, dp(2), 0)
+        })
         return line
     }
 
@@ -319,7 +328,8 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     private fun updateMicStatus(status: String) {
         micStatus = status
         micStatusView?.text = status
-        micIndicator?.text = if (listening) "🎙 LIVE" else if (SettingsStore.language(this) == "lt-LT") "LT" else "EN"
+        micIndicator?.text = (if (SettingsStore.language(this) == "lt-LT") "LT" else "EN") +
+            (if (listening) " 🎙 LIVE" else " 🎙")
     }
 
     private fun activeModifiers(): Int =
@@ -396,32 +406,50 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         rows.forEachIndexed { index, keys ->
             if (!SettingsStore.showExtras(this) && index < 2) return@forEachIndexed
             val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER }
-            keys.forEachIndexed { col, label ->
+            keys.filterNot { it == "🎙" || it == "🎙️" }.forEachIndexed { col, label ->
                 val special = index < 2 || label.length > 1 || label in listOf("⇧", "⌫", "↵", "🎙", "😀")
                 val b = button(label, special, index * 13 + col)
                 b.isSoundEffectsEnabled = SettingsStore.prefs(this).getBoolean("sound", false)
+                var spaceTouchFraction = 0.5f
                 b.setOnClickListener {
+                    if (label == "Space") {
+                        when {
+                            spaceTouchFraction < 0.22f -> { commit("<"); return@setOnClickListener }
+                            spaceTouchFraction > 0.78f -> { commit(">"); return@setOnClickListener }
+                        }
+                    }
                     if (label == "⌫" && deleteRepeated) { deleteRepeated = false; return@setOnClickListener }
                     if (SettingsStore.prefs(this).getBoolean("haptic", false)) {
                         b.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     }
                     keyPressed(label)
                 }
-                if (label == "⌫") {
-                    b.setOnTouchListener { _, event ->
-                        when (event.actionMasked) {
-                            MotionEvent.ACTION_DOWN -> {
+                // Lightweight visual feedback without consuming touch or click events.
+                b.setOnTouchListener { view, event ->
+                    when (event.actionMasked) {
+                        MotionEvent.ACTION_DOWN -> {
+                            if (label == "Space") spaceTouchFraction =
+                                event.x / view.width.coerceAtLeast(1)
+                            view.animate().cancel()
+                            view.animate().scaleX(0.96f).scaleY(0.93f)
+                                .alpha(0.84f).setDuration(65L).start()
+                            if (label == "⌫") {
                                 deleteRepeated = false
                                 repeatingDelete = true
                                 repeatHandler.postDelayed(repeatDeletion, 450L)
                             }
-                            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                        }
+                        MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                            view.animate().cancel()
+                            view.animate().scaleX(1f).scaleY(1f)
+                                .alpha(1f).setDuration(120L).start()
+                            if (label == "⌫") {
                                 repeatingDelete = false
                                 repeatHandler.removeCallbacks(repeatDeletion)
                             }
                         }
-                        false
                     }
+                    false
                 }
                 if (index == 2 && SettingsStore.language(this) == "lt-LT" && symbols == 0) {
                     SettingsStore.ltNumbers[label]?.let { letter ->
@@ -456,7 +484,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             } else label
             text = if (digitHint != null) SpannableString("$digitHint\n$label").apply {
                 setSpan(RelativeSizeSpan(0.69f), 0, digitHint.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            } else effective
+            } else if (label == "Space") "<          Space          >" else effective
             if (digitHint != null) {
                 setLineSpacing(-dp(3).toFloat(), 1f)
                 gravity = Gravity.CENTER
@@ -469,7 +497,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             minWidth = 0; minimumWidth = 0; minHeight = 0; minimumHeight = 0
             val selected = (label == "Ctrl" && ctrl) || (label == "Alt" && alt) || (label == "⇧" && (shifted || capsLock))
             background = shape(if (selected) Color.rgb(35, 124, 186) else if (special) palette.specialColor() else palette.keyColor())
-            if (label == "Space") contentDescription = "Space. Long press to change language"
+            if (label == "Space") contentDescription = "Space with less-than on the left and greater-than on the right. Long press to change language"
         }
     }
     private fun colorful(index: Int): Int = listOf("#3DDCFF", "#FF6DAF", "#F9D44D", "#87FAAC", "#C9A7FF", "#FF9B4C")

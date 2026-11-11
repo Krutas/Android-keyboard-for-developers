@@ -9,7 +9,7 @@
     <application
         android:allowBackup="false"
         android:label="DevBoard"
-        android:icon="@drawable/ic_app"
+        android:icon="@drawable/ic_app_rgb"
         android:theme="@android:style/Theme.Material.Light.NoActionBar"
         android:usesCleartextTraffic="false">
         <activity android:name=".MainActivity" android:exported="true">

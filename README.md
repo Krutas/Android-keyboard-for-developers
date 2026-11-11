@@ -4,7 +4,7 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Android:** 0.2.2 · **iOS:** 0.1 · [Download APK](releases/DevBoard-v0.2.2.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
+**Android:** 0.2.3 · **iOS:** 0.1 · [Download APK](releases/DevBoard-v0.2.3.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
 
 ## What it does
 
@@ -40,9 +40,16 @@ Emoji appearance depends on OS font support; newly released Unicode 18.0 symbols
 - Android version updated to 0.2.2 (versionCode 4).
 - iOS version tracked separately as 0.1; its unsigned CI build is available as an Actions artifact.
 
+## New in 0.2.3
+
+- Removed the microphone key from the terminal shortcut row. The top-right toolbar shows `LT 🎙` (or `EN 🎙`) in one button: tap for dictation, long-press to switch language.
+- Embedded `<` and `>` touch zones inside the Space key: tap the left/right edge to type the bracket, or the center for a space. Existing saved layouts also hide the old microphone key.
+- Added tactile press animations to Android keyboard buttons and the web simulator.
+- Updated the Android app icon to the RGB mechanical keyboard design.
+
 ## Install on Android
 
-1. [Download the APK](releases/DevBoard-v0.2.2.apk) and install it.
+1. [Download the APK](releases/DevBoard-v0.2.3.apk) and install it.
 2. Open **DevBoard**, enable it in Android keyboard settings, and select it as your keyboard.
 3. Open any text field. Use **Settings** to customize it or **Profiles** to import layouts.
 
@@ -58,7 +65,7 @@ export ANDROID_HOME="/path/to/android-sdk"
 ./gradlew :app:assembleDebug :app:lintDebug
 ```
 
-Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.2.apk`.
+Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.3.apk`.
 
 ## Privacy
 

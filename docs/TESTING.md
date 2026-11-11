@@ -24,7 +24,7 @@
 - [ ] Profiles clone/select/delete; JSON Terminal layout imports and exports; 'space' from web JSON becomes Space.
 - [ ] Per-app mapping activates a named profile only for configured packages (e.g. com.termux).
 - [ ] 📎 invokes Android's file picker and share chooser. It does **not** silently attach a file to an app.
-- [ ] Upper 🎙 (next to Alt) opens speech panel; Baigti finishes and Atšaukti discards dictation. Verify LT/EN, live microphone level, and Cyrillic blocking in LT mode.
+- [ ] Top-right combined LT 🎙 / EN 🎙 button opens speech panel; Baigti finishes and Atšaukti discards dictation. Verify LT/EN, live microphone level, and Cyrillic blocking in LT mode.
 - [ ] Bottom 😀 opens nine scrollable emoji categories plus Recent, inserts whole ZWJ/skin-tone/flag sequences in the active field, preserves scrolling while inserting multiple emoji, ⌫ deletes, and ABC closes picker. Test saved layouts migrated from old microphone placement.
 - [ ] Rotate phone and test portrait/landscape, return from Settings, disable/reenable keyboard, and reopen apps.
 
@@ -46,3 +46,15 @@ Known constraint: Android apps decide which hardware key events and content MIME
 - [ ] Sign the containing app and keyboard extension using valid Apple provisioning profiles.
 - [ ] Test keyboard enablement, typing, emoji, settings and switching on a physical iPhone.
 - [ ] Verify App Group entitlements and accessibility; review before public distribution.
+
+- [ ] Terminal shortcut row contains no microphone key, including when loading older saved layouts; voice dictation remains available by tapping the combined LT 🎙 button; long-press changes LT/EN.
+
+- [ ] Space key visually contains `<` on its left and `>` on its right; tapping its left/center/right zones types `<` / space / `>` in letters and symbols modes. Saved layouts have no extra bracket keys.
+
+## Android v0.2.3 smoke checks
+
+- [ ] Press any key, Space edge, Backspace: observe quick shrink/fade and recovery.
+- [ ] Backspace still repeats when held; Space edge zones insert `<`, space, `>`; center long press changes language.
+- [ ] Top right `LT 🎙` starts dictation and long press opens language picker.
+- [ ] Launcher icon shows the updated RGB keyboard artwork.
+- [ ] Web simulator key presses animate; JavaScript console is clear.

@@ -45,7 +45,7 @@ internal object SettingsStore {
     )
 
     val defaultRows = listOf(
-        listOf("Esc", "Ctrl", "Alt", "🎙", "Tab", "/", "Home", "PgUp"),
+        listOf("Esc", "Ctrl", "Alt", "Tab", "/", "Home", "PgUp"),
         listOf("←", "↑", "↓", "→", "Enter", "Del", "PgDn"),
         listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "0"),
         listOf("Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"),
@@ -54,7 +54,7 @@ internal object SettingsStore {
         listOf("123", "😀", ",", "Space", ".", "↵")
     )
     val symbols1 = listOf(
-        listOf("Esc", "Ctrl", "Alt", "🎙", "Tab", "/", "Home", "PgUp"),
+        listOf("Esc", "Ctrl", "Alt", "Tab", "/", "Home", "PgUp"),
         listOf("←", "↑", "↓", "→", "Enter", "Del", "PgDn"),
         listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "0"),
         listOf("!", "@", "#", "$", "%", "^", "&", "*", "(", ")"),
@@ -115,16 +115,15 @@ internal object SettingsStore {
                 }
             }
             // Migrate old layouts without discarding any user-customized key positions.
-            // The microphone now lives next to Alt; End is replaced by forward Delete.
-            for (row in parsed.drop(1)) row.removeAll { it == "🎙" }
+            // Remove legacy microphone shortcut keys; voice remains in the top toolbar.
+            for (row in parsed) row.removeAll { it == "🎙" }
             val bottom = parsed.last()
+            // Angle brackets are touch zones inside Space, not separate keys.
+            bottom.removeAll { it == "<" || it == ">" }
             if ("😀" !in bottom && bottom.size < 16) {
                 val after = bottom.indexOfFirst { it in listOf("123", "ABC") }
                 bottom.add(if (after >= 0) after + 1 else 1, "😀")
             }
-            val shortcuts = parsed[0]
-            if ("Alt" in shortcuts && "🎙" !in shortcuts && shortcuts.size < 16)
-                shortcuts.add(shortcuts.indexOf("Alt") + 1, "🎙")
             parsed
         } catch (_: Exception) { null }
     }
