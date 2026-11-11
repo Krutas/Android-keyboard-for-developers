@@ -459,6 +459,13 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                     }
                 }
                 if (label == "Space") b.setOnLongClickListener { v -> showLanguagePopup(v); true }
+                if (label == "⇧") b.setOnLongClickListener {
+                    capsLock = !capsLock
+                    shifted = false
+                    lastShiftTap = 0L
+                    render()
+                    true
+                }
                 if (label == "," || label == ".") {
                     b.setOnLongClickListener { v ->
                         val choices = if (label == ",") listOf(",", ";", ":", "„", "'")
@@ -507,6 +514,10 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             text = if (digitHint != null) SpannableString("$digitHint\n$label").apply {
                 setSpan(RelativeSizeSpan(0.69f), 0, digitHint.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             } else effective
+            if (label == "⇧") {
+                text = if (capsLock) "⇪" else "⇧"
+                contentDescription = if (capsLock) "Caps Lock on. Tap to turn off" else "Shift. Double tap or hold for Caps Lock"
+            }
             if (digitHint != null) {
                 setLineSpacing(-dp(3).toFloat(), 1f)
                 gravity = Gravity.CENTER
@@ -556,7 +567,8 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             })
         }
         val width = dp(choices.size * 45 + 6)
-        val popup = PopupWindow(strip, width, dp(48), true).apply {
+        val popupHeight = dp(48)
+        val popup = PopupWindow(strip, width, popupHeight, true).apply {
             isOutsideTouchable = true
             elevation = dp(5).toFloat()
             setBackgroundDrawable(shape(palette.specialColor()))
@@ -565,7 +577,10 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         anchor.getLocationOnScreen(xy)
         val x = (xy[0] + anchor.width / 2 - width / 2)
             .coerceIn(0, (resources.displayMetrics.widthPixels - width).coerceAtLeast(0))
-        popup.showAtLocation(anchor, Gravity.NO_GRAVITY, x, (xy[1] - dp(53)).coerceAtLeast(0))
+        // Leave a full key-height gap so the finger holding punctuation does not hide the options.
+        val fingerClearance = anchor.height.coerceAtLeast(dp(42)) + dp(8)
+        val y = (xy[1] - popupHeight - fingerClearance).coerceAtLeast(0)
+        popup.showAtLocation(anchor, Gravity.NO_GRAVITY, x, y)
         punctuationPopup = popup
     }
 
