@@ -6,9 +6,9 @@ An experimental **Android system keyboard** for programming, Termux, SSH termina
 
 ## Try the simulator
 
-- **[Interactive simulator (GitHub Pages)](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)** (requires GitHub Pages to be enabled with **GitHub Actions** as the source).
+- **[Interactive simulator (GitHub Pages)](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)** (hosted with GitHub Pages).
 - **[Simulator HTML source](docs/simulator.html)**. For local use, download the single HTML file and open it in a browser. Microphone dictation generally requires an HTTPS/localhost origin and a supporting browser.
-- **[Preview APK](releases/devboard-debug.apk)** (once a verified build has been committed). The APK is a development/debug build, not a Play Store release.
+- **[Preview APK](releases/devboard-debug.apk)** (compiled and debug-signed). The APK is a development/debug build, not a Play Store release.
 
 > GitHub README pages do not execute embedded JavaScript or allow interactive iframes. The animated GIF above is therefore the in-README review. The full interactive simulator runs on GitHub Pages (or a local web server).
 
@@ -90,6 +90,6 @@ docs/devboard-demo.gif      animated README demo
 - Terminal shortcuts need testing against Termux, Termius, and other target applications.
 - Rich content image commit, auto layout per-app, and import of web JSON configuration into the Android app are future work. The native editor currently saves its layout separately from the web simulator.
 - The web preview uses Samsung A56-like viewport proportions, not a real Android emulator or a physical millimeter-accurate display.
-- GitHub Pages may require a repository administrator to select **Settings → Pages → Build and deployment → GitHub Actions** once before the simulator link becomes live.
+- The GitHub Pages workflow publishes the web simulator after each update to docs.
 
 License: see [LICENSE](LICENSE).
