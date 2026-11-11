@@ -347,6 +347,11 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     private fun functionStrip(): View {
         val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         val names = (1..12).map { "F" + it } + listOf("Ins", "Del")
+        // Eight function keys must fit in the first viewport without horizontal scrolling.
+        // Remaining keys (F9–F12, Ins, Del) stay accessible by swiping the strip.
+        val margin = dp(1)
+        val keyWidth = ((resources.displayMetrics.widthPixels - 8 * margin * 2) / 8)
+            .coerceAtLeast(dp(30))
         names.forEachIndexed { index, label ->
             val code = when (label) {
                 "Ins" -> KeyEvent.KEYCODE_INSERT
@@ -360,8 +365,8 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 hardware(code, activeModifiers())
                 releaseModifiers()
             }
-            row.addView(b, LinearLayout.LayoutParams(dp(50), dp(31)).apply {
-                setMargins(dp(2), dp(1), dp(2), dp(3))
+            row.addView(b, LinearLayout.LayoutParams(keyWidth, dp(31)).apply {
+                setMargins(margin, dp(1), margin, dp(3))
             })
         }
         return HorizontalScrollView(this).apply {
