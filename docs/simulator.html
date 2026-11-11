@@ -48,6 +48,10 @@
 .setting-row{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:12px 10px;background:#fff;border:1px solid #e0e7f3;border-radius:10px;margin:7px 0;font-size:12px}
 .setting-row label{flex:1}.setting-row input[type=range]{width:107px;accent-color:#3776cc}.setting-row output{width:39px;text-align:right;font-variant-numeric:tabular-nums;color:#496683}.setting-row select{background:#f6f9ff;color:#1a365c;padding:6px;border-radius:7px;border:1px solid #c9d5e8;max-width:135px}
 .setting-row input[type=checkbox]{accent-color:#2d6ccc}
+.permission-label{font-size:10px;color:#637992;white-space:nowrap}
+.permission-label.granted{color:#137b40;font-weight:800}
+.permission-label.denied{color:#a12638;font-weight:800}
+#permissionOpen{font-size:11px;padding:7px 9px}
 .theme-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
 .theme-option{background:#fff;color:#283c59;border:2px solid #dae3f0;padding:6px;border-radius:10px;text-align:center;font-size:10px;min-width:0;cursor:pointer}
 .theme-option.active{border-color:#377dda;background:#eaf2ff}.theme-option .swatch{height:35px;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:5px;overflow:hidden}
@@ -160,13 +164,774 @@
  <div class="live-keyboard" id="liveKeyboard" aria-label="Live keyboard theme preview"></div>
  <button type="button" class="theme-navigate live-next" id="themeNext" aria-label="Next theme" title="Next theme">›</button></div>
  <div class="live-caption"><strong id="selectedThemeName">Midnight</strong><span>Swipe to change theme · Adjust sliders below</span></div>
-</div><div class="settings-content"><h3>Keyboard selection</h3><div class="settings-description">Choose any enabled keyboard on Android. This browser preview cannot inspect installed keyboards.</div><button type="button" class="settings-action" id="chooseSystemKeyboard" aria-expanded="false" aria-controls="systemKeyboardPicker">▸ Installed keyboards</button><div id="systemKeyboardPicker" class="system-ime-picker" hidden><strong>Keyboard picker · demo only</strong><p class="settings-description">Examples, not a list of keyboards installed on your phone. In the Android APK, the system displays the actual installed and enabled keyboards.</p><div id="demoKeyboardOptions"></div><button type="button" id="closeKeyboardPicker" class="settings-action">Close</button></div><div class="settings-description" id="keyboardPickerStatus" role="status">Currently previewing DevBoard.</div><h3>Key appearance</h3><div class="setting-row"><label for="fontSize">Font size</label><input type="range" min="9" max="18" step="1" id="fontSize"><output id="fontSizeVal"></output></div><div class="setting-row"><label for="keyHeight">Key height</label><input type="range" min="29" max="49" step="1" id="keyHeight"><output id="keyHeightVal"></output></div><div class="setting-row"><label for="keyGap">Key spacing</label><input type="range" min="1" max="7" step="1" id="keyGap"><output id="keyGapVal"></output></div><div class="setting-row"><label for="keyRadius">Corner radius</label><input type="range" min="1" max="15" step="1" id="keyRadius"><output id="keyRadiusVal"></output></div><div class="setting-row"><label for="numberOffset">Number-row offset</label><input type="range" min="0" max="14" step="1" id="numberOffset"><output id="numberOffsetVal"></output></div><div class="setting-row"><label for="showExtras">Terminal shortcut rows</label><input type="checkbox" checked id="showExtras"></div><div class="setting-row"><label for="pressAnimation">Button Press Animation</label><input type="checkbox" checked id="pressAnimation"></div><h3>Language & dictation</h3><div class="setting-row"><label for="voiceLang">Selected language</label><select id="voiceLang"><option value="lt-LT">🇱🇹 Lithuanian (LT)</option><option value="en-US">🇬🇧 English (EN)</option></select></div><div class="setting-row"><label for="rejectCyrillic">Block Cyrillic output in LT mode</label><input type="checkbox" checked id="rejectCyrillic"></div><p id="voiceSupport"></p><h3>Privacy & storage</h3><p class="settings-description">Themes, settings, and clipboard entries are stored locally in this browser. Speech recognition is provided by the browser and may require internet access.</p><h3 class="theme-heading">Themes · Swipe to browse</h3>
+</div><div class="settings-content"><h3>Keyboard selection</h3><div class="settings-description">Choose any enabled keyboard on Android. This browser preview cannot inspect installed keyboards.</div><button type="button" class="settings-action" id="chooseSystemKeyboard" aria-expanded="false" aria-controls="systemKeyboardPicker">▸ Installed keyboards</button><div id="systemKeyboardPicker" class="system-ime-picker" hidden><strong>Keyboard picker · demo only</strong><p class="settings-description">Examples, not a list of keyboards installed on your phone. In the Android APK, the system displays the actual installed and enabled keyboards.</p><div id="demoKeyboardOptions"></div><button type="button" id="closeKeyboardPicker" class="settings-action">Close</button></div><div class="settings-description" id="keyboardPickerStatus" role="status">Currently previewing DevBoard.</div><h3>Key appearance</h3><div class="setting-row"><label for="fontSize">Font size</label><input type="range" min="9" max="18" step="1" id="fontSize"><output id="fontSizeVal"></output></div><div class="setting-row"><label for="keyHeight">Key height</label><input type="range" min="29" max="49" step="1" id="keyHeight"><output id="keyHeightVal"></output></div><div class="setting-row"><label for="keyGap">Key spacing</label><input type="range" min="1" max="7" step="1" id="keyGap"><output id="keyGapVal"></output></div><div class="setting-row"><label for="keyRadius">Corner radius</label><input type="range" min="1" max="15" step="1" id="keyRadius"><output id="keyRadiusVal"></output></div><div class="setting-row"><label for="numberOffset">Number-row offset</label><input type="range" min="0" max="14" step="1" id="numberOffset"><output id="numberOffsetVal"></output></div><div class="setting-row"><label for="showExtras">Terminal shortcut rows</label><input type="checkbox" checked id="showExtras"></div><div class="setting-row"><label for="pressAnimation">Button Press Animation</label><input type="checkbox" checked id="pressAnimation"></div><h3>Language & dictation</h3><div class="setting-row"><label for="voiceLang">Selected language</label><select id="voiceLang"><option value="lt-LT">🇱🇹 Lithuanian (LT)</option><option value="en-US">🇬🇧 English (EN)</option></select></div><div class="setting-row"><label for="layoutVariant">Keyboard layout</label><select id="layoutVariant"><option value="pc">PC</option><option value="qwerty">QWERTY</option></select></div><div class="setting-row"><label for="rejectCyrillic">Block Cyrillic output in LT mode</label><input type="checkbox" checked id="rejectCyrillic"></div><div class="setting-row"><label for="permissionOpen">Microphone</label><button type="button" class="settings-action" id="permissionOpen">Permissions</button><span id="micPermissionStatus" class="permission-label" role="status">Checking…</span></div><p class="settings-description">Browser demo: Permissions requests microphone access for this site. It cannot read or change Android app permissions.</p><p id="voiceSupport"></p><h3>Privacy & storage</h3><p class="settings-description">Themes, settings, and clipboard entries are stored locally in this browser. Speech recognition is provided by the browser and may require internet access.</p><h3 class="theme-heading">Themes · Swipe to browse</h3>
 <div class="settings-description">Tap Colorful ASCII or any theme, use the arrows, or swipe. Keys update immediately.</div>
 <div class="theme-rail-wrap"><button type="button" class="rail-nav" id="railPrev" aria-label="Scroll themes left">‹</button><div class="theme-grid" id="themeGrid" aria-label="Keyboard theme carousel"></div><button type="button" class="rail-nav" id="railNext" aria-label="Scroll themes right">›</button></div>
 <div class="theme-counter" id="themeCounter">1 / 19 · Colorful ASCII</div><button class="settings-action" id="saveSettings">💾 Save settings</button><button class="settings-action" id="openLayout">▦ Edit key layout</button><button class="settings-action" id="resetSettings">↺ Reset appearance</button></div></div><div class="clipdrawer" id="clipDrawer" hidden><header><strong id="drawerTitle">📋 Clipboard</strong><button id="clipClose">✕</button></header><div class="snippet-actions"><button class="cliptab active" id="tabHistory">📋 History</button><button class="cliptab" id="tabSaved">⭐ Saved snippets</button></div><div class="clipnote" id="clipNote">Tap an entry to insert it. 📌 pins; ✕ deletes.</div><div class="snippet-form" id="snippetForm" hidden><textarea id="snippetText" placeholder="Text to insert with one tap"></textarea><div class="snippet-actions"><button id="snippetSave">💾 Save</button><button id="snippetCancel">Cancel</button></div></div><div id="clipItems"></div><button id="snippetAdd" hidden>＋ New saved snippet</button><button id="clipClear">Clear unpinned</button></div><div class="navbar"></div></div><div class="foot">Galaxy A56 proportions · 360 × 780 CSS px · web preview</div></div></section><aside class="panel"><h2>Keyboard controls</h2><p>Terminal mode is always available. 📋 opens clipboard history; ⭐ lets you save and insert reusable snippets. Lithuanian letters appear above numbers 1–9 (hold a number to type its letter). Hold comma or period for punctuation alternatives. Hold Space to choose LT / EN. The top-right LT 🎙 button opens the voice dictation window (hold to change language); the bottom 😀 key opens emojis. Test the keyboard in the white document. 📎 selects any file and inserts a temporary local link.</p><p>Tap the left or right edge of Space to insert &lt; or &gt;; tap the center for a space. Tap the virtual keys to type in the white document. In Configure, tap two keys to swap positions. Use + Combo to add keyboard shortcuts.</p><div class="field"><label>Profile</label><select id="profiles"></select></div><div class="row"><button class="action secondary" id="saveProfile">Save profile</button><button class="action secondary" id="newProfile">New profile</button></div><button class="action" id="configure">⚙ Configure</button><div class="editor" id="editor" hidden><h2>Editing mode</h2><p><strong>Tap a key, then tap its new location to swap them.</strong> Works across rows. Tap the selected key again to cancel. You can also drag keys on desktop.</p><div class="field"><label>Selected key</label><input type="text" id="keyValue" placeholder="Select a key" maxlength="16"></div><button class="action secondary" id="applyKey">Update key</button><div class="field"><label class="check"><input type="checkbox" id="extraRows" checked> Show extra keys</label></div><button class="action secondary" id="resetLayout">Reset Terminal layout</button></div><div class="editor"><h2>Export</h2><p>Keyboard profiles are stored in this browser. Export JSON for a future Android build.</p><div class="row"><button class="action secondary" id="exportJson">↓ JSON</button><button class="action secondary" id="importJson">↑ Import</button></div><input id="file" type="file" accept="application/json" hidden></div><p class="hint" id="status">Ready. Try the keys in the phone preview.</p><p class="hint">Note: this is an interactive web prototype, not an Android OS emulator. Physical key sizes depend on your screen density.</p><p class="hint"><a href="https://github.com/Krutas/Android-keyboard-for-developers" target="_blank" rel="noopener noreferrer" style="color:#9fd7ff">Android source, README and APK on GitHub</a></p></aside></main><script>
 const defaults={Normal:[['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['123','😀',',','space','.','↵']],Code:[['Esc','Tab','{','}','[',']','/','\\','|','~'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['Ctrl','Alt','<','>','space','↵']],Terminal:[['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','Delete','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['123','😀',',','space','.','↵']]};
 // Upgrade previously stored layouts so that older saved profiles also have a microphone.
-const clone=x=>JSON.parse(JSON.stringify(x));let profiles;try{profiles=JSON.parse(localStorage.getItem('devboard-profiles'))||{Default:clone(defaults)}}catch{profiles={Default:clone(defaults)}};let profile='Default',mode='Terminal',editing=false,selected=null,shift=true,capsLock=false,lastShiftTap=0,ctrl=false,alt=false,extras=true,dragFrom=null,functionKeys=localStorage.getItem('devboard-function-keys')==='true';const $=id=>document.getElementById(id),paper=$('paper');function persist(){localStorage.setItem('devboard-profiles',JSON.stringify(profiles))}function layout(){return profiles[profile][mode]}const symbolPages=[
+const clone=x=>JSON.parse(JSON.stringify(x));let profiles;try{profiles=JSON.parse(localStorage.getItem('devboard-profiles'))||{Default:clone(defaults)}}catch{profiles={Default:clone(defaults)}};let profile='Default',mode='Terminal',editing=false,selected=null,shift=true,capsLock=false,lastShiftTap=0,ctrl=false,alt=false,extras=true,dragFrom=null,functionKeys=localStorage.getItem('devboard-function-keys')==='true';const $=id=>document.getElementById(id),paper=$('paper');function persist(){localStorage.setItem('devboard-profiles',JSON.stringify(profiles))}function layout(){return profiles[profile][mode]}
+function currentLayoutVariant(){
+ return pref?.layoutVariants?.[pref.lang]==='qwerty'?'qwerty':'pc';
+}
+const pcShiftedSymbols={'1':'!','2':'@','3':'#','4':'
+ [ ['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','Delete','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','-','+','(',')','/'],['*','\"',"'",':',';','!','?','=','_','\\'],['{','}','[',']','<','>','|','~','^','`'],['ABC','😀',',','space','.','1/2','↵'] ],
+ [ ['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','Delete','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['€','£','¥','¢','©','®','™','§','¶','°'],['±','×','÷','≠','≤','≥','∞','µ','•','…'],['<','>','[',']','{','}','|','\\','~','^'],['ABC','😀',',','space','.','2/2','↵'] ]
+];
+let symbolPage=false, symbolsSecondPage=false, emojiOpen=false;
+let emojiRows=[
+ ['ABC','😀','😃','😄','😁','😅','😂','🤣'],
+ ['😊','😍','🥰','😘','😎','🤔','😢','😭'],
+ ['😡','👍','👎','👏','🙏','🤝','💪','🔥'],
+ ['❤️','✅','❌','⭐','🎉','💯','👀','💻','🚀']
+];
+// Full offline catalog served alongside the simulator; 32-emoji fallback for file:// previews.
+const emojiIcons=['🕘','😀','🧑','🐻','🍔','🚗','⚽','💡','❤️','🏳️'];
+let emojiCatalog=[], emojiCategory=1, emojiSearch='';
+let emojiRecent=[];try{emojiRecent=JSON.parse(localStorage.getItem('devboard-recent-emojis'))||[]}catch{}
+fetch('./emoji.json').then(r=>{if(!r.ok)throw Error('emoji catalog');return r.json()}).then(data=>{
+ emojiCatalog=data.groups||[];if(emojiOpen){render();renderLiveKeyboard()}
+}).catch(()=>{});
+function emojiOptions(){
+ if(!emojiCatalog.length)return emojiRows.flat().filter(k=>k!=='ABC').map(e=>[e,e]);
+ if(emojiCategory===0){
+  const lookup=new Map(emojiCatalog.flatMap(g=>g.items).map(item=>[item[0],item]));
+  return emojiRecent.map(e=>lookup.get(e)).filter(Boolean);
+ }
+ return emojiCatalog[emojiCategory-1].items;
+}
+function rememberEmoji(e){
+ emojiRecent=[e,...emojiRecent.filter(x=>x!==e)].slice(0,48);
+ localStorage.setItem('devboard-recent-emojis',JSON.stringify(emojiRecent))
+}
+function emojiPicker(root){
+ root.classList.add('emoji-mode');
+ const controls=document.createElement('div');controls.className='emoji-controls';
+ const back=document.createElement('button');back.textContent='ABC';back.onclick=()=>press('ABC');
+ const title=document.createElement('span');title.textContent='Emoji · '+(emojiCatalog[emojiCategory-1]?.name||'Recent');
+ const erase=document.createElement('button');erase.textContent='⌫';erase.onclick=()=>command('delete');
+ controls.append(back,title,erase);root.append(controls);
+ const cats=document.createElement('div');cats.className='emoji-cats';
+ emojiIcons.forEach((glyph,i)=>{
+  const b=document.createElement('button');b.textContent=glyph;b.className=i===emojiCategory?'active':'';
+  b.onclick=()=>{emojiCategory=i;emojiSearch='';render();renderLiveKeyboard()};cats.append(b)
+ });root.append(cats);
+ const search=document.createElement('input');search.className='emoji-search';search.placeholder='⌕ Search emoji';search.value=emojiSearch;
+ root.append(search);
+ const grid=document.createElement('div');grid.className='emoji-grid';root.append(grid);
+ function fill(){
+  grid.replaceChildren();
+  const options=emojiOptions().filter(x=>!emojiSearch||x[1].toLowerCase().includes(emojiSearch.toLowerCase()));
+  for(const [emoji,name] of options){
+   const b=document.createElement('button');b.textContent=emoji;b.title=name;
+   b.onclick=()=>{rememberEmoji(emoji);insert(emoji);if(emojiCategory===0)fill()};
+   grid.append(b)
+  }
+  if(!options.length){const no=document.createElement('p');no.textContent='No matching emoji';grid.append(no)}
+ }
+ search.oninput=()=>{emojiSearch=search.value;fill()};
+ fill();
+}
+const accents={'1':['ą'],'2':['č'],'3':['ę'],'4':['ė'],'5':['į'],'6':['š'],'7':['ų'],'8':['ū'],'9':['ž']};
+const punctuation={',':[',',';',':','„',"'"],'.':['.','?','!','…',':']};
+for(const p of Object.values(profiles)){
+ const r=p.Terminal;if(!Array.isArray(r))continue;
+ if(!r.some(row=>row.join('')==='1234567890'))r.splice(2,0,['1','2','3','4','5','6','7','8','9','0']);
+ for(const [ri,row] of r.entries()){
+  for(let i=0;i<row.length;i++){if(row[i]==='🌐')row[i]='🎙️';if(row[i]==='End')row[i]='Delete';}
+  for(let i=row.length-1;i>=0;i--)if(row[i]==='🎙️'||row[i]==='🎙')row.splice(i,1);
+ }
+ // Microphone lives beside LT/EN in the top toolbar.
+ const bottom=r[r.length-1];
+ if(bottom&&!bottom.includes('😀'))bottom.splice(Math.max(0,bottom.indexOf('123'))+1,0,'😀');
+ if(bottom?.includes('space')){for(let i=bottom.length-1;i>=0;i--)if(bottom[i]==='<'||bottom[i]==='>')bottom.splice(i,1)}
+ const normal=p.Normal;
+ if(Array.isArray(normal)){
+  const normalBottom=normal[normal.length-1];
+  if(normalBottom)for(let i=0;i<normalBottom.length;i++)if(['🎙️','🎙','🌐'].includes(normalBottom[i]))normalBottom[i]='😀';
+ }
+}
+persist();
+if(!profiles[profile]||!profiles[profile].Terminal){profile='Default';profiles.Default=clone(defaults)}
+let longTimer=null,longTriggered=false,skipClick=false,spaceTimer=null,shiftTimer=null;
+let layoutLongTimer=null,layoutKeyTarget=null,arrowRepeatTimeout=null,arrowRepeatInterval=null;
+const arrowKeys=new Set(['←','→','↑','↓']);
+function stopArrowRepeat(){
+ clearTimeout(arrowRepeatTimeout);clearInterval(arrowRepeatInterval);
+ arrowRepeatTimeout=null;arrowRepeatInterval=null;
+}
+function moveArrowOnce(key){
+ focusPaper();
+ const selection=window.getSelection();
+ if(selection&&selection.modify){
+  try{selection.modify('move',key==='←'||key==='↑'?'backward':'forward',key==='↑'||key==='↓'?'line':'character')}catch{}
+ }
+}
+function closeLayoutOptions(){$('layoutKeyPopup').hidden=true;layoutKeyTarget=null}
+function showLayoutOptions(row,col,button){
+ if(!editing)return;
+ longTriggered=true;selected=null;layoutKeyTarget=[row,col];
+ const pop=$('layoutKeyPopup');
+ $('layoutKeyTitle').textContent='Key: '+layout()[row][col];
+ $('layoutDelete').disabled=layout()[row].length<=3;
+ pop.hidden=false;
+ const rect=button.getBoundingClientRect(),phone=document.querySelector('.phone').getBoundingClientRect();
+ pop.style.top=Math.max(39,rect.top-phone.top-pop.offsetHeight-44)+'px';
+}
+$('layoutDelete').onclick=()=>{
+ if(!layoutKeyTarget)return;
+ const [row,col]=layoutKeyTarget;if(layout()[row].length<=3)return;
+ layout()[row].splice(col,1);persist();closeLayoutOptions();render();renderLiveKeyboard();setStatus('Key deleted');
+};
+$('layoutReset').onclick=()=>{
+ if(!confirm('Reset this layout to defaults? Custom key positions will be lost.'))return;
+ profiles[profile][mode]=clone(defaults[mode]);
+ persist();selected=null;closeLayoutOptions();render();renderLiveKeyboard();setStatus('Layout reset to defaults');
+};
+$('layoutCancel').onclick=closeLayoutOptions;
+document.addEventListener('pointerdown',e=>{
+ if(!$('layoutKeyPopup').hidden&&!$('layoutKeyPopup').contains(e.target)&&!e.target.closest('.key'))closeLayoutOptions();
+});
+
+function closeAccents(){$('accentPopup').hidden=true}
+function showAccents(key,button){
+ const variants=accents[key.toLowerCase()]||punctuation[key];
+ if(!variants||editing)return;
+ const pop=$('accentPopup');pop.replaceChildren();
+ const options=(shift||capsLock)&&accents[key.toLowerCase()]?variants.map(v=>v.toUpperCase()):variants;
+ options.forEach(ch=>{
+  const b=document.createElement('button');b.textContent=ch;b.type='button';
+  b.onpointerdown=e=>e.preventDefault();
+  b.onclick=()=>{insert(ch);closeAccents();updateAutoShift()};
+  pop.appendChild(b);
+ });
+ pop.hidden=false;
+ const phone=document.querySelector('.phone'),rect=button.getBoundingClientRect(),pr=phone.getBoundingClientRect();
+ // Place menu one full key-height above held button, leaving finger clearance.
+ pop.style.top=Math.max(40,rect.top-pr.top-pop.offsetHeight-Math.max(38,rect.height)-10)+'px';
+ longTriggered=true;
+}
+document.addEventListener('pointerdown',e=>{if(!$('accentPopup').contains(e.target)&&!e.target.closest('.key'))closeAccents()});
+const snippetStoreKey='devboard-snippets-v07';let snippets=[];let drawerTab='history',editingSnippet=-1;
+try{const raw=JSON.parse(localStorage.getItem(snippetStoreKey)||'[]');if(Array.isArray(raw))snippets=raw.filter(x=>x&&typeof x.title==='string'&&typeof x.text==='string').slice(0,100)}catch{}
+function saveSnippets(){localStorage.setItem(snippetStoreKey,JSON.stringify(snippets));renderClips()}
+function setDrawerTab(tab){drawerTab=tab;$('clipDrawer').hidden=false;$('snippetForm').hidden=true;renderClips()}
+function editSnippet(index){editingSnippet=index;const item=snippets[index];$('snippetText').value=item?.text||'';$('snippetForm').hidden=false;$('snippetText').focus()}
+$('snippetOpen').onclick=()=>setDrawerTab('saved');
+$('tabHistory').onclick=()=>setDrawerTab('history');
+$('tabSaved').onclick=()=>setDrawerTab('saved');
+$('snippetAdd').onclick=()=>editSnippet(-1);
+$('snippetCancel').onclick=()=>{$('snippetForm').hidden=true};
+$('snippetSave').onclick=()=>{const value=$('snippetText').value;if(!value.trim()){setStatus('Enter text to insert');return}const title=value.trim().replace(/\s+/g,' ').slice(0,80)if(editingSnippet>=0)snippets[editingSnippet]={title,text:value};else snippets.unshift({title,text:value});$('snippetForm').hidden=true;saveSnippets();setStatus('Saved snippet is ready to insert')};
+const clipStoreKey='devboard-clips-v06';
+let clips=[];
+try{clips=JSON.parse(localStorage.getItem(clipStoreKey)||'[]');if(!Array.isArray(clips))clips=[]}catch{clips=[]}
+function persistClips(){localStorage.setItem(clipStoreKey,JSON.stringify(clips));renderClips()}
+function addClip(t){t=String(t||'').trim();if(!t)return;const old=clips.find(c=>c.text===t);clips=clips.filter(c=>c.text!==t);clips.unshift({text:t,pinned:!!old?.pinned});clips=clips.filter((c,i)=>c.pinned||i<20).slice(0,40);persistClips();setStatus('Text added to clipboard history')}
+function copySelection(cut){const sel=window.getSelection();const t=sel?sel.toString():'';if(!t){setStatus('Select some text in the document first');return}addClip(t);if(cut)command('delete');if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).catch(()=>{});}
+function pasteLatest(){if(!clips.length){setStatus('Clipboard is empty');return}insert(clips[0].text)}
+function renderClips(){
+ const recent=$('clipRecent'),items=$('clipItems');if(!recent||!items)return;
+ recent.replaceChildren();items.replaceChildren();
+ for(const c of clips.slice(0,3)){const b=document.createElement('button');b.textContent=(c.pinned?'📌 ':'')+c.text.slice(0,12);b.title=c.text;b.onclick=()=>insert(c.text);recent.appendChild(b)}
+ const saved=drawerTab==='saved';
+ $('drawerTitle').textContent=saved?'⭐ Saved snippets':'📋 Clipboard history';
+ $('tabHistory').classList.toggle('active',!saved);$('tabSaved').classList.toggle('active',saved);
+ $('snippetAdd').hidden=!saved;$('clipClear').hidden=saved;
+ $('clipNote').textContent=saved?'Create reusable text, commands, and templates. Tap an item to insert it.':'Tap an entry to insert it. 📌 pins; ✕ deletes.';
+ const data=saved?snippets:clips;
+ if(!data.length){items.textContent=saved?'No saved snippets yet. Tap New to add one.':'Nothing copied yet.';return}
+ data.forEach((c,i)=>{
+ const line=document.createElement('div');line.className='clipitem';
+ const t=document.createElement('button');t.className='cliptext';
+ if(saved){const title=document.createElement('strong');title.textContent=c.title;const preview=document.createElement('div');preview.className='snippet-preview';preview.textContent=c.text;t.append(title,preview)}else t.textContent=c.text;
+ t.title=c.text;t.onclick=()=>{insert(c.text);$('clipDrawer').hidden=true};
+ line.appendChild(t);
+ if(saved){const edit=document.createElement('button');edit.textContent='✎';edit.title='Edit';edit.onclick=()=>editSnippet(i);line.appendChild(edit)}
+ else {const pin=document.createElement('button');pin.textContent=c.pinned?'📌':'📍';pin.title='Pin / unpin';pin.onclick=()=>{c.pinned=!c.pinned;persistClips()};line.appendChild(pin)}
+ const del=document.createElement('button');del.textContent='✕';del.title='Delete';del.onclick=()=>{if(saved){snippets.splice(i,1);saveSnippets()}else{clips.splice(i,1);persistClips()}};line.appendChild(del);items.appendChild(line)
+ })
+}
+$('clipOpen').onclick=()=>{if($('clipDrawer').hidden||drawerTab!=='history')setDrawerTab('history');else $('clipDrawer').hidden=true};
+$('clipClose').onclick=()=>{$('clipDrawer').hidden=true};
+$('clipClear').onclick=()=>{clips=clips.filter(c=>c.pinned);persistClips()};
+document.addEventListener('copy',e=>{const sel=window.getSelection();if(sel&&paper.contains(sel.anchorNode)&&sel.toString())addClip(sel.toString())});
+document.addEventListener('cut',e=>{const sel=window.getSelection();if(sel&&paper.contains(sel.anchorNode)&&sel.toString())addClip(sel.toString())});
+renderClips();
+function renderProfiles(){$('profiles').innerHTML=Object.keys(profiles).map(p=>`<option ${p===profile?'selected':''}>${p.replaceAll('&','&amp;').replaceAll('<','&lt;')}</option>`).join('')}function switchKeys(source, destination){
+ const keys=layout();
+ const a=keys[source[0]],b=keys[destination[0]];
+ if(!a||!b||source[1]>=a.length||destination[1]>=b.length)return;
+ [a[source[1]],b[destination[1]]]=[b[destination[1]],a[source[1]]];
+ selected=null;dragFrom=null;
+ persist();render();renderLiveKeyboard();
+ setStatus('Key positions swapped and saved');
+}
+function render(){
+ updateToolbarMic();
+ renderFunctionBar();
+ $('keyboard').classList.toggle('press-animation-off',pref.pressAnimation===false);
+ renderProfiles();
+ $('keys').replaceChildren();
+ // Preserve original row indices even when extra rows are hidden.
+ let rows=(emojiOpen?emojiRows:symbolPage?symbolPages[symbolsSecondPage?1:0]:effectiveLayoutRows()).map((r,index)=>({row:r,index}));
+ if(!emojiOpen&&!extras&&mode!=='Normal'&&!editing)rows=rows.filter(({index})=>mode==='Code'?index!==0:index>1);
+ const tip=$('swapTip');tip.hidden=!editing;
+ if(editing)tip.textContent=selected?`Selected: ${layout()[selected[0]][selected[1]]}  ·  Tap the destination key to swap  ·  Tap again to cancel`:'Swap keys: tap the first key, then tap its new location';
+ if(emojiOpen && emojiCatalog.length){emojiPicker($('keys'));renderComboBar();return}
+ $('keys').classList.remove('emoji-mode');
+ rows.forEach(({row:r,index:ri})=>{
+  const div=document.createElement('div');div.className='keyrow'+(r.join('')==='1234567890'?' numbers':'');
+  r.forEach((key,ki)=>{
+   const btn=document.createElement('button');btn.type='button';
+   btn.className='key'+(key==='space'?' space':'')+(key.length>1?' special':'')+(ri<2&&mode==='Terminal'||ri===0&&mode==='Code'?' small':'')+(selected&&selected[0]===ri&&selected[1]===ki?' selected':'')+(key==='🎙️'&&listening?' speaking':'')+(['123','ABC','1/2','2/2'].includes(key)?' symbol-switch':'');
+   const displayed=key==='⇧'&&capsLock?'⇪':key.length===1&&/^\p{L}$/u.test(key)?((shift||capsLock)?key.toUpperCase():key.toLowerCase()):key;
+   if(key==='⇧'){btn.title=capsLock?'Caps Lock on':'Shift (double tap or hold for Caps Lock)';btn.setAttribute('aria-pressed',String(capsLock))}
+   if(pref.lang==='lt-LT'&&currentLayoutVariant()==='pc'&&accents[key.toLowerCase()]){btn.innerHTML='<span class="hintchar">'+accents[key.toLowerCase()].join(' ')+'</span><span class="mainchar">'+displayed+'</span>'}
+   else if(key==='space')btn.innerHTML='<span class="space-inner"><span>&lt;</span><span>Space</span><span>&gt;</span></span>';
+   else btn.textContent=displayed;
+   let spaceTapZone='center';
+   btn.onpointerdown=e=>{
+    if(pref.pressAnimation!==false)btn.classList.add('key-pressed');
+    longTriggered=false;
+    if(editing){
+     clearTimeout(layoutLongTimer);
+     layoutLongTimer=setTimeout(()=>showLayoutOptions(ri,ki,btn),520);
+    }else{
+     if(accents[key.toLowerCase()]||punctuation[key]){
+      clearTimeout(longTimer);longTimer=setTimeout(()=>showAccents(key,btn),450);
+     }
+     if(key==='space'){clearTimeout(spaceTimer);spaceTimer=setTimeout(()=>openLangPopup(),520)}
+     if(arrowKeys.has(key)){
+      stopArrowRepeat();
+      arrowRepeatTimeout=setTimeout(()=>{
+       longTriggered=true;moveArrowOnce(key);
+       arrowRepeatInterval=setInterval(()=>moveArrowOnce(key),75);
+      },430);
+     }
+     if(key==='⇧'){
+      clearTimeout(shiftTimer);
+      shiftTimer=setTimeout(()=>{
+       capsLock=!capsLock;shift=capsLock;lastShiftTap=0;longTriggered=true;
+       render();renderLiveKeyboard();setStatus(capsLock?'Caps Lock on':'Caps Lock off')
+      },520);
+     }
+    }
+   };
+   const cancelKeyTimers=()=>{
+    clearTimeout(longTimer);clearTimeout(spaceTimer);clearTimeout(shiftTimer);
+    clearTimeout(layoutLongTimer);stopArrowRepeat();
+   };
+   btn.onpointerup=()=>{
+    cancelKeyTimers();
+    setTimeout(()=>btn.classList.remove('key-pressed'),90);
+   };
+   btn.onpointercancel=()=>{cancelKeyTimers();btn.classList.remove('key-pressed')};
+   btn.onpointerleave=()=>{cancelKeyTimers();btn.classList.remove('key-pressed')};
+   btn.draggable=editing;
+   btn.onclick=()=>{
+    if(longTriggered){longTriggered=false;return}closeAccents();
+    if(comboRecording&&!$('comboPop').hidden){recordComboKey(key);return}
+    if(editing){
+     if(!selected){selected=[ri,ki];$('keyValue').value=key;render();setStatus('Selected '+key+'. Tap destination to swap.');}
+     else if(selected[0]===ri&&selected[1]===ki){selected=null;$('keyValue').value='';render();setStatus('Selection cleared');}
+     else switchKeys(selected,[ri,ki]);
+    }else press(key);
+   };
+   btn.ondragstart=()=>{if(editing)dragFrom=[ri,ki]};
+   btn.ondragover=e=>{if(editing)e.preventDefault()};
+   btn.ondrop=e=>{e.preventDefault();if(!editing||!dragFrom)return;const from=dragFrom;dragFrom=null;switchKeys(from,[ri,ki])};
+   div.appendChild(btn);
+  });$('keys').appendChild(div)
+ });
+ renderComboBar();
+}function renderFunctionBar(){
+ const root=$('fnBar');if(!root)return;
+ root.hidden=!functionKeys;root.replaceChildren();
+ $('fnOpen').classList.toggle('active',functionKeys);
+ $('fnOpen').setAttribute('aria-pressed',String(functionKeys));
+ if(!functionKeys)return;
+ for(let i=1;i<=8;i++){const b=document.createElement('button');b.type='button';b.textContent='F'+i;b.title='Function key F'+i;
+  b.onclick=()=>setStatus('F'+i+' is an Android hardware function key; browser preview only');
+  root.appendChild(b);
+ }
+}
+$('fnOpen').onclick=()=>{
+ functionKeys=!functionKeys;
+ localStorage.setItem('devboard-function-keys',String(functionKeys));
+ renderFunctionBar();renderLiveKeyboard();
+};
+function setStatus(s){$('status').textContent=s}function focusPaper(){paper.focus();if(lastCaret&&paper.contains(lastCaret.commonAncestorContainer)){const saved=window.getSelection();saved.removeAllRanges();saved.addRange(lastCaret.cloneRange());lastCaret=null;return;}const sel=window.getSelection();if(!sel.rangeCount||!paper.contains(sel.anchorNode)){const r=document.createRange();r.selectNodeContents(paper);r.collapse(false);sel.removeAllRanges();sel.addRange(r)}}document.addEventListener('selectionchange',()=>{const sel=window.getSelection();if(sel.rangeCount&&paper.contains(sel.anchorNode))lastCaret=sel.getRangeAt(0).cloneRange()});function command(cmd,value){focusPaper();try{document.execCommand(cmd,false,value)}catch{}}function insert(t){command('insertText',t)}function textBeforeCursor(){
+ const sel=window.getSelection();
+ if(!sel||!sel.rangeCount||!paper.contains(sel.anchorNode))return paper.textContent||'';
+ const r=document.createRange();r.selectNodeContents(paper);
+ try{r.setEnd(sel.anchorNode,sel.anchorOffset)}catch{return paper.textContent||''}
+ return r.toString();
+}
+function updateAutoShift(){
+ if(!capsLock){const before=textBeforeCursor();shift=!before.trim()||/[.!?]\s+$/.test(before)}
+ render();renderLiveKeyboard();
+}
+function press(k){
+ closeAccents();
+ if(k==='Ctrl'){ctrl=!ctrl;setStatus('Ctrl '+(ctrl?'on':'off'));render();return}
+ if(k==='Alt'){alt=!alt;setStatus('Alt '+(alt?'on':'off'));render();return}
+ if(k==='⇧'){
+  const now=Date.now();
+  if(capsLock){capsLock=false;shift=false;lastShiftTap=0}
+  else if(now-lastShiftTap<420){capsLock=true;shift=false;lastShiftTap=0}
+  else{shift=!shift;lastShiftTap=now}
+  setStatus(capsLock?'Caps Lock on':shift?'Shift on':'Shift off');render();renderLiveKeyboard();return
+ }
+ if(k==='Esc'){ctrl=false;alt=false;shift=false;setStatus('Esc');render();return}
+ if(k==='🎙️'||k==='🎙'||k==='🌐'){toggleVoice();return}
+ if(emojiOpen){
+  if(k==='ABC'){emojiOpen=false;render();renderLiveKeyboard();setStatus('Letter keyboard restored');return}
+  insert(k);updateAutoShift();return;
+ }
+ if(k==='😀'||k==='Emoji'){emojiOpen=true;render();renderLiveKeyboard();setStatus('Emoji picker open');return}
+ if(k==='123'||k==='ABC'){symbolPage=k==='123';symbolsSecondPage=false;render();renderLiveKeyboard();setStatus(symbolPage?'Symbol keyboard open. Tap ABC to return.':'Letter keyboard open.');return}
+ if(k==='1/2'||k==='2/2'){symbolPage=true;symbolsSecondPage=k==='1/2';render();renderLiveKeyboard();setStatus('Symbol page '+(symbolsSecondPage?'2':'1')+'/2');return}
+ if(ctrl){const c=k.toLowerCase();if(c==='a')command('selectAll');else if(c==='c')copySelection(false);else if(c==='x')copySelection(true);else if(c==='v')pasteLatest();else if(c==='z')command('undo');else if(c==='y')command('redo');else setStatus('Ctrl+'+k+' may not be supported in the browser');ctrl=false;render();return}
+ if(currentLayoutVariant()==='pc'&&shift&&pcShiftedSymbols[k]){
+  insert(pcShiftedSymbols[k]);shift=false;updateAutoShift();return;
+ }
+ if(k==='⌫'){command('delete');updateAutoShift();return}
+ if(k==='Delete'||k==='Del'){command('forwardDelete');updateAutoShift();return}
+ if(k==='↵'){insert('\n');updateAutoShift();return}
+ if(k==='Tab'){insert('\t');updateAutoShift();return}
+ if(k==='space'){insert(' ');updateAutoShift();return}
+ if(['Home','End','←','→','↑','↓','PgUp','PgDn'].includes(k)){
+  focusPaper();const sel=window.getSelection();
+  if(sel&&sel.modify){
+   const direction=['←','↑','Home','PgUp'].includes(k)?'backward':'forward';
+   const granularity=['Home','End'].includes(k)?'lineboundary':['PgUp','PgDn'].includes(k)?'paragraph':['↑','↓'].includes(k)?'line':'character';
+   try{sel.modify('move',direction,granularity)}catch{}
+  }
+  updateAutoShift();return;
+ }
+ insert(shift||capsLock?k.toUpperCase():k);
+ ctrl=false;alt=false;updateAutoShift();
+}
+$('configure').onclick=()=>{editing=!editing;if(editing){symbolPage=false;symbolsSecondPage=false;$('comboPop').hidden=true} $('editor').hidden=!editing;$('configure').textContent=editing?'✓ Finish configuring':'⚙ Configure';selected=null;render();setStatus(editing?'Tap a key, then tap a second key to swap positions.':'Test mode enabled')};$('applyKey').onclick=()=>{if(!selected)return setStatus('Select a key first');let v=$('keyValue').value.trim();if(!v)return;layout()[selected[0]][selected[1]]=v;selected=null;persist();render();renderLiveKeyboard();setStatus('Key updated')};$('extraRows').onchange=e=>{extras=e.target.checked;render()};$('resetLayout').onclick=()=>{profiles[profile][mode]=clone(defaults[mode]);persist();selected=null;render()};$('profiles').onchange=e=>{profile=e.target.value;render()};$('saveProfile').onclick=()=>{persist();setStatus('Profile saved')};$('newProfile').onclick=()=>{const name=prompt('New profile name');if(!name||!name.trim())return;profile=name.trim();profiles[profile]=clone(profiles.Default);persist();render()};$('newDoc').onclick=()=>{if(paper.textContent&&!confirm('Start a new blank document?'))return;paper.innerHTML='';focusPaper()};$('exportJson').onclick=()=>{const blob=new Blob([JSON.stringify({version:2,profiles,combosByProfile},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='devboard-layouts.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};$('importJson').onclick=()=>$('file').click();$('file').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!data.profiles||typeof data.profiles!=='object')throw Error('Invalid JSON');profiles=data.profiles;profile=Object.keys(profiles)[0];if(data.combosByProfile&&typeof data.combosByProfile==='object')combosByProfile=data.combosByProfile;persist();storeCombos();render();setStatus('JSON imported')}catch(err){setStatus('Import error: '+err.message)}};
+let screen='test',appTab='home';
+function setScreen(next){
+ screen=next;
+ $('apphome').hidden=next!=='app';
+ $('docbar').hidden=next!=='test';
+ paper.hidden=next!=='test';
+ $('keyboard').hidden=next!=='test';
+ 
+ 
+ if(next==='app')renderApp();else {render();focusPaper()}
+}
+function renderApp(){
+ const root=$('apphome');
+ const nav=`<div class="appnav">${[['home','Home'],['layout','Layout'],['style','Appearance']].map(([id,label])=>`<button data-tab="${id}" class="${appTab===id?'active':''}">${label}</button>`).join('')}</div>`;
+ let body='';
+ if(appTab==='home')body=`<div class="apphero"><div class="appbadge">DEVBOARD • ANDROID KEYBOARD</div><h2>Your keyboard.<br>Your rules.</h2><p>Coding, terminal, and everyday writing in one keyboard.</p></div><div class="appsection">Quick actions</div><button class="apptile" id="quickTest"><span>⌨ Try keyboard<small>Type in the blank document</small></span>›</button><button class="apptile" id="quickLayout"><span>▦ Edit keys<small>Configure ir drag & drop</small></span>›</button><div class="appsection">Active settings</div><div class="settingline"><span>Profile</span><strong>${escapeHtml(profile)}</strong></div><div class="settingline"><span>Mode</span><strong>${mode}</strong></div><div class="settingline"><span>Privacy</span><strong>Offline</strong></div>`;
+ if(appTab==='layout')body=`<div class="appsection">Keyboard layout</div><div class="settingline"><span>Active mode</span><select id="appMode">${['Normal','Code','Terminal'].map(m=>`<option ${m===mode?'selected':''}>${m}</option>`).join('')}</select></div><div class="settingline"><span>Profile</span><select id="appProfile">${Object.keys(profiles).map(p=>`<option ${p===profile?'selected':''}>${escapeHtml(p)}</option>`).join('')}</select></div><button class="apptile" id="quickLayout"><span>⚙ Configure<small>Edit keys in the layout editor</small></span>›</button><button class="apptile" id="quickTest"><span>⌨ Test changes<small>Open blank document</small></span>›</button>`;
+ if(appTab==='style')body=`<div class="appsection">Keyboard theme</div><div class="settingline"><span>Color theme</span><select id="appTheme">${keyboardThemes.map(([id,name])=>`<option value="${id}">${name}</option>`).join('')}</select></div><div class="settingline"><span>Extra keys</span><input id="appExtras" type="checkbox" ${extras?'checked':''}></div><button class="apptile" id="quickTest"><span>👁 Preview keyboard<small>Changes appear instantly in the preview</small></span>›</button>`;
+ root.innerHTML=nav+body;
+ root.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{appTab=b.dataset.tab;renderApp()});
+ if($('quickTest'))$('quickTest').onclick=()=>setScreen('test');
+ if($('quickLayout'))$('quickLayout').onclick=()=>{setScreen('test');if(!editing)$('configure').click()};
+ 
+ if($('appProfile'))$('appProfile').onchange=e=>{profile=e.target.value;renderApp()};
+ if($('appExtras'))$('appExtras').onchange=e=>{extras=e.target.checked;$('extraRows').checked=extras};
+ if($('appTheme')){$('appTheme').value=pref.theme;$('appTheme').onchange=e=>{applyTheme(e.target.value)}}
+}
+function escapeHtml(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const keyboardThemes=[
+ ['navy','Midnight','#151d2b','#303e54','#435575','#f5f7fc','#40516a'],
+ ['graphite','Graphite','#18191e','#383a42','#51545e','#f3f3f3','#666973'],
+ ['terminal','Terminal Green','#071b15','#154b38','#267d57','#96ffce','#247959'],
+ ['cyber','Neon Cyan','#071d29','#11445c','#187f9e','#d9faff','#31a4c9'],
+ ['violet','Cyber Violet','#1b142b','#45335f','#6c4d9c','#f7edff','#7a62b0'],
+ ['amber','Amber Console','#271a10','#57402b','#936a37','#ffebbd','#a37942'],
+ ['ice','Frost','#dae4ef','#f6faff','#bcd3e7','#1b3558','#9bb4cc'],
+ ['rose','Neon Pink','#241225','#592852','#a3468c','#fff0fd','#b451a1'],
+ ['slate','Steel','#121f2e','#33475a','#506e89','#eff7ff','#5a7897'],
+ ['carbon','Carbon','#0e0f11','#25272b','#41444c','#ededed','#4c4f58'],
+ ['cobalt','Cobalt','#101d44','#24488a','#4264a5','#f3f8ff','#5578bc'],
+ ['forest','Forest','#101e17','#2f4f38','#426e4e','#edffeb','#5d885e'],
+ ['copper','Copper','#251918','#503734','#8b5247','#ffe9df','#a46b61'],
+ ['sunset','Sunset','#2b1723','#70394c','#b76a5e','#ffede4','#c07a77'],
+ ['sakura','Sakura','#332132','#684966','#9b658b','#fff0f8','#bf93ad'],
+ ['sand','Sand','#ddd3bc','#f9f1dd','#c6b595','#363126','#ac9d83'],
+ ['ocean','Ocean','#0c2530','#1a5963','#2d7982','#e2fcff','#4194a2'],
+ ['mono','Monochrome','#1a1a1a','#eeeeee','#aaaaaa','#181818','#999999'],
+ ['ascii','Colorful ASCII','#080e1c','#152139','#25334f','#f0f7ff','#445575']
+];
+
+function renderLiveKeyboard(){
+ const root=$('liveKeyboard');if(!root)return;root.replaceChildren();
+ function miniRow(values,extraClass=''){
+  if(!values.length)return;
+  const div=document.createElement('div');div.className='mini-keyrow '+extraClass;
+  for(const val of values){
+   const key=document.createElement('div');
+   key.className='mini-key'+(val==='space'?' space':'')+(val.length>1||['⇧','⌫','↵'].includes(val)?' special':'')+
+    (extraClass==='preview-toolbar'||extraClass==='preview-fn'||extraClass==='preview-combo'?' terminal':'');
+   if(val==='space')key.innerHTML='<span class="space-inner"><span>&lt;</span><span>Space</span><span>&gt;</span></span>';
+   else key.textContent=val.length===1&&/^\p{L}$/u.test(val)?((shift||capsLock)?val.toUpperCase():val.toLowerCase()):val;
+   if(accents[val]&&pref.lang==='lt-LT'&&currentLayoutVariant()==='pc'){
+    const hint=document.createElement('span');hint.className='mini-accent';hint.textContent=accents[val][0];key.appendChild(hint);
+   }
+   div.appendChild(key);
+  }
+  root.appendChild(div);
+ }
+ miniRow(['⚙','+ Combo','Fn','📎','📋','⭐',pref.lang==='lt-LT'?'LT 🎙':'EN 🎙'],'preview-toolbar');
+ if(functionKeys)miniRow(Array.from({length:8},(_,i)=>'F'+(i+1)),'preview-fn');
+ const activeCombos=currentCombos().filter(c=>c.enabled!==false);
+ for(let i=0;i<activeCombos.length;i+=4)
+  miniRow(activeCombos.slice(i,i+4).map(c=>c.name||comboSummary(c)),'preview-combo');
+ const rows=emojiOpen?(emojiCatalog.length?Array.from({length:4},(_,i)=>emojiOptions().slice(i*8,i*8+8).map(x=>x[0])):emojiRows):
+  symbolPage?symbolPages[symbolsSecondPage?1:0]:effectiveLayoutRows();
+ const content=(extras||emojiOpen)?rows:rows.filter((_,i)=>mode==='Code'?i!==0:i>1);
+ for(const row of content)miniRow(row,row.join('')==='1234567890'?'numbers':'');
+ $('liveLanguage').textContent=(pref.lang==='lt-LT'?'LT':'EN')+' '+currentLayoutVariant().toUpperCase()+' · '+(emojiOpen?'Emoji':symbolPage?'Symbols':mode)+
+  (functionKeys?' · Fn':'')+(activeCombos.length?' · '+activeCombos.length+' Combo':'');
+}
+function themeIndex(){return Math.max(0,keyboardThemes.findIndex(x=>x[0]===pref.theme))}
+function updateLiveThemeName(){
+ const selected=keyboardThemes[themeIndex()];if(!selected)return;
+ $('selectedThemeName').textContent=selected[1];
+ $('themeCounter').textContent=(themeIndex()+1)+' / '+keyboardThemes.length+' · '+selected[1];
+}
+function changeTheme(delta){
+ const next=(themeIndex()+delta+keyboardThemes.length)%keyboardThemes.length;
+ applyTheme(keyboardThemes[next][0]);renderThemeGrid();
+ const active=$('themeGrid')?.querySelector('.theme-option.active');active?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function swipeTheme(element){
+ let startX=null,startY=null;
+ element.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY},{passive:true});
+ element.addEventListener('touchend',e=>{if(startX===null)return;const dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;startX=null;
+ if(Math.abs(dx)>35&&Math.abs(dx)>Math.abs(dy)*1.3)changeTheme(dx<0?1:-1)},{passive:true});
+}
+$('themePrev').onclick=()=>changeTheme(-1);
+$('themeNext').onclick=()=>changeTheme(1);
+$('railPrev').onclick=()=>$('themeGrid').scrollBy({left:-235,behavior:'smooth'});
+$('railNext').onclick=()=>$('themeGrid').scrollBy({left:235,behavior:'smooth'});
+swipeTheme($('liveKeyboard'));
+const defaultPref={theme:'ascii',fontSize:12,keyHeight:38,keyGap:3,keyRadius:6,numberOffset:8,lang:'lt-LT',rejectCyrillic:true,pressAnimation:true,layoutVariants:{'lt-LT':'pc','en-US':'qwerty'}};
+let pref={...defaultPref};try{pref={...pref,...JSON.parse(localStorage.getItem('devboard-settings-v09')||'{}')};if(!localStorage.getItem('devboard-v11-ascii-initialized')){pref.theme='ascii';localStorage.setItem('devboard-v11-ascii-initialized','1')}}catch{}
+let recognition=null,listening=false,voiceRequested=false,lastCaret=null;
+function persistSettings(){try{localStorage.setItem('devboard-settings-v09',JSON.stringify(pref))}catch{}}
+function renderThemeGrid(){const grid=$('themeGrid');grid.replaceChildren();for(const [id,name,bg,key,special,fg] of keyboardThemes){const btn=document.createElement('button');btn.className='theme-option'+(pref.theme===id?' active':'')+(id==='ascii'?' ascii-swatch':'');btn.type='button';btn.setAttribute('aria-pressed',pref.theme===id?'true':'false');const swatch=document.createElement('div');swatch.className='swatch';swatch.style.background=bg;for(const chr of ['A','1','↵']){const item=document.createElement('span');item.style.background=chr==='↵'?special:key;item.style.color=fg;item.textContent=chr;swatch.append(item)}const label=document.createElement('span');label.textContent=name;btn.append(swatch,label);btn.onclick=()=>{applyTheme(id);renderThemeGrid()};grid.append(btn)}updateLiveThemeName();requestAnimationFrame(()=>{const active=grid.querySelector('.theme-option.active');if(active&&grid.clientWidth){grid.scrollTo({left:Math.max(0,active.offsetLeft-grid.offsetLeft-(grid.clientWidth-active.offsetWidth)/2),behavior:'instant'})}})}
+function applyTheme(theme){
+ const selected=keyboardThemes.find(t=>t[0]===theme)||keyboardThemes[0];
+ const [, ,bg,key,special,fg,border]=selected;
+ for(const [cssvar,value] of [['--kb-bg',bg],['--kb-key',key],['--kb-special',special],['--kb-text',fg],['--kb-border',border]])document.documentElement.style.setProperty(cssvar,value);
+ pref.theme=selected[0];$('keyboard').classList.toggle('ascii-theme',pref.theme==='ascii');$('liveKeyboard').classList.toggle('ascii-theme',pref.theme==='ascii');document.documentElement.style.setProperty('--kb-font',pref.fontSize+'px');document.documentElement.style.setProperty('--kb-height',pref.keyHeight+'px');document.documentElement.style.setProperty('--kb-gap',pref.keyGap+'px');document.documentElement.style.setProperty('--kb-radius',pref.keyRadius+'px');document.documentElement.style.setProperty('--number-offset',pref.numberOffset+'px');
+ persistSettings();updateLiveThemeName();
+}
+function syncSettingControls(){for(const key of ['fontSize','keyHeight','keyGap','keyRadius','numberOffset']){$(key).value=pref[key];$(key+'Val').textContent=pref[key]+' px'}$('voiceLang').value=pref.lang;$('layoutVariant').value=currentLayoutVariant();$('rejectCyrillic').checked=pref.rejectCyrillic;$('showExtras').checked=extras;$('pressAnimation').checked=pref.pressAnimation!==false;render();renderLiveKeyboard();renderThemeGrid();const supported=!!(window.SpeechRecognition||window.webkitSpeechRecognition);$('voiceSupport').textContent=supported?'🎙️ This browser provides speech recognition. Actual language support depends on the device.':'⚠️ This browser does not support speech recognition. Try the latest Chrome on Android.'}
+
+async function refreshMicPermissionStatus(){
+ const status=$('micPermissionStatus');if(!status)return;
+ status.classList.remove('granted','denied');
+ status.textContent='Not checked';
+ if(!navigator.permissions?.query)return;
+ try{
+  const result=await navigator.permissions.query({name:'microphone'});
+  status.textContent=result.state==='granted'?'Permissions Granted':result.state==='denied'?'Permission Denied':'Permission Needed';
+  status.classList.add(result.state==='granted'?'granted':result.state==='denied'?'denied':'pending');
+  result.onchange=refreshMicPermissionStatus;
+ }catch{status.textContent='Status unavailable'}
+}
+$('permissionOpen').onclick=async()=>{
+ const status=$('micPermissionStatus');
+ if(!navigator.mediaDevices?.getUserMedia){
+  status.textContent='Browser unsupported';return;
+ }
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  stream.getTracks().forEach(t=>t.stop());
+  await refreshMicPermissionStatus();
+  setStatus('Browser microphone access allowed');
+ }catch(error){
+  await refreshMicPermissionStatus();
+  setStatus('Browser microphone access not granted: '+(error.name||'Permission denied'));
+ }
+};
+$('settingsOpen').onclick=()=>{refreshMicPermissionStatus();closeAccents();$('clipDrawer').hidden=true;$('langPop').hidden=true;$('phoneSettings').hidden=false;syncSettingControls()};
+$('settingsClose').onclick=()=>{$('phoneSettings').hidden=true;focusPaper()};
+
+// Browser cannot enumerate installed Android IMEs. Show examples only.
+// The native app uses InputMethodManager.showInputMethodPicker() instead.
+let previewKeyboard='DevBoard';
+const demoImeNames=['DevBoard','Samsung Keyboard (example)','Gboard (example)'];
+function renderDemoKeyboardPicker(){
+ const target=$('demoKeyboardOptions');target.replaceChildren();
+ demoImeNames.forEach(name=>{
+  const b=document.createElement('button');b.type='button';
+  b.className='demo-ime'+(previewKeyboard===name?' active':'');
+  const label=document.createElement('span');label.textContent=name;
+  const state=document.createElement('small');state.textContent=previewKeyboard===name?'✓ Preview selection':'Choose in demo';
+  b.append(label,state);
+  b.onclick=()=>{
+   previewKeyboard=name;
+   $('keyboardPickerStatus').textContent='Demo choice: '+name+'. The keyboard displayed is still DevBoard. Real switching is available only in the Android APK.';
+   renderDemoKeyboardPicker();
+  };
+  target.append(b);
+ });
+}
+function setKeyboardPickerExpanded(expanded){
+ $('systemKeyboardPicker').hidden=!expanded;
+ $('chooseSystemKeyboard').textContent=expanded?'▾ Installed keyboards':'▸ Installed keyboards';
+ $('chooseSystemKeyboard').setAttribute('aria-expanded',String(expanded));
+ if(expanded)renderDemoKeyboardPicker();
+}
+$('chooseSystemKeyboard').onclick=()=>setKeyboardPickerExpanded($('systemKeyboardPicker').hidden);
+$('closeKeyboardPicker').onclick=()=>setKeyboardPickerExpanded(false);
+
+for(const key of ['fontSize','keyHeight','keyGap','keyRadius','numberOffset'])$(key).oninput=e=>{pref[key]=Number(e.target.value);$(key+'Val').textContent=pref[key]+' px';applyTheme(pref.theme)};
+$('voiceLang').onchange=e=>setLang(e.target.value);
+$('layoutVariant').onchange=e=>{
+ pref.layoutVariants={...defaultPref.layoutVariants,...pref.layoutVariants,[pref.lang]:e.target.value};
+ persistSettings();render();renderLiveKeyboard();setStatus('Keyboard layout: '+pref.lang+' '+e.target.value.toUpperCase());
+};
+$('rejectCyrillic').onchange=e=>{pref.rejectCyrillic=e.target.checked;persistSettings()};
+$('showExtras').onchange=e=>{extras=e.target.checked;$('extraRows').checked=extras;render();renderLiveKeyboard()};
+$('pressAnimation').onchange=e=>{pref.pressAnimation=e.target.checked;persistSettings();render()};
+$('saveSettings').onclick=()=>{persistSettings();setStatus('Settings saved');$('phoneSettings').hidden=true};
+$('openLayout').onclick=()=>{$('phoneSettings').hidden=true;if(!editing)$('configure').click()};
+$('resetSettings').onclick=()=>{pref={...defaultPref};applyTheme(pref.theme);syncSettingControls();render();setStatus('Appearance reset')};
+function setLang(lang){if(!['lt-LT','en-US'].includes(lang))return;pref.lang=lang;persistSettings();$('langPop').hidden=true;$('voiceLang').value=lang;$('layoutVariant').value=currentLayoutVariant();updateToolbarMic();render();renderLiveKeyboard();setStatus('Language: '+(lang==='lt-LT'?'Lithuanian':'English'))}
+function openLangPopup(){if(editing)return;longTriggered=true;$('langPop').hidden=false;closeAccents();for(const b of $('langPop').querySelectorAll('[data-lang]'))b.textContent=(b.dataset.lang===pref.lang?'✓ ':'')+(b.dataset.lang==='lt-LT'?'🇱🇹 Lithuanian (LT)':'🇬🇧 English (EN)')}
+for(const b of $('langPop').querySelectorAll('[data-lang]')){b.onpointerdown=e=>e.preventDefault();b.onclick=()=>setLang(b.dataset.lang)}
+document.addEventListener('pointerdown',e=>{if(!$('langPop').contains(e.target)&&!e.target.closest('.key.space')&&!e.target.closest('#toolbarMic'))$('langPop').hidden=true});
+let micStream=null,audioContext=null,micAnalyser=null,voiceFrame=null,voiceError='';
+function voiceSignal(level){
+ const bar=$('voiceMeter');const bars=Array.from(bar.children);const detected=level>.045;
+ bar.classList.toggle('active',detected);
+ $('voiceActivity').classList.toggle('hearing',detected);
+ $('voiceActivity').textContent=detected?'● Voice detected':'● Listening for voice…';
+ bars.forEach((el,i)=>{const wave=Math.pow(Math.abs(Math.sin(i*.72+performance.now()*.006)),1.4);el.style.height=Math.max(4,Math.min(32,3+level*180*(.35+.65*wave)))+'px'});
+}
+function beginVoiceMeter(stream){
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  audioContext=new AC();const source=audioContext.createMediaStreamSource(stream);
+  micAnalyser=audioContext.createAnalyser();micAnalyser.fftSize=512;micAnalyser.smoothingTimeConstant=.72;source.connect(micAnalyser);
+  const data=new Uint8Array(micAnalyser.fftSize);
+  function update(){if(!micAnalyser)return;micAnalyser.getByteTimeDomainData(data);let energy=0;for(const v of data){const x=(v-128)/128;energy+=x*x}voiceSignal(Math.sqrt(energy/data.length));voiceFrame=requestAnimationFrame(update)}
+  update();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+ }catch(e){$('voiceActivity').textContent='Audio level meter unavailable'}
+}
+function releaseVoiceAudio(){
+ if(voiceFrame!==null){cancelAnimationFrame(voiceFrame);voiceFrame=null}
+ micAnalyser=null;
+ if(micStream){for(const track of micStream.getTracks())track.stop();micStream=null}
+ if(audioContext){audioContext.close().catch(()=>{});audioContext=null}
+ $('voiceMeter').classList.remove('active');for(const b of $('voiceMeter').children)b.style.height='5px';
+}
+async function startVoice(){
+ if(editing){setStatus('Exit Configure mode before dictating');return}
+ const API=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!API){setStatus('Speech-to-text is unavailable in this browser. Try Chrome on Android over HTTPS.');$('voicePop').hidden=false;$('voiceTitle').textContent='Dictation unavailable';$('voiceActivity').textContent='Speech recognition not supported';$('voicePreview').textContent='Try Chrome on Android using an HTTPS page.';return}
+ if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){
+  $('voicePop').hidden=false;$('voiceTitle').textContent='Secure connection required';$('voiceActivity').textContent='Microphone not available';$('voicePreview').textContent='Open this simulator from an HTTPS web address (or localhost). A downloaded HTML preview may not request microphone access.';
+  setStatus('Microphone requires HTTPS/localhost and browser permission');return
+ }
+ if(recognition)try{recognition.abort()}catch{}
+ voiceRequested=true;listening=false;voiceError='';
+ $('voicePop').hidden=false;$('voiceTitle').textContent='Microphone permission';$('voiceActivity').textContent='Waiting for permission…';$('voicePreview').textContent='Tap Allow when the browser requests microphone access.';
+ setStatus('Requesting microphone permission…');
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+  if(!voiceRequested){stream.getTracks().forEach(t=>t.stop());return}
+  micStream=stream;beginVoiceMeter(stream);
+  recognition=new API();recognition.lang=pref.lang;recognition.continuous=true;recognition.interimResults=true;recognition.maxAlternatives=1;
+  recognition.onstart=()=>{if(!voiceRequested)return;listening=true;$('voiceTitle').textContent='Listening… '+(pref.lang==='lt-LT'?'LT':'EN');$('voiceActivity').textContent='● Listening for voice…';$('voicePreview').textContent='Speak now. Recognized text will appear in the document.';render();setStatus('Microphone on · listening')};
+  recognition.onresult=ev=>{let temporary='';for(let i=ev.resultIndex;i<ev.results.length;i++){const result=ev.results[i];const text=result[0]?.transcript?.trim()||'';if(!text)continue;
+    if(result.isFinal){if(pref.lang==='lt-LT'&&pref.rejectCyrillic&&/[\u0400-\u052f]/u.test(text)){$('voicePreview').textContent='Cyrillic detected. Text was not inserted.';setStatus('Cyrillic output blocked in LT mode');continue}insert(text+' ');$('voicePreview').textContent='✓ '+text}
+    else temporary+=text+' ';
+  }if(temporary)$('voicePreview').textContent=temporary};
+  recognition.onerror=e=>{
+   const messages={'not-allowed':'Microphone permission denied. Enable it in browser settings.','service-not-allowed':'Speech recognition service is unavailable.','language-not-supported':'Selected language is not supported in this browser.','no-speech':'No speech detected. Try again.','network':'Speech recognition network error.','audio-capture':'Microphone is unavailable.'};
+   voiceError=messages[e.error]||('Dictation error: '+e.error);$('voicePreview').textContent=voiceError;setStatus(voiceError);
+   if(e.error!=='no-speech')voiceRequested=false;
+  };
+  recognition.onend=()=>{listening=false;voiceRequested=false;releaseVoiceAudio();render();if(!voiceError){$('voiceActivity').textContent='Microphone off';setStatus('Dictation stopped')}else $('voiceActivity').textContent='Dictation error';};
+  recognition.start();
+ }catch(e){
+  voiceRequested=false;listening=false;voiceError='';releaseVoiceAudio();
+  const msg=e?.name==='NotAllowedError'?'Microphone permission denied. Use browser site settings to allow it.':e?.name==='NotFoundError'?'No microphone was found.':'Unable to access microphone: '+(e.message||e.name);
+  $('voiceTitle').textContent='Microphone unavailable';$('voiceActivity').textContent='Permission or device error';$('voicePreview').textContent=msg;setStatus(msg);render();
+ }
+}
+function stopVoice(){voiceRequested=false;if(recognition){try{recognition.abort()}catch{}}listening=false;releaseVoiceAudio();render();$('voicePop').hidden=true;setStatus('Dictation stopped')}
+function updateToolbarMic(){const b=$('toolbarMic');if(!b)return;b.textContent=(pref.lang==='lt-LT'?'LT':'EN')+(listening?' 🎙 LIVE':' 🎙');b.classList.toggle('speaking',listening)}
+let toolbarMicTimer=null,toolbarMicHeld=false;
+$('toolbarMic').addEventListener('pointerdown',()=>{toolbarMicHeld=false;clearTimeout(toolbarMicTimer);toolbarMicTimer=setTimeout(()=>{toolbarMicHeld=true;openLangPopup()},520)});
+for(const eventName of ['pointerup','pointercancel','pointerleave'])$('toolbarMic').addEventListener(eventName,()=>clearTimeout(toolbarMicTimer));
+$('toolbarMic').onclick=()=>{if(toolbarMicHeld){toolbarMicHeld=false;return}toggleVoice()};
+$('toolbarMic').oncontextmenu=e=>{e.preventDefault();openLangPopup()};
+function toggleVoice(){if(listening||voiceRequested){stopVoice()}else startVoice()}
+$('voiceStop').onclick=stopVoice;
+
+
+// Saved keyboard combos, shared between the current profile and JSON export.
+const comboStorageKey='devboard-combos-v12';
+let combosByProfile={};
+try{const saved=JSON.parse(localStorage.getItem(comboStorageKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))combosByProfile=saved}catch{}
+function currentCombos(){return Array.isArray(combosByProfile[profile])?combosByProfile[profile]:[]}
+function storeCombos(){try{localStorage.setItem(comboStorageKey,JSON.stringify(combosByProfile))}catch{}renderComboBar();renderComboList();renderLiveKeyboard()}
+const comboKeyOptions=[...Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ'),...Array.from('0123456789'),'Tab','Enter','Escape','Space','Backspace','Delete','Home','End','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','PageUp','PageDown','/','\\','[',']','{','}','-','=','.',',',';'];
+let comboEditIndex=-1,comboRecording=false,comboDraft={ctrl:false,alt:false,shift:false,key:''};
+function comboSummary(c){return `${[c.ctrl?'Ctrl':null,c.alt?'Alt':null,c.shift?'Shift':null,c.key].filter(Boolean).join(' + ')}`}
+function renderComboBar(){
+ const strip=$('comboBar');if(!strip)return;strip.replaceChildren();const data=currentCombos().filter(c=>c.enabled!==false);
+ strip.hidden=!data.length;
+ for(const combo of data){const b=document.createElement('button');b.type='button';b.title=comboSummary(combo);b.textContent=combo.name||comboSummary(combo);b.onpointerdown=e=>e.preventDefault();b.onclick=()=>runCombo(combo);strip.appendChild(b)}
+}
+function renderComboList(){
+ const root=$('comboList');if(!root)return;root.replaceChildren();const data=currentCombos();
+ if(!data.length){const p=document.createElement('p');p.className='combo-help';p.textContent='No saved combos yet.';root.append(p);return}
+ data.forEach((combo,index)=>{
+  const row=document.createElement('div');row.className='combo-items';
+  const label=document.createElement('span');label.textContent=combo.name||'Combo';
+  const detail=document.createElement('small');detail.textContent=comboSummary(combo);label.append(document.createElement('br'),detail);
+  const enabled=document.createElement('input');enabled.type='checkbox';enabled.checked=combo.enabled!==false;
+  enabled.title='Show shortcut on keyboard';enabled.setAttribute('aria-label','Enable '+(combo.name||'combo'));
+  enabled.onchange=()=>{combo.enabled=enabled.checked;storeCombos();setStatus(enabled.checked?'Combo enabled':'Combo disabled')};
+  const edit=document.createElement('button');edit.textContent='Edit';edit.onclick=()=>editCombo(index);
+  const del=document.createElement('button');del.textContent='✕';del.title='Delete combo';del.onclick=()=>{
+   combosByProfile[profile].splice(index,1);storeCombos();setStatus('Combo deleted')
+  };
+  row.append(label,enabled,edit,del);root.append(row);
+ });
+}
+function comboDisplay(draft){
+ return [draft.ctrl?'Ctrl':null,draft.alt?'Alt':null,draft.shift?'Shift':null,draft.key||null].filter(Boolean).join(' + ');
+}
+function recordComboKey(key){
+ if(!comboRecording||$('comboPop').hidden)return false;
+ const normalized=key==='⇧'?'Shift':key==='⌫'?'Backspace':key==='↵'?'Enter':key===' '||key==='space'?'Space':key==='Esc'?'Escape':key==='PgUp'?'PageUp':key==='PgDn'?'PageDown':
+  ({'←':'ArrowLeft','→':'ArrowRight','↑':'ArrowUp','↓':'ArrowDown'}[key]||key);
+ if(['Ctrl','Control','Alt','Shift'].includes(normalized)){
+  const prop=normalized==='Control'?'ctrl':normalized.toLowerCase();
+  comboDraft[prop]=!comboDraft[prop];comboDraft.key='';
+ }else if(comboKeyOptions.includes(normalized.toUpperCase())||comboKeyOptions.includes(normalized)){
+  comboDraft.key=normalized.length===1?normalized.toUpperCase():normalized;
+ }else return false;
+ $('comboAction').value=comboDisplay(comboDraft);
+ return true;
+}
+function editCombo(i){
+ comboEditIndex=i;const c=currentCombos()[i];
+ $('comboName').value=c?.name||'';
+ comboDraft={ctrl:!!c?.ctrl,alt:!!c?.alt,shift:!!c?.shift,key:c?.key||''};
+ comboRecording=true;$('comboPop').hidden=false;
+ $('comboAction').value=comboDisplay(comboDraft);
+ $('comboSave').textContent=i<0?'Save combo':'Update combo';
+ renderComboList();
+}
+$('comboAction').onfocus=()=>{comboRecording=true};
+document.addEventListener('keydown',e=>{
+ if($('comboPop').hidden||!comboRecording||e.target===$('comboName'))return;
+ if(e.key==='Escape'&&e.target!==$('comboAction'))return;
+ if(e.repeat)return;
+ e.preventDefault();
+ if(e.ctrlKey)comboDraft.ctrl=true;
+ if(e.altKey)comboDraft.alt=true;
+ if(e.shiftKey&&e.key!=='Shift')comboDraft.shift=true;
+ recordComboKey(e.key);
+});
+$('comboOpen').onclick=()=>{closeAccents();$('langPop').hidden=true;$('phoneSettings').hidden=true;$('clipDrawer').hidden=true;editCombo(-1)};
+$('comboClose').onclick=()=>{comboRecording=false;$('comboPop').hidden=true};
+$('comboCancel').onclick=()=>{comboRecording=false;$('comboPop').hidden=true};
+$('comboSave').onclick=()=>{
+ const name=$('comboName').value.trim(),key=comboDraft.key;
+ if(!name){setStatus('Enter a combo name');$('comboName').focus();return}
+ if(!key||!comboKeyOptions.includes(key)){setStatus('Press a shortcut key in Action');return}
+ const previous=currentCombos()[comboEditIndex];
+ const item={name,key,ctrl:comboDraft.ctrl,alt:comboDraft.alt,shift:comboDraft.shift,enabled:previous?.enabled!==false};
+ if(!Array.isArray(combosByProfile[profile]))combosByProfile[profile]=[];
+ if(comboEditIndex<0){if(currentCombos().length>=15){setStatus('Maximum 15 combos per profile');return}currentCombos().push(item)}
+ else currentCombos()[comboEditIndex]=item;
+ comboRecording=false;storeCombos();$('comboPop').hidden=true;
+ setStatus('Saved '+name+' ('+comboSummary(item)+')');
+};
+function runCombo(combo){
+ if(editing){setStatus('Finish Configure before running combos');return}
+ const key=combo.key,lower=key.toLowerCase(),chord=comboSummary(combo);
+ // Browser-only simulation of popular text-editing chords.
+ if(combo.ctrl&&!combo.alt){
+  if(lower==='a')command('selectAll');
+  else if(lower==='c')copySelection(false);
+  else if(lower==='x')copySelection(true);
+  else if(lower==='v')pasteLatest();
+  else if(lower==='z')command(combo.shift?'redo':'undo');
+  else if(lower==='y')command('redo');
+  else{setStatus(chord+' saved. This shortcut requires an Android target app to execute.');return}
+  setStatus('Combo: '+chord);return;
+ }
+ if(!combo.ctrl&&!combo.alt){
+  if(key==='Tab'){insert('\t');setStatus('Combo: '+chord);return}
+  if(key==='Enter'){insert('\n');setStatus('Combo: '+chord);return}
+  if(key==='Space'){insert(' ');setStatus('Combo: '+chord);return}
+  if(key.length===1){insert(combo.shift?key.toUpperCase():key.toLowerCase());setStatus('Combo: '+chord);return}
+  const lookup={ArrowLeft:'←',ArrowRight:'→',ArrowUp:'↑',ArrowDown:'↓',PageUp:'PgUp',PageDown:'PgDn',Escape:'Esc',Backspace:'⌫'};
+  if(lookup[key]){press(lookup[key]);setStatus('Combo: '+chord);return}
+ }
+ setStatus(chord+' saved. OS-level shortcuts will work only in the Android app when supported by the target.');
+}
+applyTheme(pref.theme);
+let selectedFile=null;
+const fileUrls=[];
+const sizeText=bytes=>bytes<1024?bytes+' B':bytes<1024*1024?(bytes/1024).toFixed(1)+' KB':(bytes/(1024*1024)).toFixed(1)+' MB';
+const escapeAttribute=text=>String(text).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+$('attachFile').onclick=()=>$('attachmentFile').click();
+$('attachmentFile').onchange=e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ const url=URL.createObjectURL(file);fileUrls.push(url);
+ selectedFile={file,url};
+ $('fileName').textContent=file.name;
+ $('fileMeta').textContent=(file.type||'Unknown file type')+' · '+sizeText(file.size);
+ const isImage=file.type.startsWith('image/');
+ $('fileThumb').hidden=!isImage;
+ $('fileIcon').hidden=isImage;
+ if(isImage)$('fileThumb').src=url;
+ else $('fileIcon').textContent=file.type==='application/pdf'?'📕':file.type.startsWith('audio/')?'🎵':file.type.startsWith('video/')?'🎬':/zip|compressed|archive/.test(file.type)?'🗜️':'📄';
+ $('filePreview').hidden=false;
+ e.target.value='';
+ setStatus('File selected: '+file.name+'. You can insert its temporary local link.');
+};
+$('closeFile').onclick=()=>{$('filePreview').hidden=true};
+$('insertFileLink').onclick=()=>{
+ if(!selectedFile)return;
+ const {file,url}=selectedFile;
+ const html='<a href="'+escapeAttribute(url)+'" download="'+escapeAttribute(file.name)+'">📎 '+escapeAttribute(file.name)+'</a>&nbsp;';
+ focusPaper();
+ if(!document.execCommand('insertHTML',false,html))insert(file.name+' ('+url+') ');
+ $('filePreview').hidden=true;
+ setStatus('Local file link inserted. The file was not uploaded or sent to any chat.');
+};
+window.addEventListener('pagehide',()=>fileUrls.forEach(url=>URL.revokeObjectURL(url)));
+paper.addEventListener('input',()=>{if(!editing)updateAutoShift()});
+render();
+</script></body></html>
+,'5':'%','6':'^','7':'&','8':'*','9':'(','0':')','-':'_','=':'+',',':'<','.':'>','/':'?',';':':',"'":'"','[':'{',']':'}'};
+function effectiveLayoutRows(){
+ const rows=layout().map(row=>row.slice());
+ if(editing||pref.lang!=='lt-LT'||currentLayoutVariant()!=='qwerty')return rows;
+ // Lithuanian Windows standard LST 1582. Physical positions Q→ą, W→ž,
+ // F→š, X→ū and the extra vowel/consonant keys remain directly accessible.
+ const indices=mode==='Terminal'?[3,4,5]:mode==='Code'?[1,2,3]:[0,1,2];
+ if(rows.length>indices[2]){
+  rows[indices[0]]=['ą','ž','e','r','t','y','u','i','o','p','į','w'];
+  rows[indices[1]]=['a','s','d','š','g','h','j','k','l','ų','ė','q'];
+  rows[indices[2]]=['⇧','z','ū','c','v','b','n','m','č','f','ę','⌫'];
+ }
+ return rows;
+}
+const symbolPages=[
  [ ['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','Delete','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','-','+','(',')','/'],['*','\"',"'",':',';','!','?','=','_','\\'],['{','}','[',']','<','>','|','~','^','`'],['ABC','😀',',','space','.','1/2','↵'] ],
  [ ['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','Delete','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['€','£','¥','¢','©','®','™','§','¶','°'],['±','×','÷','≠','≤','≥','∞','µ','•','…'],['<','>','[',']','{','}','|','\\','~','^'],['ABC','😀',',','space','.','2/2','↵'] ]
 ];
@@ -605,7 +1370,7 @@ $('themeNext').onclick=()=>changeTheme(1);
 $('railPrev').onclick=()=>$('themeGrid').scrollBy({left:-235,behavior:'smooth'});
 $('railNext').onclick=()=>$('themeGrid').scrollBy({left:235,behavior:'smooth'});
 swipeTheme($('liveKeyboard'));
-const defaultPref={theme:'ascii',fontSize:12,keyHeight:38,keyGap:3,keyRadius:6,numberOffset:8,lang:'lt-LT',rejectCyrillic:true,pressAnimation:true};
+const defaultPref={theme:'ascii',fontSize:12,keyHeight:38,keyGap:3,keyRadius:6,numberOffset:8,lang:'lt-LT',rejectCyrillic:true,pressAnimation:true,layoutVariants:{'lt-LT':'pc','en-US':'qwerty'}};
 let pref={...defaultPref};try{pref={...pref,...JSON.parse(localStorage.getItem('devboard-settings-v09')||'{}')};if(!localStorage.getItem('devboard-v11-ascii-initialized')){pref.theme='ascii';localStorage.setItem('devboard-v11-ascii-initialized','1')}}catch{}
 let recognition=null,listening=false,voiceRequested=false,lastCaret=null;
 function persistSettings(){try{localStorage.setItem('devboard-settings-v09',JSON.stringify(pref))}catch{}}
