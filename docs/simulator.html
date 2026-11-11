@@ -336,7 +336,7 @@ $('tabHistory').onclick=()=>setDrawerTab('history');
 $('tabSaved').onclick=()=>setDrawerTab('saved');
 $('snippetAdd').onclick=()=>editSnippet(-1);
 $('snippetCancel').onclick=()=>{$('snippetForm').hidden=true};
-$('snippetSave').onclick=()=>{const value=$('snippetText').value;if(!value.trim()){setStatus('Enter text to insert');return}const title=value.trim().replace(/\s+/g,' ').slice(0,80)if(editingSnippet>=0)snippets[editingSnippet]={title,text:value};else snippets.unshift({title,text:value});$('snippetForm').hidden=true;saveSnippets();setStatus('Saved snippet is ready to insert')};
+$('snippetSave').onclick=()=>{const value=$('snippetText').value;if(!value.trim()){setStatus('Enter text to insert');return}const title=value.trim().replace(/\s+/g,' ').slice(0,80);if(editingSnippet>=0)snippets[editingSnippet]={title,text:value};else snippets.unshift({title,text:value});$('snippetForm').hidden=true;saveSnippets();setStatus('Saved snippet is ready to insert')};
 const clipStoreKey='devboard-clips-v06';
 let clips=[];
 try{clips=JSON.parse(localStorage.getItem(clipStoreKey)||'[]');if(!Array.isArray(clips))clips=[]}catch{clips=[]}
