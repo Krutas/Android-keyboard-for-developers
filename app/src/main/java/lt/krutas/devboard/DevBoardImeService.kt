@@ -63,6 +63,23 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             repeatHandler.postDelayed(this, 65L)
         }
     }
+    private var repeatingArrow: String? = null
+    private var arrowRepeated = false
+    private val repeatArrowMovement = object : Runnable {
+        override fun run() {
+            val arrow = repeatingArrow ?: return
+            val code = when (arrow) {
+                "←" -> KeyEvent.KEYCODE_DPAD_LEFT
+                "→" -> KeyEvent.KEYCODE_DPAD_RIGHT
+                "↑" -> KeyEvent.KEYCODE_DPAD_UP
+                "↓" -> KeyEvent.KEYCODE_DPAD_DOWN
+                else -> return
+            }
+            arrowRepeated = true
+            hardware(code, activeModifiers())
+            repeatHandler.postDelayed(this, 65L)
+        }
+    }
     private var symbols = 0
     private var passwordField = false
     private var mic: SpeechRecognizer? = null
@@ -126,6 +143,9 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         punctuationPopup = null
         repeatingDelete = false
         repeatHandler.removeCallbacks(repeatDeletion)
+        repeatingArrow = null
+        arrowRepeated = false
+        repeatHandler.removeCallbacks(repeatArrowMovement)
         super.onFinishInputView(finishingInput)
     }
     override fun onDestroy() {
@@ -411,15 +431,13 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 val special = index < 2 || label.length > 1 || label in listOf("⇧", "⌫", "↵", "🎙", "😀")
                 val b = button(label, special, index * 13 + col)
                 b.isSoundEffectsEnabled = SettingsStore.prefs(this).getBoolean("sound", false)
-                var spaceTouchFraction = 0.5f
                 b.setOnClickListener {
-                    if (label == "Space") {
-                        when {
-                            spaceTouchFraction < 0.22f -> { commit("<"); return@setOnClickListener }
-                            spaceTouchFraction > 0.78f -> { commit(">"); return@setOnClickListener }
-                        }
-                    }
+                    // The < and > printed on Space are visual hints only.
                     if (label == "⌫" && deleteRepeated) { deleteRepeated = false; return@setOnClickListener }
+                    if (label in listOf("←", "→", "↑", "↓") && arrowRepeated) {
+                        arrowRepeated = false
+                        return@setOnClickListener
+                    }
                     if (SettingsStore.prefs(this).getBoolean("haptic", false)) {
                         b.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     }
@@ -429,11 +447,17 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 b.setOnTouchListener { view, event ->
                     when (event.actionMasked) {
                         MotionEvent.ACTION_DOWN -> {
-                            if (label == "Space") spaceTouchFraction =
-                                event.x / view.width.coerceAtLeast(1)
-                            view.animate().cancel()
-                            view.animate().scaleX(0.96f).scaleY(0.93f)
-                                .alpha(0.84f).setDuration(65L).start()
+                            if (SettingsStore.prefs(this).getBoolean("press_animation", true)) {
+                                view.animate().cancel()
+                                view.animate().scaleX(0.95f).scaleY(0.90f)
+                                    .alpha(0.79f).setDuration(70L).start()
+                            }
+                            if (label in listOf("←", "→", "↑", "↓")) {
+                                arrowRepeated = false
+                                repeatingArrow = label
+                                repeatHandler.removeCallbacks(repeatArrowMovement)
+                                repeatHandler.postDelayed(repeatArrowMovement, 430L)
+                            }
                             if (label == "⌫") {
                                 deleteRepeated = false
                                 repeatingDelete = true
@@ -441,9 +465,16 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                             }
                         }
                         MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                            view.animate().cancel()
-                            view.animate().scaleX(1f).scaleY(1f)
-                                .alpha(1f).setDuration(120L).start()
+                            if (SettingsStore.prefs(this).getBoolean("press_animation", true)) {
+                                view.animate().cancel()
+                                view.animate().scaleX(1f).scaleY(1f)
+                                    .alpha(1f).setDuration(120L).start()
+                            }
+                            if (label in listOf("←", "→", "↑", "↓")) {
+                                repeatingArrow = null
+                                repeatHandler.removeCallbacks(repeatArrowMovement)
+                                if (event.actionMasked == MotionEvent.ACTION_CANCEL) arrowRepeated = false
+                            }
                             if (label == "⌫") {
                                 repeatingDelete = false
                                 repeatHandler.removeCallbacks(repeatDeletion)
