@@ -4,7 +4,7 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Version:** 0.2.0 · [Download APK](releases/devboard-debug.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
+**Version:** 0.2.1 · [Download APK](releases/DevBoard-v0.2.1.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
 
 ## What it does
 
@@ -29,13 +29,18 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 
 Emoji appearance depends on OS font support; newly released Unicode 18.0 symbols may not render on older devices. Emoji data is bundled offline from [Unicode](https://www.unicode.org/Public/emoji/latest/emoji-test.txt) under the [Unicode License](https://www.unicode.org/license.txt).
 
+## New in 0.2.1
+
+- Emoji picker expanded to 3,963 Unicode emoji variants in 9 categories, plus recent emoji.
+- APK filename changed to `DevBoard-v0.2.1.apk`.
+
 ## Install on Android
 
-1. [Download the APK](releases/devboard-debug.apk) and install it.
+1. [Download the APK](releases/DevBoard-v0.2.1.apk) and install it.
 2. Open **DevBoard**, enable it in Android keyboard settings, and select it as your keyboard.
 3. Open any text field. Use **Settings** to customize it or **Profiles** to import layouts.
 
-This is a **debug-signed developer build**, not an app-store release. It needs on-device testing. Some terminal shortcuts depend on the receiving app. Files are shared through Android's chooser, not directly uploaded to an active chat.
+Despite the cleaner filename, this remains a **debug-signed developer build**, not an app-store release. It needs on-device testing. Some terminal shortcuts depend on the receiving app. Files are shared through Android's chooser, not directly uploaded to an active chat.
 
 ## Build
 
@@ -47,7 +52,7 @@ export ANDROID_HOME="/path/to/android-sdk"
 ./gradlew :app:assembleDebug :app:lintDebug
 ```
 
-APK: `app/build/outputs/apk/debug/app-debug.apk`.
+Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.1.apk`.
 
 ## Privacy
 
