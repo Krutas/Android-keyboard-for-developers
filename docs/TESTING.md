@@ -28,6 +28,15 @@
 - [ ] Bottom 😀 opens nine scrollable emoji categories plus Recent, inserts whole ZWJ/skin-tone/flag sequences in the active field, preserves scrolling while inserting multiple emoji, ⌫ deletes, and ABC closes picker. Test saved layouts migrated from old microphone placement.
 - [ ] Rotate phone and test portrait/landscape, return from Settings, disable/reenable keyboard, and reopen apps.
 
+## Pending Shift and punctuation popup regression tests (source changes after 0.2.4)
+- [ ] In a normal text field, tap Shift once then type a letter. Only that letter is capitalized. Tap Shift twice quickly to enter Caps Lock, type three letters, and verify they are all uppercase; tap Shift again to turn it off.
+- [ ] Long-press Shift for roughly half a second. Caps Lock toggles and the key displays `⇪`. Long-press again to disable. Test Android, iOS and web simulator.
+- [ ] Long-press `.` and `,` on Android: punctuation choices appear at least a full key row above the pressed key and remain selectable without the finger covering them.
+- [ ] Repeat long-press `.` and `,` in the web simulator: menu clears the held key by one additional key height and remains within the phone preview.
+- [ ] iOS: punctuation choices appear in the separate upper toolbar area, away from the held key.
+- [ ] On narrow screens, verify `< Space >` remains on one line and left/center/right touch zones type `<`, space, `>`.
+- [ ] Rebuild Android and iOS, run device tests, then publish a new version. Existing 0.2.4/0.2 downloadable binaries do not contain these source fixes.
+
 ## Release gate
 - [x] Gradle \`:app:assembleDebug\` succeeds on Linux/WSL with Android SDK 35 and JDK 17.
 - [ ] Manual device testing completed on Android.
