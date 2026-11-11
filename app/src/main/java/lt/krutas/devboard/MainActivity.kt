@@ -93,7 +93,7 @@ class MainActivity : Activity() {
         slider("Key spacing (dp)", "gap", 0, 8, SettingsStore.gap(this))
         slider("Corner radius (dp)", "radius", 0, 18, SettingsStore.radius(this))
         checkbox("Terminal shortcut rows", "extras", SettingsStore.showExtras(this))
-        checkbox("Show F1–F12 / Insert / Delete bar", "function_keys", SettingsStore.prefs(this).getBoolean("function_keys", false))
+        checkbox("Show F1–F8 bar", "function_keys", SettingsStore.prefs(this).getBoolean("function_keys", false))
         checkbox("Haptic feedback on keys", "haptic", SettingsStore.prefs(this).getBoolean("haptic", false))
         checkbox("Sound effects on keys", "sound", SettingsStore.prefs(this).getBoolean("sound", false))
         checkbox("Save clipboard history while keyboard is active", "clipboard_opt_in", SettingsStore.captureClipboard(this))
@@ -192,30 +192,60 @@ class MainActivity : Activity() {
     private fun preview() {
         if (!::keyboardPreview.isInitialized) return
         val theme = SettingsStore.theme(this)
-        themeLabel.text = "Theme: ${theme.name} · Profile: ${SettingsStore.activeProfile(this)} · Live preview"
+        val functionKeys = SettingsStore.prefs(this).getBoolean("function_keys", false)
+        val activeCombos = SettingsStore.combos(this).filter { it.enabled }
+        themeLabel.text = "Theme: ${theme.name} · Profile: ${SettingsStore.activeProfile(this)} · " +
+            "Fn: ${if (functionKeys) "on" else "off"} · Combos: ${activeCombos.size}"
         keyboardPreview.removeAllViews()
         keyboardPreview.setBackgroundColor(theme.bg())
-        SettingsStore.rows(this).forEachIndexed { index, row ->
-            if (index < 2 && !SettingsStore.showExtras(this)) return@forEachIndexed
-            val line = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER }
-            row.forEachIndexed { indexInRow, label ->
+
+        // Reuse the same saved settings as the real IME, including the optional
+        // function strip and the saved shortcuts that are currently enabled.
+        fun addRow(labels: List<String>, special: Boolean = false) {
+            if (labels.isEmpty()) return
+            val line = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER
+            }
+            labels.forEachIndexed { index, label ->
                 val chip = TextView(this).apply {
-                    text = label
+                    text = if (label == "Space") "‹ Space ›" else label
                     gravity = Gravity.CENTER
+                    maxLines = 1
                     textSize = (SettingsStore.font(this@MainActivity) * .70f).coerceAtLeast(7f)
                     typeface = Typeface.MONOSPACE
-                    setTextColor(if (theme.colorful) listOf("#44F8DE", "#FA83A9", "#FFDE60", "#9C96FF").map(Color::parseColor)[indexInRow % 4] else theme.textColor())
+                    setTextColor(
+                        if (theme.colorful)
+                            listOf("#44F8DE", "#FA83A9", "#FFDE60", "#9C96FF")
+                                .map(Color::parseColor)[index % 4]
+                        else theme.textColor()
+                    )
                     background = GradientDrawable().apply {
-                        setColor(if (index < 2) theme.specialColor() else theme.keyColor())
+                        setColor(if (special || label.length > 1) theme.specialColor() else theme.keyColor())
                         cornerRadius = px(SettingsStore.radius(this@MainActivity)).toFloat()
                         setStroke(px(1), theme.borderColor())
                     }
                 }
-                line.addView(chip, LinearLayout.LayoutParams(0, px((SettingsStore.keyHeight(this) * .65f).roundToInt()), if (label == "Space") 4f else 1f).apply {
-                    setMargins(px(1), px(2), px(1), 0)
-                })
+                val weight = if (label == "Space") 4f else 1f
+                line.addView(chip, LinearLayout.LayoutParams(
+                    0, px((SettingsStore.keyHeight(this) * .65f).roundToInt()), weight
+                ).apply { setMargins(px(1), px(2), px(1), 0) })
             }
             keyboardPreview.addView(line)
+        }
+
+        // Toolbar, function row and active shortcuts are part of the keyboard,
+        // rather than an appearance-only preview.
+        addRow(listOf("⚙", "+ Combo", "Fn", "📎", "📋", "⭐",
+            if (SettingsStore.language(this) == "lt-LT") "LT 🎙" else "EN 🎙"), special = true)
+        if (functionKeys) addRow((1..8).map { "F$it" }, special = true)
+        // Wrap only inside the preview so no active shortcut disappears offscreen.
+        activeCombos.chunked(4).forEach { chunk ->
+            addRow(chunk.map { it.label }, special = true)
+        }
+        SettingsStore.rows(this).forEachIndexed { index, row ->
+            if (index < 2 && !SettingsStore.showExtras(this)) return@forEachIndexed
+            addRow(row, special = index < 2)
         }
     }
 }
