@@ -1,4 +1,4 @@
-# DevBoard for iPhone (source preview)
+# DevBoard for iPhone v0.1 (unsigned preview)
 
 The iOS port lives beside the Android source. It has a SwiftUI settings/companion app and a native `UIInputViewController` keyboard extension.
 
@@ -12,6 +12,14 @@ The iOS port lives beside the Android source. It has a SwiftUI settings/companio
 - System keyboard switching via 🌐; a system Share Sheet file picker in the companion app.
 - Local preferences in an App Group; `RequestsOpenAccess = false` by default.
 
+## Download built packages
+
+GitHub Actions → **iOS build** compiles and packages:
+- `DevBoard-iOS-v0.1-Simulator.zip`: an iOS Simulator `.app` for Xcode testing.
+- `DevBoard-iOS-v0.1-unsigned.ipa`: a device-targeted app bundle with the keyboard extension, **not signed**.
+
+The unsigned IPA **cannot be installed normally on an iPhone**. You must sign the app and extension with valid Apple credentials and provisioning profiles using Xcode or an appropriate signing workflow. The workflow's artifacts expire after 30 days.
+
 ## Build on macOS
 
 1. Install **Xcode** and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
@@ -19,7 +27,7 @@ The iOS port lives beside the Android source. It has a SwiftUI settings/companio
 3. Set your Apple Development Team for **both targets**: DevBoard and DevBoardKeyboard.
 4. Create/register an App Group called `group.lt.krutas.devboard`, enable it in both targets' entitlements, or change the group and bundle IDs to available identifiers.
 5. Run the containing app on an iPhone. Then open **Settings → General → Keyboard → Keyboards → Add New Keyboard → DevBoard**.
-6. In a text field hold 🌐 and select DevBoard. The app is not yet archived as an IPA.
+6. In a text field hold 🌐 and select DevBoard. A signed IPA requires an Apple signing configuration; CI provides an unsigned IPA package.
 
 ## Platform limits
 
@@ -28,7 +36,7 @@ The iOS port lives beside the Android source. It has a SwiftUI settings/companio
 - **No guaranteed hardware-style key events.** Some terminal apps may interpret inserted ANSI sequences; other apps may ignore them.
 - Password and some phone fields use the Apple keyboard. Apps can also disable third-party keyboards.
 - iOS does not give a keyboard the host app's identity for Android-style automatic profile switching.
-- This is an uncompiled source implementation. Physical iPhone and Xcode tests, accessibility, App Group signing and App Store review remain.
+- CI builds the source, but physical iPhone tests, accessibility, App Group signing and App Store review remain.
 
 References: [Apple custom keyboard guide](https://developer.apple.com/documentation/uikit/creating-a-custom-keyboard), [custom keyboard restrictions](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/CustomKeyboard.html).
 

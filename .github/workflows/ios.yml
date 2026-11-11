@@ -1,4 +1,4 @@
-name: iOS source build
+name: iOS build
 
 on:
   push:
@@ -8,17 +8,50 @@ on:
       - ".github/workflows/ios.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  compile:
+  build:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
       - name: Generate Xcode project
         run: |
-          brew install xcodegen
           cd ios
           xcodegen generate
-      - name: Build iOS Simulator app and keyboard extension
+      - name: Build and package iOS Simulator app
         run: |
-          cd ios
-          xcodebuild -project DevBoard.xcodeproj -scheme DevBoard -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+          set -euo pipefail
+          xcodebuild -project ios/DevBoard.xcodeproj -scheme DevBoard -configuration Release \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/DevBoardSimulator" CODE_SIGNING_ALLOWED=NO build
+          mkdir -p releases
+          ditto -c -k --sequesterRsrc --keepParent \
+            "$RUNNER_TEMP/DevBoardSimulator/Build/Products/Release-iphonesimulator/DevBoard.app" \
+            "releases/DevBoard-iOS-v0.1-Simulator.zip"
+      - name: Build and package unsigned iPhone IPA
+        run: |
+          set -euo pipefail
+          xcodebuild -project ios/DevBoard.xcodeproj -scheme DevBoard -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/DevBoardDevice" CODE_SIGNING_ALLOWED=NO build
+          app="$RUNNER_TEMP/DevBoardDevice/Build/Products/Release-iphoneos/DevBoard.app"
+          test -d "$app/PlugIns/DevBoardKeyboard.appex"
+          mkdir -p "$RUNNER_TEMP/DevBoardPayload/Payload"
+          ditto "$app" "$RUNNER_TEMP/DevBoardPayload/Payload/DevBoard.app"
+          (cd "$RUNNER_TEMP/DevBoardPayload" && zip -q -r \
+            "$GITHUB_WORKSPACE/releases/DevBoard-iOS-v0.1-unsigned.ipa" Payload)
+          unzip -l releases/DevBoard-iOS-v0.1-unsigned.ipa | grep -F \
+            "Payload/DevBoard.app/PlugIns/DevBoardKeyboard.appex/Info.plist"
+      - name: Upload iOS packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: DevBoard-iOS-v0.1
+          path: |
+            releases/DevBoard-iOS-v0.1-Simulator.zip
+            releases/DevBoard-iOS-v0.1-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 30
