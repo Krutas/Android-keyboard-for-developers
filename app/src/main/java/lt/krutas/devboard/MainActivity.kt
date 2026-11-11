@@ -26,6 +26,8 @@ class MainActivity : Activity() {
     private lateinit var keyboardPreview: LinearLayout
     private lateinit var themeLabel: TextView
     private lateinit var keyboardChoices: LinearLayout
+    private lateinit var installedKeyboardsToggle: Button
+    private var installedKeyboardsExpanded = false
     private fun px(dp: Int) = (resources.displayMetrics.density * dp).roundToInt()
     private fun button(label: String, color: Int = Color.rgb(42, 80, 132), click: () -> Unit) = Button(this).apply {
         text = label; isAllCaps = false; textSize = 13f
@@ -55,8 +57,15 @@ class MainActivity : Activity() {
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
         })
         title("Installed keyboards", 17)
-        detail("Tap an enabled keyboard to open the Android system picker. Disabled keyboards must first be enabled in Android Settings.")
-        keyboardChoices = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        installedKeyboardsToggle = button("▸ Show installed keyboards") {
+            installedKeyboardsExpanded = !installedKeyboardsExpanded
+            renderKeyboardChoices()
+        }.apply { contentDescription = "Expand installed keyboard list" }
+        column.addView(installedKeyboardsToggle)
+        keyboardChoices = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            visibility = if (installedKeyboardsExpanded) View.VISIBLE else View.GONE
+        }
         column.addView(keyboardChoices)
         renderKeyboardChoices()
         column.addView(button("Profiles · import/export and app-specific layouts") {
@@ -125,6 +134,13 @@ class MainActivity : Activity() {
     private fun renderKeyboardChoices() {
         if (!::keyboardChoices.isInitialized) return
         keyboardChoices.removeAllViews()
+        keyboardChoices.visibility = if (installedKeyboardsExpanded) View.VISIBLE else View.GONE
+        installedKeyboardsToggle.text = if (installedKeyboardsExpanded)
+            "▾ Hide installed keyboards" else "▸ Show installed keyboards"
+        installedKeyboardsToggle.contentDescription = if (installedKeyboardsExpanded)
+            "Collapse installed keyboard list" else "Expand installed keyboard list"
+        installedKeyboardsToggle.isSelected = installedKeyboardsExpanded
+        if (!installedKeyboardsExpanded) return
         val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         val enabledIds = manager.enabledInputMethodList.map { it.id }.toSet()
         val installed = manager.inputMethodList.sortedBy { it.loadLabel(packageManager).toString().lowercase() }
@@ -132,6 +148,11 @@ class MainActivity : Activity() {
             keyboardChoices.addView(TextView(this).apply { text = "No installed keyboards found. Open Android input settings."; setTextColor(Color.WHITE) })
             return
         }
+        keyboardChoices.addView(TextView(this).apply {
+            text = "Tap an enabled keyboard to choose it. Disabled keyboards open Android input settings."
+            setTextColor(Color.LTGRAY)
+            textSize = 12f
+        })
         installed.forEach { keyboard ->
             val isEnabled = keyboard.id in enabledIds
             val name = keyboard.loadLabel(packageManager)?.toString() ?: keyboard.packageName
