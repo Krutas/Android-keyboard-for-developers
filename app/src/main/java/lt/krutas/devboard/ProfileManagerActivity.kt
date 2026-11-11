@@ -3,6 +3,7 @@ package lt.krutas.devboard
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.ViewGroup
@@ -135,12 +136,18 @@ class ProfileManagerActivity : Activity() {
         root.addView(CheckBox(this).apply {
             text = "Automatically choose profile per app"
             setTextColor(Color.WHITE)
+            buttonTintList = ColorStateList.valueOf(Color.rgb(174, 205, 255))
             isChecked = SettingsStore.autoProfile(this@ProfileManagerActivity)
             setOnCheckedChangeListener { _, checked ->
                 SettingsStore.prefs(this@ProfileManagerActivity).edit().putBoolean("auto_profile", checked).apply()
             }
         })
-        val pkg = EditText(this).apply { hint = "App package, e.g. com.termux"; setSingleLine(true) }
+        val pkg = EditText(this).apply {
+            hint = "App package, e.g. com.termux"
+            setSingleLine(true)
+            setTextColor(Color.WHITE)
+            setHintTextColor(Color.LTGRAY)
+        }
         root.addView(pkg)
         val assigned = SettingsStore.activeProfile(this)
         note("Choose the target profile by selecting it above, then add an app package here.")
