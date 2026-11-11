@@ -164,9 +164,15 @@ final class KeyboardViewController: UIInputViewController {
             addRow(nums)
             addRow(Array("qwertyuiop").map { Key(shift || capsLock ? String($0).uppercased() : String($0), String($0)) })
             addRow(Array("asdfghjkl").map { Key(shift || capsLock ? String($0).uppercased() : String($0), String($0)) })
-            addRow([Key(capsLock ? "⇪" : "⇧", "shift", 1.5)] +
-                   Array("zxcvbnm").map { Key(shift || capsLock ? String($0).uppercased() : String($0), String($0)) } +
-                   [Key("⌫", "backspace", 1.5)])
+            let lowerChars = Array("zxcvbnm").map { String($0) }
+            let lowerKeys: [Key] = lowerChars.map { character in
+                let label = (shift || capsLock) ? character.uppercased() : character
+                return Key(label, character)
+            }
+            var bottomKeys: [Key] = [Key(capsLock ? "⇪" : "⇧", "shift", 1.5)]
+            bottomKeys.append(contentsOf: lowerKeys)
+            bottomKeys.append(Key("⌫", "backspace", 1.5))
+            addRow(bottomKeys)
         case .numbers:
             addRow(Array("1234567890").map { Key(String($0)) })
             addRow(["@", "#", "$", "%", "&", "-", "+", "(", ")", "/"].map { Key($0) })
