@@ -1,6 +1,7 @@
 package lt.krutas.devboard
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
@@ -8,6 +9,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import kotlin.math.roundToInt
 
 class LayoutEditorActivity : Activity() {
@@ -23,11 +25,50 @@ class LayoutEditorActivity : Activity() {
         scroll.addView(root); setContentView(scroll)
         render()
     }
+    private fun deleteKey(row: Int, column: Int) {
+        if (keys[row].size <= 3) {
+            Toast.makeText(this, "Each row needs at least 3 keys", Toast.LENGTH_SHORT).show()
+            return
+        }
+        keys[row].removeAt(column)
+        SettingsStore.saveRows(this, keys)
+        selected = null
+        render()
+    }
+
+    private fun confirmReset() {
+        AlertDialog.Builder(this)
+            .setTitle("Reset keyboard layout?")
+            .setMessage("Restore the default layout for this profile? Your custom key positions and deletions will be lost.")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Reset") { _, _ ->
+                keys = SettingsStore.copyDefault()
+                SettingsStore.saveRows(this, keys)
+                selected = null
+                render()
+            }
+            .show()
+    }
+
+    private fun showKeyOptions(row: Int, column: Int) {
+        val label = keys[row][column]
+        AlertDialog.Builder(this)
+            .setTitle("Key: $label")
+            .setItems(arrayOf("Delete key", "Reset to defaults")) { _, choice ->
+                when (choice) {
+                    0 -> deleteKey(row, column)
+                    1 -> confirmReset()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
     private fun render() {
         val theme = SettingsStore.theme(this)
         root.removeAllViews()
         root.addView(TextView(this).apply {
-            text = "EDIT LAYOUT · Tap first key, then destination to swap"
+            text = "EDIT LAYOUT · Tap two keys to swap · Hold a key for options"
             textSize = 16f; setTextColor(Color.WHITE); setPadding(dp(9), dp(6), dp(9), dp(13))
         })
         keys.forEachIndexed { ri, row ->
@@ -53,6 +94,10 @@ class LayoutEditorActivity : Activity() {
                         }
                         render()
                     }
+                    setOnLongClickListener {
+                        showKeyOptions(ri, ci)
+                        true
+                    }
                 }
                 strip.addView(b, LinearLayout.LayoutParams(0, dp(43), if (text == "Space") 3f else 1f).apply {
                     setMargins(dp(1), dp(3), dp(1), dp(3))
@@ -62,7 +107,7 @@ class LayoutEditorActivity : Activity() {
         }
         root.addView(Button(this).apply {
             text = "Reset to defaults"
-            setOnClickListener { keys = SettingsStore.copyDefault(); SettingsStore.saveRows(this@LayoutEditorActivity, keys); selected = null; render() }
+            setOnClickListener { confirmReset() }
         })
         root.addView(Button(this).apply { text = "Done"; setOnClickListener { finish() } })
     }
