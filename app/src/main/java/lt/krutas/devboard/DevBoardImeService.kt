@@ -376,14 +376,29 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
 
     private fun openClipboard(savedOnly: Boolean) {
         if (passwordField) { toast("Clipboard unavailable in password fields"); return }
-        val recent = if (savedOnly) SettingsStore.snippets(this) else {
-            val current = clipboard.primaryClip?.getItemAt(0)?.coerceToText(this)?.toString().orEmpty()
-            val historical = SettingsStore.clipboardHistory(this).filter { it != current }
-            (listOf(current) + historical).filter { it.isNotBlank() }
-        }
-        if (recent.isEmpty()) { toast("Clipboard is empty. Save snippets in Settings."); return }
         val popup = PopupMenu(this, micIndicator ?: container)
-        recent.take(15).forEach { s -> popup.menu.add(s.take(42).replace('\n', ' ')).setOnMenuItemClickListener { commit(s); true } }
+        if (savedOnly) {
+            val saved = SettingsStore.snippetEntries(this)
+            if (saved.isEmpty()) { toast("No snippets. Create one in Settings."); return }
+            saved.take(20).forEach { item ->
+                popup.menu.add(item.title.take(42)).setOnMenuItemClickListener {
+                    commit(item.text)
+                    true
+                }
+            }
+        } else {
+            val current = clipboard.primaryClip?.takeIf { it.itemCount > 0 }
+                ?.getItemAt(0)?.coerceToText(this)?.toString().orEmpty()
+            val historical = SettingsStore.clipboardHistory(this).filter { it != current }
+            val texts = (listOf(current) + historical).filter { it.isNotBlank() }
+            if (texts.isEmpty()) { toast("Clipboard is empty"); return }
+            texts.take(15).forEach { text ->
+                popup.menu.add(text.take(42).replace('\n', ' ')).setOnMenuItemClickListener {
+                    commit(text)
+                    true
+                }
+            }
+        }
         popup.show()
     }
     private fun rememberClipboard() {

@@ -1,52 +1,120 @@
 package lt.krutas.devboard
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 
-/** Saved snippets are distinct from the optional system clipboard history. */
+/** Named snippets persist locally and never become clipboard history. */
 class SnippetsActivity : Activity() {
     private lateinit var root: LinearLayout
-    private lateinit var field: EditText
+    private lateinit var titleField: EditText
+    private lateinit var textField: EditText
     private var editing = -1
+    private fun dp(value: Int) = (resources.displayMetrics.density * value).toInt()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val scroll = ScrollView(this).apply { setBackgroundColor(Color.rgb(20, 28, 44)) }
-        root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(18, 30, 18, 20) }
-        scroll.addView(root); setContentView(scroll); redraw()
+        root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(15), dp(25), dp(15), dp(20))
+        }
+        scroll.addView(root)
+        setContentView(scroll)
+        redraw()
     }
+
     private fun redraw() {
         root.removeAllViews()
-        root.addView(TextView(this).apply { text = "⭐ Saved snippets"; textSize = 23f; setTextColor(Color.WHITE) })
-        field = EditText(this).apply {
-            hint = "Text to insert with one tap"; minLines = 2
-            setTextColor(Color.WHITE); setHintTextColor(Color.LTGRAY)
+        root.addView(TextView(this).apply {
+            text = "⭐ Saved snippets"
+            textSize = 22f
+            setTextColor(Color.WHITE)
+        })
+        root.addView(TextView(this).apply {
+            text = "Reusable text snippets have names and can be inserted with one tap from the ⭐ keyboard menu."
+            textSize = 12f
+            setTextColor(Color.LTGRAY)
+            setPadding(0, dp(7), 0, dp(11))
+        })
+        titleField = EditText(this).apply {
+            hint = "Snippet name, e.g. Git status"
+            setSingleLine(true)
+            setTextColor(Color.WHITE)
+            setHintTextColor(Color.LTGRAY)
         }
-        root.addView(field)
-        root.addView(Button(this).apply { text = "Save snippet"; setOnClickListener {
-            val value = field.text.toString().take(2000)
-            if (value.isNotBlank()) {
-                val items = SettingsStore.snippets(this@SnippetsActivity)
-                if (editing in items.indices) items[editing] = value else items.add(0, value)
-                SettingsStore.saveSnippets(this@SnippetsActivity, items.take(30)); editing = -1; redraw()
+        textField = EditText(this).apply {
+            hint = "Text to insert"
+            minLines = 3
+            setTextColor(Color.WHITE)
+            setHintTextColor(Color.LTGRAY)
+        }
+        root.addView(titleField)
+        root.addView(textField)
+        root.addView(Button(this).apply {
+            text = "Save snippet"
+            isAllCaps = false
+            setOnClickListener {
+                val title = titleField.text.toString().trim().take(50)
+                val value = textField.text.toString().take(2000)
+                if (title.isBlank() || value.isBlank()) {
+                    Toast.makeText(this@SnippetsActivity, "Enter both name and text", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                val items = SettingsStore.snippetEntries(this@SnippetsActivity)
+                val saved = SavedSnippet(title, value)
+                if (editing in items.indices) items[editing] = saved
+                else if (items.size < 30) items.add(0, saved)
+                else {
+                    Toast.makeText(this@SnippetsActivity, "Maximum 30 snippets", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                SettingsStore.saveSnippetEntries(this@SnippetsActivity, items)
+                editing = -1
+                redraw()
             }
-        } })
-        SettingsStore.snippets(this).forEachIndexed { index, value ->
+        })
+        SettingsStore.snippetEntries(this).forEachIndexed { index, snippet ->
             val line = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-            line.addView(Button(this).apply { text = value.take(44); isAllCaps = false; setOnClickListener {
-                editing = index; field.setText(value)
-            } }, LinearLayout.LayoutParams(0, -2, 1f))
-            line.addView(Button(this).apply { text = "✕"; setOnClickListener {
-                val all = SettingsStore.snippets(this@SnippetsActivity)
-                all.removeAt(index); SettingsStore.saveSnippets(this@SnippetsActivity, all); editing = -1; redraw()
-            } })
+            line.addView(Button(this).apply {
+                text = snippet.title + " · " + snippet.text.replace('\n', ' ').take(25)
+                isAllCaps = false
+                setOnClickListener {
+                    editing = index
+                    titleField.setText(snippet.title)
+                    textField.setText(snippet.text)
+                }
+            }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            line.addView(Button(this).apply {
+                text = "✕"
+                setOnClickListener {
+                    AlertDialog.Builder(this@SnippetsActivity)
+                        .setTitle("Delete snippet?")
+                        .setMessage(snippet.title)
+                        .setPositiveButton("Delete") { _, _ ->
+                            val items = SettingsStore.snippetEntries(this@SnippetsActivity)
+                            if (index in items.indices) items.removeAt(index)
+                            SettingsStore.saveSnippetEntries(this@SnippetsActivity, items)
+                            editing = -1
+                            redraw()
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                }
+            })
             root.addView(line)
         }
-        root.addView(Button(this).apply { text = "Done"; setOnClickListener { finish() } })
+        root.addView(Button(this).apply {
+            text = "Done"
+            setOnClickListener { finish() }
+        })
     }
 }

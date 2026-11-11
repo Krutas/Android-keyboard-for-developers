@@ -18,6 +18,7 @@ internal data class Palette(
 }
 
 internal data class Combo(val label: String, val action: String)
+internal data class SavedSnippet(val title: String, val text: String)
 
 internal object SettingsStore {
     // Includes the original nine terminal themes plus the original rounded-key styles.
@@ -103,7 +104,19 @@ internal object SettingsStore {
                 MutableList(row.length()) { j ->
                     val key = row.getString(j)
                     require(key.isNotBlank() && key.length <= 24)
-                    key
+                    when (key.lowercase()) {
+                        "space" -> "Space"
+                        "ctrl" -> "Ctrl"
+                        "alt" -> "Alt"
+                        "esc" -> "Esc"
+                        "tab" -> "Tab"
+                        "home" -> "Home"
+                        "end" -> "End"
+                        "pgup" -> "PgUp"
+                        "pgdn" -> "PgDn"
+                        "enter" -> "Enter"
+                        else -> key
+                    }
                 }
             }
         } catch (_: Exception) { null }
@@ -289,12 +302,32 @@ internal object SettingsStore {
         val a = JSONArray(); items.forEach(a::put)
         prefs(c).edit().putString("clipboard_history", a.toString()).apply()
     }
-    fun snippets(c: Context): MutableList<String> = try {
-        val a = JSONArray(prefs(c).getString("snippets", "[]"))
-        MutableList(a.length()) { i -> a.getString(i) }
+    fun snippetEntries(c: Context): MutableList<SavedSnippet> = try {
+        val arr = JSONArray(prefs(c).getString("snippets", "[]"))
+        MutableList(arr.length().coerceAtMost(30)) { i ->
+            when (val entry = arr.get(i)) {
+                is JSONObject -> SavedSnippet(entry.optString("title").take(50), entry.optString("text").take(2000))
+                else -> {
+                    val text = entry.toString().take(2000)
+                    SavedSnippet(text.replace('\n', ' ').take(32), text)
+                }
+            }
+        }.filter { it.text.isNotBlank() }.toMutableList()
     } catch (_: Exception) { mutableListOf() }
+
+    fun saveSnippetEntries(c: Context, entries: List<SavedSnippet>) {
+        val arr = JSONArray()
+        entries.take(30).forEach { item ->
+            val title = item.title.trim().take(50).ifBlank { "Untitled" }
+            val text = item.text.take(2000)
+            if (text.isNotBlank()) arr.put(JSONObject().put("title", title).put("text", text))
+        }
+        prefs(c).edit().putString("snippets", arr.toString()).apply()
+    }
+
+    fun snippets(c: Context): MutableList<String> =
+        snippetEntries(c).map { it.text }.toMutableList()
     fun saveSnippets(c: Context, items: List<String>) {
-        val a = JSONArray(); items.forEach(a::put)
-        prefs(c).edit().putString("snippets", a.toString()).apply()
+        saveSnippetEntries(c, items.map { SavedSnippet(it.replace('\n', ' ').take(32), it) })
     }
 }
