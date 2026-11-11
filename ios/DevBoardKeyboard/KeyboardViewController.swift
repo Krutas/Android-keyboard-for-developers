@@ -110,6 +110,9 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
         button.backgroundColor = buttonColor
         button.layer.cornerRadius = 6
         button.accessibilityIdentifier = key.id
+        if key.id == "shift" {
+            button.accessibilityLabel = capsLock ? "Caps Lock on. Tap to disable" : "Shift. Double tap or hold for Caps Lock"
+        }
         if key.id == "space" {
             button.accessibilityLabel = "Less than, space, greater than"
             let labels = UIStackView()
@@ -146,7 +149,7 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
                 self.keyPressed(key.id)
             }
         }, for: .touchUpInside)
-        if ["comma", "period"].contains(key.id) || accentedNumbers[key.id] != nil {
+        if ["comma", "period", "shift"].contains(key.id) || accentedNumbers[key.id] != nil {
             let hold = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(_:)))
             hold.minimumPressDuration = 0.4
             button.addGestureRecognizer(hold)
@@ -346,7 +349,12 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
     @objc private func longPressed(_ recognizer: UILongPressGestureRecognizer) {
         guard recognizer.state == .began,
               let id = recognizer.view?.accessibilityIdentifier else { return }
-        if id == "comma" {
+        if id == "shift" {
+            capsLock.toggle()
+            shift = capsLock
+            lastShiftTap = .distantPast
+            render()
+        } else if id == "comma" {
             showChoices([",", ";", ":", "!", "?"])
         } else if id == "period" {
             showChoices([".", "…", "?", "!", "@"])
