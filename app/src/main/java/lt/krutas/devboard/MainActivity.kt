@@ -97,6 +97,10 @@ class MainActivity : Activity() {
         checkbox("Haptic feedback on keys", "haptic", SettingsStore.prefs(this).getBoolean("haptic", false))
         checkbox("Sound effects on keys", "sound", SettingsStore.prefs(this).getBoolean("sound", false))
         checkbox("Save clipboard history while keyboard is active", "clipboard_opt_in", SettingsStore.captureClipboard(this))
+        column.addView(button("Clear saved clipboard history", Color.rgb(90, 57, 65)) {
+            SettingsStore.saveClipboardHistory(this, emptyList())
+            Toast.makeText(this, "Clipboard history cleared", Toast.LENGTH_SHORT).show()
+        })
         detail("Clipboard history is opt-in. Android restricts background clipboard reads. Password fields are excluded.")
         title("Language & dictation", 17)
         val current = SettingsStore.language(this)
@@ -179,7 +183,9 @@ class MainActivity : Activity() {
         column.addView(CheckBox(this).apply {
             text = name; isChecked = value; setTextColor(Color.WHITE)
             setOnCheckedChangeListener { _, checked ->
-                SettingsStore.prefs(this@MainActivity).edit().putBoolean(key, checked).apply(); preview()
+                SettingsStore.prefs(this@MainActivity).edit().putBoolean(key, checked).apply()
+                if (key == "clipboard_opt_in" && !checked) SettingsStore.saveClipboardHistory(this@MainActivity, emptyList())
+                preview()
             }
         })
     }

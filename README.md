@@ -1,6 +1,6 @@
 # DevBoard · Android Keyboard for Developers
 
-An experimental **Android system keyboard** for programming, Termux, SSH terminals and power users. Designed and iterated first in the interactive Samsung Galaxy A56-inspired browser simulator.
+An experimental **Android system keyboard (v0.2.0 developer preview)** for programming, Termux, SSH terminals and power users. Designed and iterated first in the interactive Samsung Galaxy A56-inspired browser simulator.
 
 ![DevBoard simulator demo](docs/devboard-demo.gif)
 
@@ -25,7 +25,13 @@ An experimental **Android system keyboard** for programming, Termux, SSH termina
 | Colorful ASCII theme | ✅ | ✅ |
 | Tap two keys to swap positions | ✅ (layout editor) | ✅ (Configure) |
 | Custom combos and one-touch command actions | ✅ | ✅ |
-| Saved text snippets | ✅ | ✅ |
+| Named reusable snippets with one-tap insertion | ✅ | ✅ |
+| Named Terminal profiles, clone/select/delete | ✅ | ✅ |
+| Web JSON layout import/export | ✅ | ✅ |
+| Per-app profile auto-selection via Android package name | ✅, opt-in | Android-only |
+| Optional F1–F12, Insert and forward Delete toolbar | ✅ | Terminal preview only |
+| Shift/Ctrl/Alt-aware navigation, repeating Backspace | ✅ | Browser simulation |
+| Haptics and key click sound toggles | ✅ | Browser preview only |
 | Clipboard history | ✅ opt-in, subject to Android limits | ✅ in-app history |
 | Microphone / speech-to-text (LT / EN) | Android SpeechRecognizer | Browser Web Speech API |
 | Real voice level indicator | SpeechRecognizer RMS | Web Audio levels where permitted |
@@ -39,10 +45,12 @@ An experimental **Android system keyboard** for programming, Termux, SSH termina
 
 1. Download [`releases/devboard-debug.apk`](releases/devboard-debug.apk) or the latest APK from **Actions → Android build → DevBoard-debug-APK**.
 2. Open the APK on your Android phone. Android may ask permission to install apps from that source.
-3. Open **DevBoard** → **Enable DevBoard in Android settings**, then **Choose DevBoard as input method**.
+3. Open **DevBoard** → **Enable DevBoard in Android settings**, then **Choose any enabled keyboard** and select DevBoard.
 4. In any text field, the DevBoard keyboard will appear. Try `123`, long-press a number, or long-press **Space** to switch LT / EN.
 5. Tap **📎** to choose any file with Android's system file picker, then select a destination app in the Android share chooser. **This is not an automatic upload to the currently focused chat.**
 6. Tap 🎙 for dictation. The app requests Android's standard microphone permission. The recognition engine might use a network service; no OpenAI API is used.
+7. Open **Profiles** to clone a keyboard layout or import a `devboard-layouts.json` file exported from the simulator. Toggle **Automatically choose profile per app** and enter app package names (for example `com.termux`) to assign a profile.
+8. Tap **Fn** on the keyboard to show or hide F1–F12, Insert and forward Delete. Long-press Backspace to repeat deletion. Enable haptics or click sounds under Appearance.
 
 **Security:** Android warns whenever a keyboard is enabled because input methods can see typed text. This app stores local preferences and does not implement custom network calls or analytics. Speech recognition is delegated to the system speech service. Clipboard history is **off by default** and requires opt-in. It is disabled inside password fields; clipboard access is subject to Android permissions and restrictions.
 
@@ -78,9 +86,11 @@ app/src/main/
   AndroidManifest.xml       Android service and permission declaration
   java/lt/krutas/devboard/
     DevBoardImeService.kt   native keyboard and SpeechRecognizer
-    SettingsStore.kt        layouts, palettes, local persistence
+    SettingsStore.kt        layouts, named profiles, palettes, local persistence
     MainActivity.kt         settings, themes, keyboard preview
     LayoutEditorActivity.kt tap-to-swap editor
+    ProfileManagerActivity.kt import/export, named layouts, per-app assignments
+    FileShareActivity.kt    Android document picker and share sheet
     ComboEditorActivity.kt  shortcut editor
     SnippetsActivity.kt     saved text snippets
     MicPermissionActivity.kt Android runtime microphone permission
@@ -93,9 +103,10 @@ docs/devboard-demo.gif      animated README demo
 ## Status / limitations
 
 - This is a **developer preview**. No Play Store signature or app store release yet. Debug builds are not appropriate for distributing as production keyboard apps.
-- Terminal shortcuts need testing against Termux, Termius, and other target applications.
-- Direct file insertion into the currently focused chat is not universal; Android uses the system share chooser here. Automatic per-app file uploads require target-app integration. Auto layout per-app, and import of web JSON configuration into the Android app are future work. The native editor currently saves its layout separately from the web simulator.
+- Terminal shortcuts, the Android installed-keyboard picker, microphone and clipboard behavior still need hands-on testing on a Samsung Galaxy A56 and target apps such as Termux or Termius. Automated Android APK compilation passed; an emulator or physical-device test has not yet been completed.
+- Direct file insertion into the currently focused chat is not universal; Android uses the system share chooser here. Automatic per-app file uploads require target-app integration. Web JSON **Terminal** layouts can be imported and exported in Android, but other simulator state (theme selections, browser clipboard, per-mode Code/Normal layouts, and combo definitions) is not currently migrated by that import. Per-app profile switching requires manual package assignments and is off by default.
 - The web preview uses Samsung A56-like viewport proportions, not a real Android emulator or a physical millimeter-accurate display.
 - The GitHub Pages workflow publishes the web simulator after each update to docs.
+- See [test checklist](docs/TESTING.md) for manual device acceptance before release.
 
 License: see [LICENSE](LICENSE).

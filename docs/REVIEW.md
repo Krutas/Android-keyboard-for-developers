@@ -13,3 +13,8 @@
 
 - Android Settings: list all installed IMEs with enabled/disabled state; tap enabled opens Android system picker, tap disabled opens Input Method Settings. User selects keyboard in OS dialog.
 - Simulator Settings: "Choose keyboard" opens clearly labeled demo options only. The web page cannot read Android-installed keyboards or activate another IME.
+
+- Test Profile Manager → new profile → swap keys → close/reopen → import web-exported JSON → ensure Space types a real space.
+- Enable per-app mapping: use package `com.termux`, assign a dedicated profile, verify it activates only in that app.
+- Toggle Fn, F1–F12 / Insert / Delete, Shift+arrow selection, long-press Backspace and optional feedback.
+- Named snippets: save title + text, tap title from keyboard ⭐ menu, verify full text is inserted.
