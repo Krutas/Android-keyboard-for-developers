@@ -25,6 +25,7 @@ class MainActivity : Activity() {
     private lateinit var column: LinearLayout
     private lateinit var keyboardPreview: LinearLayout
     private lateinit var themeLabel: TextView
+    private lateinit var keyboardChoices: LinearLayout
     private fun px(dp: Int) = (resources.displayMetrics.density * dp).roundToInt()
     private fun button(label: String, color: Int = Color.rgb(42, 80, 132), click: () -> Unit) = Button(this).apply {
         text = label; isAllCaps = false; textSize = 13f
@@ -32,7 +33,11 @@ class MainActivity : Activity() {
         setOnClickListener { click() }
     }
     override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState); draw() }
-    override fun onResume() { super.onResume(); if (::keyboardPreview.isInitialized) preview() }
+    override fun onResume() {
+        super.onResume()
+        if (::keyboardPreview.isInitialized) preview()
+        if (::keyboardChoices.isInitialized) renderKeyboardChoices()
+    }
     private fun draw() {
         val scroll = ScrollView(this).apply { setBackgroundColor(Color.rgb(16, 24, 39)) }
         column = LinearLayout(this).apply {
@@ -46,9 +51,14 @@ class MainActivity : Activity() {
         column.addView(button("1 · Enable DevBoard in Android settings") {
             startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS))
         })
-        column.addView(button("2 · Choose DevBoard as input method") {
+        column.addView(button("2 · Choose any enabled keyboard") {
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).showInputMethodPicker()
         })
+        title("Installed keyboards", 17)
+        detail("Tap an enabled keyboard to open the Android system picker. Disabled keyboards must first be enabled in Android Settings.")
+        keyboardChoices = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        column.addView(keyboardChoices)
+        renderKeyboardChoices()
         column.addView(button("Edit keyboard layout · tap to swap") {
             startActivity(Intent(this, LayoutEditorActivity::class.java))
         })
@@ -102,6 +112,31 @@ class MainActivity : Activity() {
         })
         preview()
     }
+    private fun renderKeyboardChoices() {
+        if (!::keyboardChoices.isInitialized) return
+        keyboardChoices.removeAllViews()
+        val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val enabledIds = manager.enabledInputMethodList.map { it.id }.toSet()
+        val installed = manager.inputMethodList.sortedBy { it.loadLabel(packageManager).toString().lowercase() }
+        if (installed.isEmpty()) {
+            keyboardChoices.addView(TextView(this).apply { text = "No installed keyboards found. Open Android input settings."; setTextColor(Color.WHITE) })
+            return
+        }
+        installed.forEach { keyboard ->
+            val isEnabled = keyboard.id in enabledIds
+            val name = keyboard.loadLabel(packageManager)?.toString() ?: keyboard.packageName
+            val state = if (isEnabled) "Enabled" else "Disabled"
+            keyboardChoices.addView(button("${if (isEnabled) "✓" else "+"} $name · $state",
+                if (isEnabled) Color.rgb(36, 81, 88) else Color.rgb(66, 68, 90)) {
+                if (isEnabled) {
+                    manager.showInputMethodPicker()
+                } else {
+                    startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS))
+                }
+            })
+        }
+    }
+
     private fun title(t: String, size: Int) {
         column.addView(TextView(this).apply {
             text = t; textSize = size.toFloat(); setTextColor(Color.WHITE)

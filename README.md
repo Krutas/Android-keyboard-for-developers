@@ -21,6 +21,7 @@ An experimental **Android system keyboard** for programming, Termux, SSH termina
 | Numbers, Lithuanian letters on long-press, Space language menu | ✅ | ✅ |
 | `123` → symbols, `1/2` → more symbols, `ABC` → letters | ✅ | ✅ |
 | Settings: 19 themes, font size, key height, spacing and corners | ✅ | ✅ |
+| Switch keyboard: see installed keyboards and open Android system picker | ✅ (system-controlled) | Demo picker only |
 | Colorful ASCII theme | ✅ | ✅ |
 | Tap two keys to swap positions | ✅ (layout editor) | ✅ (Configure) |
 | Custom combos and one-touch command actions | ✅ | ✅ |
@@ -31,6 +32,8 @@ An experimental **Android system keyboard** for programming, Termux, SSH termina
 | General file attachment | Android file picker + Share sheet (app-dependent) | Select any file, show metadata, insert temporary local blob link |
 
 **Note:** Modifier combinations and navigation key events depend on the receiving Android app. Some terminal clients do not honor every Ctrl, Alt, function, or system shortcut. Native keyboard integration is not a guarantee that those shortcuts work across all apps. Microphone accuracy and language availability depend on the device's installed speech recognition service.
+
+**Switching keyboards:** Open DevBoard Settings → **Installed keyboards**. Enabled keyboards open Android’s system input-method picker; disabled ones open Android keyboard settings to enable them. Android requires the user to make the final choice, so DevBoard cannot silently activate another keyboard. The web simulator only shows example names and cannot discover installed IMEs.
 
 ## Install the APK on Android
 

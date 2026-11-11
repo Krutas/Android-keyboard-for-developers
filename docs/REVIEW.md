@@ -10,3 +10,6 @@
 
 - Test: 📎 Attach file → choose TXT, PDF, ZIP, or image → verify filename/MIME/size → Insert link. The link is local only, not a network upload.
 - Native: 📎 launches the system file picker, then a share chooser; users must select the destination app.
+
+- Android Settings: list all installed IMEs with enabled/disabled state; tap enabled opens Android system picker, tap disabled opens Input Method Settings. User selects keyboard in OS dialog.
+- Simulator Settings: "Choose keyboard" opens clearly labeled demo options only. The web page cannot read Android-installed keyboards or activate another IME.
