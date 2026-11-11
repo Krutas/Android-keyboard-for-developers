@@ -12,10 +12,9 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 
-/** Named snippets persist locally and never become clipboard history. */
+/** Saved text snippets persist locally and never become clipboard history. */
 class SnippetsActivity : Activity() {
     private lateinit var root: LinearLayout
-    private lateinit var titleField: EditText
     private lateinit var textField: EditText
     private var editing = -1
     private fun dp(value: Int) = (resources.displayMetrics.density * value).toInt()
@@ -40,36 +39,29 @@ class SnippetsActivity : Activity() {
             setTextColor(Color.WHITE)
         })
         root.addView(TextView(this).apply {
-            text = "Reusable text snippets have names and can be inserted with one tap from the ⭐ keyboard menu."
+            text = "Save text to insert with one tap from the ⭐ keyboard menu."
             textSize = 12f
             setTextColor(Color.LTGRAY)
             setPadding(0, dp(7), 0, dp(11))
         })
-        titleField = EditText(this).apply {
-            hint = "Snippet name, e.g. Git status"
-            setSingleLine(true)
-            setTextColor(Color.WHITE)
-            setHintTextColor(Color.LTGRAY)
-        }
         textField = EditText(this).apply {
             hint = "Text to insert"
             minLines = 3
             setTextColor(Color.WHITE)
             setHintTextColor(Color.LTGRAY)
         }
-        root.addView(titleField)
         root.addView(textField)
         root.addView(Button(this).apply {
             text = "Save snippet"
             isAllCaps = false
             setOnClickListener {
-                val title = titleField.text.toString().trim().take(50)
                 val value = textField.text.toString().take(2000)
-                if (title.isBlank() || value.isBlank()) {
-                    Toast.makeText(this@SnippetsActivity, "Enter both name and text", Toast.LENGTH_SHORT).show()
+                if (value.isBlank()) {
+                    Toast.makeText(this@SnippetsActivity, "Enter text to insert", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
                 val items = SettingsStore.snippetEntries(this@SnippetsActivity)
+                val title = value.trim().replace(Regex("\\s+"), " ").take(50)
                 val saved = SavedSnippet(title, value)
                 if (editing in items.indices) items[editing] = saved
                 else if (items.size < 30) items.add(0, saved)
@@ -85,11 +77,10 @@ class SnippetsActivity : Activity() {
         SettingsStore.snippetEntries(this).forEachIndexed { index, snippet ->
             val line = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
             line.addView(Button(this).apply {
-                text = snippet.title + " · " + snippet.text.replace('\n', ' ').take(25)
+                text = snippet.text.replace(Regex("\\s+"), " ").take(85)
                 isAllCaps = false
                 setOnClickListener {
                     editing = index
-                    titleField.setText(snippet.title)
                     textField.setText(snippet.text)
                 }
             }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
