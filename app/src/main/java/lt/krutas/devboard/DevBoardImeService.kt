@@ -11,12 +11,16 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.inputmethodservice.InputMethodService
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.text.InputType
 import android.view.Gravity
+import android.view.HapticFeedbackConstants
+import android.view.MotionEvent
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +40,17 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     private var ctrl = false
     private var alt = false
     private var shifted = false
+    private var deleteRepeated = false
+    private var repeatingDelete = false
+    private val repeatHandler = Handler(Looper.getMainLooper())
+    private val repeatDeletion = object : Runnable {
+        override fun run() {
+            if (!repeatingDelete) return
+            deleteRepeated = true
+            deleteBackward()
+            repeatHandler.postDelayed(this, 65L)
+        }
+    }
     private var symbols = 0
     private var passwordField = false
     private var mic: SpeechRecognizer? = null
@@ -66,6 +81,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         lastInput = info
+        ctrl = false; alt = false; shifted = false; symbols = 0
         val variation = (info?.inputType ?: 0) and InputType.TYPE_MASK_VARIATION
         passwordField = variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
             variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
@@ -83,6 +99,8 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
 
     override fun onFinishInputView(finishingInput: Boolean) {
         stopMic()
+        repeatingDelete = false
+        repeatHandler.removeCallbacks(repeatDeletion)
         super.onFinishInputView(finishingInput)
     }
     override fun onDestroy() {
@@ -114,7 +132,12 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             line.addView(button, lp)
         }
         action("⚙", 39) { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
-        action("+ Combo", 74) { startActivity(Intent(this, ComboEditorActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+        action("+ Combo", 68) { startActivity(Intent(this, ComboEditorActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+        action("Fn", 34) {
+            val prefs = SettingsStore.prefs(this)
+            prefs.edit().putBoolean("function_keys", !prefs.getBoolean("function_keys", false)).apply()
+            render()
+        }
         action("📎", 39) { startActivity(Intent(this, FileShareActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
         action("📋", 39) { openClipboard(false) }
         action("⭐", 39) { openClipboard(true) }
@@ -130,12 +153,57 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         return line
     }
 
+
+    private fun activeModifiers(): Int =
+        (if (ctrl) KeyEvent.META_CTRL_ON else 0) or
+        (if (alt) KeyEvent.META_ALT_ON else 0) or
+        (if (shifted) KeyEvent.META_SHIFT_ON else 0)
+
+    private fun releaseModifiers() {
+        ctrl = false; alt = false; shifted = false
+        render()
+    }
+
+    private fun functionStrip(): View {
+        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val names = (1..12).map { "F" + it } + listOf("Ins", "Del")
+        names.forEachIndexed { index, label ->
+            val code = when (label) {
+                "Ins" -> KeyEvent.KEYCODE_INSERT
+                "Del" -> KeyEvent.KEYCODE_FORWARD_DEL
+                else -> KeyEvent.KEYCODE_F1 + index
+            }
+            val b = button(label, true, index)
+            b.setOnClickListener {
+                if (SettingsStore.prefs(this).getBoolean("haptic", false))
+                    b.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                hardware(code, activeModifiers())
+                releaseModifiers()
+            }
+            row.addView(b, LinearLayout.LayoutParams(dp(50), dp(31)).apply {
+                setMargins(dp(2), dp(1), dp(2), dp(3))
+            })
+        }
+        return HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            addView(row)
+        }
+    }
+
+    private fun deleteBackward() {
+        val ic = currentInputConnection ?: return
+        val selected = ic.getSelectedText(0)
+        if (!selected.isNullOrEmpty()) ic.commitText("", 1)
+        else ic.deleteSurroundingTextInCodePoints(1, 0)
+    }
+
     private fun render() {
         if (!::container.isInitialized) return
         palette = SettingsStore.theme(this)
         container.setBackgroundColor(palette.bg())
         container.removeAllViews()
         container.addView(bar())
+        if (SettingsStore.prefs(this).getBoolean("function_keys", false)) container.addView(functionStrip())
         val combos = SettingsStore.combos(this)
         if (combos.isNotEmpty()) {
             val strip = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
@@ -158,7 +226,30 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             keys.forEachIndexed { col, label ->
                 val special = index < 2 || label.length > 1 || label in listOf("⇧", "⌫", "↵", "🎙")
                 val b = button(label, special, index * 13 + col)
-                b.setOnClickListener { keyPressed(label) }
+                b.isSoundEffectsEnabled = SettingsStore.prefs(this).getBoolean("sound", false)
+                b.setOnClickListener {
+                    if (label == "⌫" && deleteRepeated) { deleteRepeated = false; return@setOnClickListener }
+                    if (SettingsStore.prefs(this).getBoolean("haptic", false)) {
+                        b.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    }
+                    keyPressed(label)
+                }
+                if (label == "⌫") {
+                    b.setOnTouchListener { _, event ->
+                        when (event.actionMasked) {
+                            MotionEvent.ACTION_DOWN -> {
+                                deleteRepeated = false
+                                repeatingDelete = true
+                                repeatHandler.postDelayed(repeatDeletion, 450L)
+                            }
+                            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                                repeatingDelete = false
+                                repeatHandler.removeCallbacks(repeatDeletion)
+                            }
+                        }
+                        false
+                    }
+                }
                 if (index == 2 && SettingsStore.language(this) == "lt-LT" && symbols == 0) {
                     SettingsStore.ltNumbers[label]?.let { letter ->
                         b.setOnLongClickListener { v -> showLetterPopup(v, letter); true }
@@ -184,7 +275,8 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             setPadding(0, 0, 0, 0)
             setTextColor(if (palette.colorful) colorful(position) else palette.textColor())
             minWidth = 0; minimumWidth = 0; minHeight = 0; minimumHeight = 0
-            background = shape(if (special) palette.specialColor() else palette.keyColor())
+            val selected = (label == "Ctrl" && ctrl) || (label == "Alt" && alt) || (label == "⇧" && shifted)
+            background = shape(if (selected) Color.rgb(35, 124, 186) else if (special) palette.specialColor() else palette.keyColor())
             if (label == "Space") contentDescription = "Space. Long press to change language"
         }
     }
@@ -215,44 +307,51 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         ic.sendKeyEvent(KeyEvent(now, now, KeyEvent.ACTION_DOWN, key, 0, mods))
         ic.sendKeyEvent(KeyEvent(now, now, KeyEvent.ACTION_UP, key, 0, mods))
     }
+
     private fun keyPressed(value: String) {
         val key = value.lowercase()
         when (value) {
-            "Ctrl" -> { ctrl = !ctrl; toast("Ctrl ${if (ctrl) "ON" else "OFF"}"); return }
-            "Alt" -> { alt = !alt; toast("Alt ${if (alt) "ON" else "OFF"}"); return }
-            "⇧" -> { shifted = !shifted; return }
-            "Esc" -> { hardware(KeyEvent.KEYCODE_ESCAPE); ctrl = false; alt = false; return }
-            "⌫" -> { currentInputConnection?.deleteSurroundingTextInCodePoints(1, 0); return }
-            "Space" -> { commit(" "); return }
-            "↵", "Enter" -> { hardware(KeyEvent.KEYCODE_ENTER); return }
-            "Tab" -> { hardware(KeyEvent.KEYCODE_TAB); return }
-            "Home" -> { hardware(KeyEvent.KEYCODE_MOVE_HOME); return }
-            "End" -> { hardware(KeyEvent.KEYCODE_MOVE_END); return }
-            "PgUp" -> { hardware(KeyEvent.KEYCODE_PAGE_UP); return }
-            "PgDn" -> { hardware(KeyEvent.KEYCODE_PAGE_DOWN); return }
-            "←" -> { hardware(KeyEvent.KEYCODE_DPAD_LEFT); return }
-            "→" -> { hardware(KeyEvent.KEYCODE_DPAD_RIGHT); return }
-            "↑" -> { hardware(KeyEvent.KEYCODE_DPAD_UP); return }
-            "↓" -> { hardware(KeyEvent.KEYCODE_DPAD_DOWN); return }
+            "Ctrl" -> { ctrl = !ctrl; render(); return }
+            "Alt" -> { alt = !alt; render(); return }
+            "⇧" -> { shifted = !shifted; render(); return }
+            "⌫" -> { deleteBackward(); return }
+            "Space" -> { commit(" "); releaseModifiers(); return }
+            "Esc" -> { hardware(KeyEvent.KEYCODE_ESCAPE, activeModifiers()); releaseModifiers(); return }
+            "↵", "Enter" -> { hardware(KeyEvent.KEYCODE_ENTER, activeModifiers()); releaseModifiers(); return }
+            "Tab" -> { hardware(KeyEvent.KEYCODE_TAB, activeModifiers()); releaseModifiers(); return }
+            "Home" -> { hardware(KeyEvent.KEYCODE_MOVE_HOME, activeModifiers()); releaseModifiers(); return }
+            "End" -> { hardware(KeyEvent.KEYCODE_MOVE_END, activeModifiers()); releaseModifiers(); return }
+            "PgUp" -> { hardware(KeyEvent.KEYCODE_PAGE_UP, activeModifiers()); releaseModifiers(); return }
+            "PgDn" -> { hardware(KeyEvent.KEYCODE_PAGE_DOWN, activeModifiers()); releaseModifiers(); return }
+            "Ins" -> { hardware(KeyEvent.KEYCODE_INSERT, activeModifiers()); releaseModifiers(); return }
+            "Del" -> { hardware(KeyEvent.KEYCODE_FORWARD_DEL, activeModifiers()); releaseModifiers(); return }
+            "←" -> { hardware(KeyEvent.KEYCODE_DPAD_LEFT, activeModifiers()); releaseModifiers(); return }
+            "→" -> { hardware(KeyEvent.KEYCODE_DPAD_RIGHT, activeModifiers()); releaseModifiers(); return }
+            "↑" -> { hardware(KeyEvent.KEYCODE_DPAD_UP, activeModifiers()); releaseModifiers(); return }
+            "↓" -> { hardware(KeyEvent.KEYCODE_DPAD_DOWN, activeModifiers()); releaseModifiers(); return }
             "123" -> { symbols = 1; render(); return }
             "ABC" -> { symbols = 0; render(); return }
             "1/2" -> { symbols = 2; render(); return }
             "2/2" -> { symbols = 1; render(); return }
             "🎙", "🎙️" -> { startMic(); return }
         }
+        val functionMatch = Regex("^F([1-9]|1[0-2])$").matchEntire(value)
+        if (functionMatch != null) {
+            hardware(KeyEvent.KEYCODE_F1 + functionMatch.groupValues[1].toInt() - 1, activeModifiers())
+            releaseModifiers(); return
+        }
         if (ctrl || alt) {
-            val mods = (if (ctrl) KeyEvent.META_CTRL_ON else 0) or (if (alt) KeyEvent.META_ALT_ON else 0)
             if (ctrl && key in listOf("a", "c", "v", "x", "z", "y")) {
-                applyCombo("Ctrl+${value.uppercase()}")
+                applyCombo("Ctrl+" + value.uppercase())
             } else {
-                val code = if (value.length == 1) KeyEvent.keyCodeFromString("KEYCODE_${value.uppercase()}") else KeyEvent.KEYCODE_UNKNOWN
-                if (code != KeyEvent.KEYCODE_UNKNOWN) hardware(code, mods) else commit(value)
+                val code = if (value.length == 1) KeyEvent.keyCodeFromString("KEYCODE_" + value.uppercase()) else KeyEvent.KEYCODE_UNKNOWN
+                if (code != KeyEvent.KEYCODE_UNKNOWN) hardware(code, activeModifiers()) else commit(value)
             }
-            ctrl = false; alt = false
+            releaseModifiers()
             return
         }
         commit(if (shifted) value.uppercase() else if (value.length == 1 && value[0].isLetter()) value.lowercase() else value)
-        shifted = false
+        if (shifted) releaseModifiers()
     }
 
     private fun applyCombo(raw: String) {

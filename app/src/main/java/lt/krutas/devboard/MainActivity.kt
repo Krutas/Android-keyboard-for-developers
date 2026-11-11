@@ -94,6 +94,8 @@ class MainActivity : Activity() {
         slider("Corner radius (dp)", "radius", 0, 18, SettingsStore.radius(this))
         checkbox("Terminal shortcut rows", "extras", SettingsStore.showExtras(this))
         checkbox("Show F1–F12 / Insert / Delete bar", "function_keys", SettingsStore.prefs(this).getBoolean("function_keys", false))
+        checkbox("Haptic feedback on keys", "haptic", SettingsStore.prefs(this).getBoolean("haptic", false))
+        checkbox("Sound effects on keys", "sound", SettingsStore.prefs(this).getBoolean("sound", false))
         checkbox("Save clipboard history while keyboard is active", "clipboard_opt_in", SettingsStore.captureClipboard(this))
         detail("Clipboard history is opt-in. Android restricts background clipboard reads. Password fields are excluded.")
         title("Language & dictation", 17)
