@@ -52,3 +52,7 @@ APK: `app/build/outputs/apk/debug/app-debug.apk`.
 Preferences are local. Clipboard recording is opt-in and disabled in password fields. Speech recognition uses the Android system service and may require internet access. The web simulator uses temporary local file links and does **not** upload files to a server.
 
 See [testing checklist](docs/TESTING.md) and [source code](app/src/main/java/lt/krutas/devboard/). License: [MIT](LICENSE).
+
+## iPhone version
+
+An initial native iOS keyboard extension and companion app are in [ios/](ios/README.md). They include LT typing, terminal controls, emoji, themes and file sharing from the companion app. **The iOS app is source-only** until it is built and tested in Xcode. Apple's keyboard restrictions prevent direct microphone recording, universal file attachment and Android-style per-app detection.

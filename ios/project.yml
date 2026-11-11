@@ -1,0 +1,49 @@
+name: DevBoard
+options:
+  bundleIdPrefix: lt.krutas
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: 5.9
+    TARGETED_DEVICE_FAMILY: "1,2"
+targets:
+  DevBoard:
+    type: application
+    platform: iOS
+    sources:
+      - DevBoardApp
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: lt.krutas.devboard.ios
+        CODE_SIGN_ENTITLEMENTS: DevBoardApp/DevBoard.entitlements
+    info:
+      path: DevBoardApp/Info.plist
+      properties:
+        CFBundleDisplayName: DevBoard
+        UILaunchScreen: {}
+    dependencies:
+      - target: DevBoardKeyboard
+  DevBoardKeyboard:
+    type: app-extension
+    platform: iOS
+    sources:
+      - DevBoardKeyboard
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: lt.krutas.devboard.ios.keyboard
+        CODE_SIGN_ENTITLEMENTS: DevBoardKeyboard/DevBoardKeyboard.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
+    info:
+      path: DevBoardKeyboard/Info.plist
+      properties:
+        CFBundleDisplayName: DevBoard Keyboard
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: "$(PRODUCT_MODULE_NAME).KeyboardViewController"
+          NSExtensionAttributes:
+            PrimaryLanguage: lt-LT
+            IsASCIICapable: true
+            RequestsOpenAccess: false
