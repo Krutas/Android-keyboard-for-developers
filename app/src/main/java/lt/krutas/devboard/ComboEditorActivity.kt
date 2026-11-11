@@ -71,7 +71,7 @@ class ComboEditorActivity : Activity() {
         if (title.isBlank() || action.isBlank()) { Toast.makeText(this, "Enter name and action", Toast.LENGTH_SHORT).show(); return }
         val combos = SettingsStore.combos(this)
         if (editing >= 0 && editing < combos.size) combos[editing] = Combo(title, action, combos[editing].enabled)
-        else combos.add(Combo(title, action, true)
+        else combos.add(Combo(title, action, true))
         SettingsStore.saveCombos(this, combos.take(24))
         editing = -1; render()
     }
