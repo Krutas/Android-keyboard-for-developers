@@ -34,3 +34,15 @@
 - [ ] Signed release APK and store review (developer preview is debug-signed only).
 
 Known constraint: Android apps decide which hardware key events and content MIME types they accept. The web simulator cannot access installed IMEs, and its blob links are local to that browser session.
+
+## Android v0.2.2 layout regression
+- [ ] Verify every row below the first has a fully visible lower key border (no overlap with the following row).
+- [ ] Check the lowest row, portrait and landscape, with minimum and maximum key height and spacing settings.
+- [ ] Test typing and long presses after the row-margin change.
+
+## iOS v0.1 release gate
+- [x] GitHub Actions macOS build succeeded for simulator and unsigned device app (run 43059201642).
+- [x] CI artifact includes `DevBoard-iOS-v0.1-Simulator.zip` and `DevBoard-iOS-v0.1-unsigned.ipa`.
+- [ ] Sign the containing app and keyboard extension using valid Apple provisioning profiles.
+- [ ] Test keyboard enablement, typing, emoji, settings and switching on a physical iPhone.
+- [ ] Verify App Group entitlements and accessibility; review before public distribution.

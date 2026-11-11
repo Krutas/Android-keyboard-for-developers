@@ -14,7 +14,7 @@ The iOS port lives beside the Android source. It has a SwiftUI settings/companio
 
 ## Download built packages
 
-GitHub Actions → **iOS build** compiles and packages:
+[GitHub Actions iOS v0.1 build](https://github.com/Krutas/Android-keyboard-for-developers/actions/runs/43059201642) **succeeded** and packages:
 - `DevBoard-iOS-v0.1-Simulator.zip`: an iOS Simulator `.app` for Xcode testing.
 - `DevBoard-iOS-v0.1-unsigned.ipa`: a device-targeted app bundle with the keyboard extension, **not signed**.
 

@@ -4,7 +4,7 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Version:** 0.2.1 · [Download APK](releases/DevBoard-v0.2.2.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
+**Android:** 0.2.2 · **iOS:** 0.1 · [Download APK](releases/DevBoard-v0.2.2.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
 
 ## What it does
 
@@ -32,13 +32,13 @@ Emoji appearance depends on OS font support; newly released Unicode 18.0 symbols
 ## New in 0.2.1
 
 - Emoji picker expanded to 3,963 Unicode emoji variants in 9 categories, plus recent emoji.
-- APK filename changed to `DevBoard-v0.2.2.apk`.
+- APK filename changed to `DevBoard-v0.2.1.apk`.
 
 ## New in 0.2.2
 
 - Fixed overlapping keyboard rows: added bottom spacing so lower key edges remain visible.
 - Android version updated to 0.2.2 (versionCode 4).
-- iOS source version set to 0.1 (not yet built or signed).
+- iOS version tracked separately as 0.1; its unsigned CI build is available as an Actions artifact.
 
 ## Install on Android
 
@@ -68,4 +68,4 @@ See [testing checklist](docs/TESTING.md) and [source code](app/src/main/java/lt/
 
 ## iPhone version
 
-An initial native iOS keyboard extension and companion app are in [ios/](ios/README.md). They include LT typing, terminal controls, emoji, themes and file sharing from the companion app. **The iOS app is source-only** until it is built and tested in Xcode. Apple's keyboard restrictions prevent direct microphone recording, universal file attachment and Android-style per-app detection.
+An initial native iOS keyboard extension and companion app are in [ios/](ios/README.md). [Download the iOS v0.1 build artifact](https://github.com/Krutas/Android-keyboard-for-developers/actions/runs/43059201642) (GitHub Actions, expires after 30 days). They include LT typing, terminal controls, emoji, themes and file sharing from the companion app. **iOS v0.1 compiles successfully in GitHub Actions**, producing a simulator app and unsigned IPA; neither is a signed, device-tested release. Apple's keyboard restrictions prevent direct microphone recording, universal file attachment and Android-style per-app detection.
