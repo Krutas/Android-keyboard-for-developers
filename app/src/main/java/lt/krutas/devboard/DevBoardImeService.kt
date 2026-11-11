@@ -29,6 +29,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.GridView
+import android.widget.BaseAdapter
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.PopupMenu
@@ -67,6 +69,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     private var micStatus = "🎙 Pasiruošęs"
     private var micStatusView: TextView? = null
     private var emojiOpen = false
+    private var emojiCategory = 1
     private var micIndicator: TextView? = null
     private var lastInput: EditorInfo? = null
     private val clipboard by lazy { getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager }
@@ -219,35 +222,97 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     }
 
     private fun emojiPanel(): View {
+        val groups = EmojiCatalog.groups(this)
         val panel = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        val controls = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         val close = Button(this).apply {
-            text = "ABC   ← Grįžti į klaviatūrą"
+            text = "ABC"
             isAllCaps = false
             textSize = 14f
             setTextColor(palette.textColor())
             background = shape(palette.specialColor())
             setOnClickListener { emojiOpen = false; render() }
         }
-        panel.addView(close, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(39)))
-        val choices = listOf(
-            listOf("😀", "😃", "😄", "😁", "😅", "😂", "🤣", "😊"),
-            listOf("😍", "🥰", "😘", "😎", "🤔", "😢", "😭", "😡"),
-            listOf("👍", "👎", "👏", "🙏", "🤝", "💪", "🔥", "❤️"),
-            listOf("✅", "❌", "⭐", "🎉", "💯", "👀", "💻", "🚀")
-        )
-        choices.forEachIndexed { rowIndex, items ->
-            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-            items.forEachIndexed { index, emoji ->
-                val b = button(emoji, false, rowIndex * 8 + index).apply {
-                    textSize = 22f
-                    setOnClickListener { commit(emoji) }
-                }
-                row.addView(b, LinearLayout.LayoutParams(0, dp(SettingsStore.keyHeight(this)), 1f).apply {
-                    setMargins(dp(1), dp(2), dp(1), 0)
-                })
-            }
-            panel.addView(row)
+        controls.addView(close, LinearLayout.LayoutParams(0, dp(39), 2f))
+        val heading = TextView(this).apply {
+            text = "Emoji"
+            textSize = 15f
+            gravity = Gravity.CENTER
+            setTextColor(palette.textColor())
         }
+        controls.addView(heading, LinearLayout.LayoutParams(0, dp(39), 4f))
+        val backspace = Button(this).apply {
+            text = "⌫"
+            textSize = 19f
+            setTextColor(palette.textColor())
+            background = shape(palette.specialColor())
+            setOnClickListener { deleteBackward() }
+        }
+        controls.addView(backspace, LinearLayout.LayoutParams(0, dp(39), 2f))
+        panel.addView(controls)
+
+        val tabs = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val grid = GridView(this).apply {
+            numColumns = 8
+            verticalSpacing = dp(2)
+            horizontalSpacing = dp(1)
+            stretchMode = GridView.STRETCH_COLUMN_WIDTH
+            isVerticalScrollBarEnabled = false
+            setBackgroundColor(palette.bg())
+        }
+        fun show(category: Int) {
+            emojiCategory = category
+            val options = if (category == 0) EmojiCatalog.recent(this) else groups[category - 1].items
+            heading.text = if (category == 0) "Neseniai naudoti" else groups[category - 1].name
+            grid.adapter = object : BaseAdapter() {
+                override fun getCount(): Int = options.size
+                override fun getItem(position: Int): Any = options[position]
+                override fun getItemId(position: Int): Long = position.toLong()
+                override fun getView(position: Int, old: View?, parent: ViewGroup): View {
+                    val cell = old as? TextView ?: TextView(this@DevBoardImeService).apply {
+                        gravity = Gravity.CENTER
+                        textSize = 25f
+                        setTextColor(palette.textColor())
+                    }
+                    cell.text = options[position].value
+                    cell.contentDescription = options[position].name
+                    return cell
+                }
+            }
+            grid.setSelection(0)
+            for (index in 0 until tabs.childCount) {
+                (tabs.getChildAt(index) as Button).alpha = if (index == category) 1f else 0.6f
+            }
+        }
+        val tabIcons = listOf("🕘") + groups.map { it.icon }
+        tabIcons.forEachIndexed { index, icon ->
+            val tab = Button(this).apply {
+                text = icon
+                textSize = 21f
+                minWidth = 0
+                minimumWidth = 0
+                setPadding(0, 0, 0, 0)
+                background = shape(palette.specialColor())
+                setOnClickListener { show(index) }
+            }
+            tabs.addView(tab, LinearLayout.LayoutParams(dp(43), dp(39)).apply {
+                setMargins(dp(1), dp(1), dp(1), dp(1))
+            })
+        }
+        panel.addView(HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            addView(tabs)
+        })
+        grid.onItemClickListener = android.widget.AdapterView.OnItemClickListener { _, _, index, _ ->
+            val options = if (emojiCategory == 0) EmojiCatalog.recent(this)
+                          else groups[emojiCategory - 1].items
+            val emoji = options.getOrNull(index)?.value ?: return@OnItemClickListener
+            currentInputConnection?.commitText(emoji, 1)
+            EmojiCatalog.remember(this, emoji)
+            if (!capsLock) shifted = shouldCapitalize()
+        }
+        panel.addView(grid, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(239)))
+        show(if (emojiCategory == 0 && EmojiCatalog.recent(this).isEmpty()) 1 else emojiCategory)
         return panel
     }
 

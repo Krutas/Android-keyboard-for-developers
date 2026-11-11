@@ -1,7 +1,25 @@
 import UIKit
 
 /// Native iOS keyboard extension. No microphone, file or network access is requested.
-final class KeyboardViewController: UIInputViewController {
+private final class EmojiCell: UICollectionViewCell {
+    let emojiLabel = UILabel()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
+        emojiLabel.font = .systemFont(ofSize: 27)
+        emojiLabel.textAlignment = .center
+        contentView.addSubview(emojiLabel)
+        NSLayoutConstraint.activate([
+            emojiLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            emojiLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            emojiLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            emojiLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
+}
+
+final class KeyboardViewController: UIInputViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private enum Layer { case letters, numbers, symbols, emoji }
     private struct Key {
         let label: String
@@ -19,6 +37,9 @@ final class KeyboardViewController: UIInputViewController {
     private var popupHeightAdded = false
     private var keyboardHeightConstraint: NSLayoutConstraint!
     private var layer: Layer = .letters
+    private var emojiCategory = 1
+    private var emojiItems: [[String]] = []
+    private weak var emojiGrid: UICollectionView?
     private var shift = true
     private var capsLock = false
     private var ctrl = false
@@ -55,7 +76,7 @@ final class KeyboardViewController: UIInputViewController {
         super.textDidChange(textInput)
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
         if before.isEmpty || before.hasSuffix("\n") { shift = true }
-        render()
+        if layer != .emoji { render() }
     }
 
     private func palette() -> (UIColor, UIColor, UIColor) {
@@ -135,9 +156,86 @@ final class KeyboardViewController: UIInputViewController {
         vertical.addArrangedSubview(scroll)
     }
 
+    private func addEmojiPanel() {
+        let available = EmojiCatalog.groups
+        guard !available.isEmpty else {
+            addRow([Key("ABC", "letters")])
+            return
+        }
+        let categoryScroll = UIScrollView()
+        categoryScroll.showsHorizontalScrollIndicator = false
+        categoryScroll.heightAnchor.constraint(equalToConstant: 39).isActive = true
+        let categories = UIStackView()
+        categories.axis = .horizontal
+        categories.spacing = 3
+        categories.translatesAutoresizingMaskIntoConstraints = false
+        categoryScroll.addSubview(categories)
+        NSLayoutConstraint.activate([
+            categories.leadingAnchor.constraint(equalTo: categoryScroll.contentLayoutGuide.leadingAnchor),
+            categories.trailingAnchor.constraint(equalTo: categoryScroll.contentLayoutGuide.trailingAnchor),
+            categories.topAnchor.constraint(equalTo: categoryScroll.contentLayoutGuide.topAnchor),
+            categories.bottomAnchor.constraint(equalTo: categoryScroll.contentLayoutGuide.bottomAnchor),
+            categories.heightAnchor.constraint(equalTo: categoryScroll.frameLayoutGuide.heightAnchor)
+        ])
+        for (index, icon) in EmojiCatalog.icons.enumerated() {
+            let button = makeButton(Key(icon, "emojiGroup:" + String(index)))
+            button.alpha = index == emojiCategory ? 1 : 0.65
+            button.widthAnchor.constraint(equalToConstant: 41).isActive = true
+            categories.addArrangedSubview(button)
+        }
+        vertical.addArrangedSubview(categoryScroll)
+
+        let flow = UICollectionViewFlowLayout()
+        flow.scrollDirection = .vertical
+        flow.minimumInteritemSpacing = 1
+        flow.minimumLineSpacing = 2
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: flow)
+        collection.register(EmojiCell.self, forCellWithReuseIdentifier: "emoji")
+        collection.dataSource = self
+        collection.delegate = self
+        collection.keyboardDismissMode = .none
+        collection.backgroundColor = .clear
+        collection.showsVerticalScrollIndicator = false
+        collection.heightAnchor.constraint(equalToConstant: 221).isActive = true
+        emojiGrid = collection
+        emojiItems = emojiCategory == 0 ? EmojiCatalog.recent() : available[emojiCategory - 1].items
+        vertical.addArrangedSubview(collection)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        emojiItems.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emoji", for: indexPath) as! EmojiCell
+        let item = emojiItems[indexPath.item]
+        cell.emojiLabel.text = item[0]
+        cell.isAccessibilityElement = true
+        cell.accessibilityLabel = item[1]
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selected = emojiItems[indexPath.item][0]
+        textDocumentProxy.insertText(selected)
+        EmojiCatalog.remember(selected)
+        if emojiCategory == 0 {
+            emojiItems = EmojiCatalog.recent()
+            collectionView.reloadData()
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = max(30, floor((collectionView.bounds.width - 14) / 8))
+        return CGSize(width: width, height: 40)
+    }
+
     private func render() {
         let (background, _, foreground) = palette()
+        keyboardHeightConstraint.constant = layer == .emoji ? 366 : 312
         view.backgroundColor = background
+        emojiGrid = nil
         vertical.arrangedSubviews.forEach {
             vertical.removeArrangedSubview($0)
             $0.removeFromSuperview()
@@ -188,10 +286,7 @@ final class KeyboardViewController: UIInputViewController {
                     Key("[", "["), Key("]", "]"), Key("{", "{"), Key("}", "}"),
                     Key("⌫", "backspace", 1.5)])
         case .emoji:
-            addRow(Array("😀😁😂🤣😊😍🥰😘😎😃").map { Key(String($0)) })
-            addRow(Array("😢😭😡👍👎👏🙏💪🔥❤️").map { Key(String($0)) })
-            addRow(Array("🎉✨✅❌💻⌨️🚀🐱🌍☕").map { Key(String($0)) })
-            addRow([Key("ABC", "letters", 2), Key("😀", "emoji", 2), Key("⌫", "backspace", 2)])
+            addEmojiPanel()
         }
         addRow([
             Key(layer == .letters ? "123" : "ABC", layer == .letters ? "numbers" : "letters"),
@@ -262,6 +357,14 @@ final class KeyboardViewController: UIInputViewController {
         case "#+=", "symbols": layer = .symbols
         case "ABC", "letters": layer = .letters
         case "emoji": layer = layer == .emoji ? .letters : .emoji
+        case let group where group.hasPrefix("emojiGroup:"):
+            if let index = Int(group.dropFirst("emojiGroup:".count)),
+               (0...EmojiCatalog.groups.count).contains(index) {
+                emojiCategory = index
+                emojiItems = index == 0 ? EmojiCatalog.recent() : EmojiCatalog.groups[index - 1].items
+                emojiGrid?.reloadData()
+                emojiGrid?.setContentOffset(.zero, animated: false)
+            }
         case "snippet":
             let saved = SharedSettings.snippet
             if !saved.isEmpty { proxy.insertText(saved) }

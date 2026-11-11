@@ -12,7 +12,7 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 - Lithuanian/English typing, numbers, symbols and a popup for punctuation.
 - 19 themes, keyboard sizes, spacing and customizable layouts.
 - Named profiles, snippets, JSON layout import/export and optional per-app profiles.
-- Clipboard history (off by default), emoji picker and speech-to-text controls.
+- Clipboard history (off by default), 3,963 Unicode 18.0 emojis in nine categories, recent emojis and speech-to-text controls.
 - Attach any file using Android's file picker and share sheet.
 - Switch to any enabled installed keyboard through Android's system picker.
 
@@ -26,6 +26,8 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 - Long-press **,** or **.** to pick extra symbols.
 - Moved 🎙️ voice input beside **Alt**, with Finish/Cancel controls.
 - Replaced the bottom microphone key with an 😀 emoji panel.
+
+Emoji appearance depends on OS font support; newly released Unicode 18.0 symbols may not render on older devices. Emoji data is bundled offline from [Unicode](https://www.unicode.org/Public/emoji/latest/emoji-test.txt) under the [Unicode License](https://www.unicode.org/license.txt).
 
 ## Install on Android
 

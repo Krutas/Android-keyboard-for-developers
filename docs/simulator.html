@@ -133,7 +133,12 @@
 .combo-items{display:flex;align-items:center;gap:5px;padding:6px 0;border-top:1px solid #d6e0ed}
 .combo-items span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .combo-items small{color:#637992}
-.file-summary{display:flex;gap:10px;align-items:center;min-height:65px;padding:7px 1px 10px;min-width:0}.file-summary img{width:65px!important;height:62px;object-fit:contain}.file-summary img[hidden],.file-icon[hidden]{display:none!important}.file-icon{width:54px;flex:0 0 54px;text-align:center;font-size:32px}.file-details{display:flex;flex-direction:column;gap:4px;min-width:0;font-size:11px}.file-details strong{overflow-wrap:anywhere}.file-details small{color:#60738b;font-size:10px;overflow-wrap:anywhere}.file-preview{bottom:315px}.system-ime-picker{border:1px solid #b8cbe4;background:#f1f6fe;color:#223f61;border-radius:12px;padding:10px;margin:8px 0 10px}.system-ime-picker[hidden]{display:none!important}.system-ime-picker>strong{font-size:12px}.system-ime-picker .demo-ime{display:flex;width:100%;justify-content:space-between;gap:8px;align-items:center;padding:10px 8px;margin:4px 0;border:1px solid #c5d7ed;border-radius:8px;background:white;color:#1c416c;cursor:pointer;font-size:12px}.system-ime-picker .demo-ime.active{border-color:#3078e5;background:#e3efff}.system-ime-picker .demo-ime span{font-weight:700}.system-ime-picker .demo-ime small{font-size:10px;color:#617b99}</style></head><body><main class="shell"><section><div class="top"><div><div class="brand">⌨ Dev<span>Board</span> Studio</div><div class="muted">Interactive Android keyboard prototype · Galaxy A56 preview</div></div><div class="pill">WEB MVP · v1.5</div></div><div class="preview"><div class="phone"><div class="camera"></div><div class="status"><span>12:46</span><span>▴ ▰  ▣ 100%</span></div><div class="docbar" id="docbar"><strong>Untitled document</strong><div class="doc-actions"><button id="attachFile" title="Attach any file" aria-label="Attach file">📎</button><button id="newDoc">+ New</button></div></div><input id="attachmentFile" type="file" hidden><div class="image-preview file-preview" id="filePreview" hidden><div class="image-actions"><strong>📎 Selected file</strong><button id="closeFile" type="button" aria-label="Close attachment preview">✕</button></div><div class="file-summary"><img id="fileThumb" alt="Selected file thumbnail" hidden><div id="fileIcon" class="file-icon" aria-hidden="true">📄</div><div class="file-details"><strong id="fileName"></strong><small id="fileMeta"></small></div></div><div class="image-actions"><span>Local preview only; file is not uploaded</span><button id="insertFileLink" type="button">Insert link</button></div></div><div class="apphome" id="apphome" hidden></div><div class="paper" id="paper" contenteditable="true" spellcheck="false" aria-label="Document"></div><div class="accent-popup" id="accentPopup" hidden></div><div class="keyboard" id="keyboard"><div class="clipbar"><button id="clipOpen" title="Clipboard history">📋</button><button id="snippetOpen" title="Saved snippets">⭐</button><div class="cliprecent" id="clipRecent"></div><button id="settingsOpen" title="Keyboard settings" aria-label="Settings">⚙️</button><button id="comboOpen" title="Add or manage key combinations">＋ Combo</button></div><div id="swapTip" class="swap-tip" hidden></div><div id="comboBar" class="combo-bar" hidden></div><div id="keys"></div></div><div class="combo-pop" id="comboPop" hidden><div class="combo-head"><strong>⌨ Add Combo</strong><button id="comboClose" type="button" aria-label="Close combo editor">✕</button></div><p class="combo-help">Save a reusable keyboard shortcut. It will appear on the shortcut bar above the keys.</p><label>Button name<input id="comboName" placeholder="e.g. Copy" maxlength="20" autocomplete="off"></label><div class="combo-mods"><label><input id="comboCtrl" type="checkbox"> Ctrl</label><label><input id="comboAlt" type="checkbox"> Alt</label><label><input id="comboShift" type="checkbox"> Shift</label></div><label>Key<select id="comboKey"></select></label><div class="combo-actions"><button id="comboSave" type="button">Save combo</button><button id="comboCancel" type="button">Cancel</button></div><p class="combo-help" id="comboHelp">Some Android shortcuts cannot be simulated in a browser. This demo supports common text-editing shortcuts.</p><div class="combo-items-title">Saved combos</div><div id="comboList"></div></div><div class="voice-pop" id="voicePop" hidden aria-live="polite"><div class="voice-heading"><span class="voice-indicator" id="voiceTitle">Listening… LT</span><button class="stop" id="voiceStop">■ Stop</button></div><div class="voice-activity" id="voiceActivity">Waiting for microphone permission</div><div class="voice-meter" id="voiceMeter" aria-label="Microphone volume level"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="voice-preview" id="voicePreview">Speak now. Recognized text will appear in the document.</div></div><div class="lang-pop" id="langPop" hidden><strong>Typing and dictation language</strong><button data-lang="lt-LT">🇱🇹 Lithuanian (LT)</button><button data-lang="en-US">🇬🇧 English (EN)</button></div><div class="phone-settings" id="phoneSettings" hidden><div class="settings-head"><button id="settingsClose">←</button><strong>⚙️ DevBoard Settings</strong><span>v1.5</span></div><div class="settings-live" id="settingsLive">
+.file-summary{display:flex;gap:10px;align-items:center;min-height:65px;padding:7px 1px 10px;min-width:0}.file-summary img{width:65px!important;height:62px;object-fit:contain}.file-summary img[hidden],.file-icon[hidden]{display:none!important}.file-icon{width:54px;flex:0 0 54px;text-align:center;font-size:32px}.file-details{display:flex;flex-direction:column;gap:4px;min-width:0;font-size:11px}.file-details strong{overflow-wrap:anywhere}.file-details small{color:#60738b;font-size:10px;overflow-wrap:anywhere}.file-preview{bottom:315px}.system-ime-picker{border:1px solid #b8cbe4;background:#f1f6fe;color:#223f61;border-radius:12px;padding:10px;margin:8px 0 10px}.system-ime-picker[hidden]{display:none!important}.system-ime-picker>strong{font-size:12px}.system-ime-picker .demo-ime{display:flex;width:100%;justify-content:space-between;gap:8px;align-items:center;padding:10px 8px;margin:4px 0;border:1px solid #c5d7ed;border-radius:8px;background:white;color:#1c416c;cursor:pointer;font-size:12px}.system-ime-picker .demo-ime.active{border-color:#3078e5;background:#e3efff}.system-ime-picker .demo-ime span{font-weight:700}.system-ime-picker .demo-ime small{font-size:10px;color:#617b99}
+/* Full Unicode emoji picker in simulator */
+.keyboard .emoji-controls{display:flex;align-items:center;justify-content:space-between;color:var(--kb-text);gap:6px;margin:4px 0 6px}
+.emoji-controls button,.emoji-cats button{background:var(--kb-special,#435575);border:1px solid var(--kb-border);color:var(--kb-text);border-radius:6px;cursor:pointer;padding:6px 12px}
+.emoji-controls span{font-size:12px;font-weight:700}.emoji-cats{display:flex;overflow-x:auto;gap:3px;padding:4px 0 7px;scrollbar-width:thin}.emoji-cats button{padding:5px 8px;font-size:17px}.emoji-cats button.active{outline:2px solid #89b5ff}.emoji-search{width:100%;padding:6px;border-radius:7px;border:1px solid var(--kb-border);background:var(--kb-bg);color:var(--kb-text);margin-bottom:6px}.emoji-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:1px;max-height:228px;overflow-y:auto;overscroll-behavior:contain}.emoji-grid button{font-size:23px;border:0;background:transparent;min-width:0;min-height:38px;cursor:pointer}.emoji-grid button:active{background:var(--kb-special)}.emoji-grid p{color:var(--kb-text);font-size:11px;grid-column:span 8}
+</style></head><body><main class="shell"><section><div class="top"><div><div class="brand">⌨ Dev<span>Board</span> Studio</div><div class="muted">Interactive Android keyboard prototype · Galaxy A56 preview</div></div><div class="pill">WEB MVP · v1.5</div></div><div class="preview"><div class="phone"><div class="camera"></div><div class="status"><span>12:46</span><span>▴ ▰  ▣ 100%</span></div><div class="docbar" id="docbar"><strong>Untitled document</strong><div class="doc-actions"><button id="attachFile" title="Attach any file" aria-label="Attach file">📎</button><button id="newDoc">+ New</button></div></div><input id="attachmentFile" type="file" hidden><div class="image-preview file-preview" id="filePreview" hidden><div class="image-actions"><strong>📎 Selected file</strong><button id="closeFile" type="button" aria-label="Close attachment preview">✕</button></div><div class="file-summary"><img id="fileThumb" alt="Selected file thumbnail" hidden><div id="fileIcon" class="file-icon" aria-hidden="true">📄</div><div class="file-details"><strong id="fileName"></strong><small id="fileMeta"></small></div></div><div class="image-actions"><span>Local preview only; file is not uploaded</span><button id="insertFileLink" type="button">Insert link</button></div></div><div class="apphome" id="apphome" hidden></div><div class="paper" id="paper" contenteditable="true" spellcheck="false" aria-label="Document"></div><div class="accent-popup" id="accentPopup" hidden></div><div class="keyboard" id="keyboard"><div class="clipbar"><button id="clipOpen" title="Clipboard history">📋</button><button id="snippetOpen" title="Saved snippets">⭐</button><div class="cliprecent" id="clipRecent"></div><button id="settingsOpen" title="Keyboard settings" aria-label="Settings">⚙️</button><button id="comboOpen" title="Add or manage key combinations">＋ Combo</button></div><div id="swapTip" class="swap-tip" hidden></div><div id="comboBar" class="combo-bar" hidden></div><div id="keys"></div></div><div class="combo-pop" id="comboPop" hidden><div class="combo-head"><strong>⌨ Add Combo</strong><button id="comboClose" type="button" aria-label="Close combo editor">✕</button></div><p class="combo-help">Save a reusable keyboard shortcut. It will appear on the shortcut bar above the keys.</p><label>Button name<input id="comboName" placeholder="e.g. Copy" maxlength="20" autocomplete="off"></label><div class="combo-mods"><label><input id="comboCtrl" type="checkbox"> Ctrl</label><label><input id="comboAlt" type="checkbox"> Alt</label><label><input id="comboShift" type="checkbox"> Shift</label></div><label>Key<select id="comboKey"></select></label><div class="combo-actions"><button id="comboSave" type="button">Save combo</button><button id="comboCancel" type="button">Cancel</button></div><p class="combo-help" id="comboHelp">Some Android shortcuts cannot be simulated in a browser. This demo supports common text-editing shortcuts.</p><div class="combo-items-title">Saved combos</div><div id="comboList"></div></div><div class="voice-pop" id="voicePop" hidden aria-live="polite"><div class="voice-heading"><span class="voice-indicator" id="voiceTitle">Listening… LT</span><button class="stop" id="voiceStop">■ Stop</button></div><div class="voice-activity" id="voiceActivity">Waiting for microphone permission</div><div class="voice-meter" id="voiceMeter" aria-label="Microphone volume level"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="voice-preview" id="voicePreview">Speak now. Recognized text will appear in the document.</div></div><div class="lang-pop" id="langPop" hidden><strong>Typing and dictation language</strong><button data-lang="lt-LT">🇱🇹 Lithuanian (LT)</button><button data-lang="en-US">🇬🇧 English (EN)</button></div><div class="phone-settings" id="phoneSettings" hidden><div class="settings-head"><button id="settingsClose">←</button><strong>⚙️ DevBoard Settings</strong><span>v1.5</span></div><div class="settings-live" id="settingsLive">
  <div class="live-title"><span>LIVE KEYBOARD PREVIEW</span><span class="live-language" id="liveLanguage">LT · Terminal</span></div>
  <div class="live-preview-wrap"><button type="button" class="theme-navigate live-prev" id="themePrev" aria-label="Previous theme" title="Previous theme">‹</button>
  <div class="live-keyboard" id="liveKeyboard" aria-label="Live keyboard theme preview"></div>
@@ -150,12 +155,59 @@ const clone=x=>JSON.parse(JSON.stringify(x));let profiles;try{profiles=JSON.pars
  [ ['Esc','Ctrl','Alt','🎙️','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','Delete','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['€','£','¥','¢','©','®','™','§','¶','°'],['±','×','÷','≠','≤','≥','∞','µ','•','…'],['<','>','[',']','{','}','|','\\','~','^'],['ABC','😀',',','space','.','2/2','↵'] ]
 ];
 let symbolPage=false, symbolsSecondPage=false, emojiOpen=false;
-const emojiRows=[
+let emojiRows=[
  ['ABC','😀','😃','😄','😁','😅','😂','🤣'],
  ['😊','😍','🥰','😘','😎','🤔','😢','😭'],
  ['😡','👍','👎','👏','🙏','🤝','💪','🔥'],
  ['❤️','✅','❌','⭐','🎉','💯','👀','💻','🚀']
 ];
+// Full offline catalog served alongside the simulator; 32-emoji fallback for file:// previews.
+const emojiIcons=['🕘','😀','🧑','🐻','🍔','🚗','⚽','💡','❤️','🏳️'];
+let emojiCatalog=[], emojiCategory=1, emojiSearch='';
+let emojiRecent=[];try{emojiRecent=JSON.parse(localStorage.getItem('devboard-recent-emojis'))||[]}catch{}
+fetch('./emoji.json').then(r=>{if(!r.ok)throw Error('emoji catalog');return r.json()}).then(data=>{
+ emojiCatalog=data.groups||[];if(emojiOpen){render();renderLiveKeyboard()}
+}).catch(()=>{});
+function emojiOptions(){
+ if(!emojiCatalog.length)return emojiRows.flat().filter(k=>k!=='ABC').map(e=>[e,e]);
+ if(emojiCategory===0){
+  const lookup=new Map(emojiCatalog.flatMap(g=>g.items).map(item=>[item[0],item]));
+  return emojiRecent.map(e=>lookup.get(e)).filter(Boolean);
+ }
+ return emojiCatalog[emojiCategory-1].items;
+}
+function rememberEmoji(e){
+ emojiRecent=[e,...emojiRecent.filter(x=>x!==e)].slice(0,48);
+ localStorage.setItem('devboard-recent-emojis',JSON.stringify(emojiRecent))
+}
+function emojiPicker(root){
+ root.classList.add('emoji-mode');
+ const controls=document.createElement('div');controls.className='emoji-controls';
+ const back=document.createElement('button');back.textContent='ABC';back.onclick=()=>press('ABC');
+ const title=document.createElement('span');title.textContent='Emoji · '+(emojiCatalog[emojiCategory-1]?.name||'Recent');
+ const erase=document.createElement('button');erase.textContent='⌫';erase.onclick=()=>command('delete');
+ controls.append(back,title,erase);root.append(controls);
+ const cats=document.createElement('div');cats.className='emoji-cats';
+ emojiIcons.forEach((glyph,i)=>{
+  const b=document.createElement('button');b.textContent=glyph;b.className=i===emojiCategory?'active':'';
+  b.onclick=()=>{emojiCategory=i;emojiSearch='';render();renderLiveKeyboard()};cats.append(b)
+ });root.append(cats);
+ const search=document.createElement('input');search.className='emoji-search';search.placeholder='⌕ Search emoji';search.value=emojiSearch;
+ root.append(search);
+ const grid=document.createElement('div');grid.className='emoji-grid';root.append(grid);
+ function fill(){
+  grid.replaceChildren();
+  const options=emojiOptions().filter(x=>!emojiSearch||x[1].toLowerCase().includes(emojiSearch.toLowerCase()));
+  for(const [emoji,name] of options){
+   const b=document.createElement('button');b.textContent=emoji;b.title=name;
+   b.onclick=()=>{rememberEmoji(emoji);insert(emoji);if(emojiCategory===0)fill()};
+   grid.append(b)
+  }
+  if(!options.length){const no=document.createElement('p');no.textContent='No matching emoji';grid.append(no)}
+ }
+ search.oninput=()=>{emojiSearch=search.value;fill()};
+ fill();
+}
 const accents={'1':['ą'],'2':['č'],'3':['ę'],'4':['ė'],'5':['į'],'6':['š'],'7':['ų'],'8':['ū'],'9':['ž']};
 const punctuation={',':[',',';',':','„',"'"],'.':['.','?','!','…',':']};
 for(const p of Object.values(profiles)){
@@ -258,6 +310,8 @@ function render(){
  if(!emojiOpen&&!extras&&mode!=='Normal'&&!editing)rows=rows.filter(({index})=>mode==='Code'?index!==0:index>1);
  const tip=$('swapTip');tip.hidden=!editing;
  if(editing)tip.textContent=selected?`Selected: ${layout()[selected[0]][selected[1]]}  ·  Tap the destination key to swap  ·  Tap again to cancel`:'Swap keys: tap the first key, then tap its new location';
+ if(emojiOpen && emojiCatalog.length){emojiPicker($('keys'));renderComboBar();return}
+ $('keys').classList.remove('emoji-mode');
  rows.forEach(({row:r,index:ri})=>{
   const div=document.createElement('div');div.className='keyrow'+(r.join('')==='1234567890'?' numbers':'');
   r.forEach((key,ki)=>{
@@ -388,7 +442,7 @@ const keyboardThemes=[
 
 function renderLiveKeyboard(){
  const root=$('liveKeyboard');if(!root)return;root.replaceChildren();
- const rows=emojiOpen?emojiRows:symbolPage?symbolPages[symbolsSecondPage?1:0]:layout();
+ const rows=emojiOpen?(emojiCatalog.length ? Array.from({length:4},(_,i)=>emojiOptions().slice(i*8,i*8+8).map(x=>x[0])) : emojiRows):symbolPage?symbolPages[symbolsSecondPage?1:0]:layout();
  const content=(extras||emojiOpen)?rows:rows.filter((_,i)=>mode==='Code'?i!==0:i>1);
  for(const row of content){
   const div=document.createElement('div');div.className='mini-keyrow'+(row.join('')==='1234567890'?' numbers':'');

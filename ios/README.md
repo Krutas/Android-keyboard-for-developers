@@ -33,3 +33,5 @@ The iOS port lives beside the Android source. It has a SwiftUI settings/companio
 References: [Apple custom keyboard guide](https://developer.apple.com/documentation/uikit/creating-a-custom-keyboard), [custom keyboard restrictions](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/CustomKeyboard.html).
 
 The iOS code is a first implementation, not full Android feature parity. Do not publish it as a verified iOS release until signed, built and tested on iPhone.
+
+Emoji picker: offline Unicode 18.0 RGI catalog, nine categories, Recent (48 entries), virtualized scrolling. Appearance varies by OS emoji font support. Source: https://www.unicode.org/Public/emoji/latest/emoji-test.txt (Unicode License).

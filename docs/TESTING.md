@@ -25,7 +25,7 @@
 - [ ] Per-app mapping activates a named profile only for configured packages (e.g. com.termux).
 - [ ] 📎 invokes Android's file picker and share chooser. It does **not** silently attach a file to an app.
 - [ ] Upper 🎙 (next to Alt) opens speech panel; Baigti finishes and Atšaukti discards dictation. Verify LT/EN, live microphone level, and Cyrillic blocking in LT mode.
-- [ ] Bottom 😀 opens emoji picker, inserts emoji into focused field, and ABC closes picker. Test saved layouts migrated from old microphone placement.
+- [ ] Bottom 😀 opens nine scrollable emoji categories plus Recent, inserts whole ZWJ/skin-tone/flag sequences in the active field, preserves scrolling while inserting multiple emoji, ⌫ deletes, and ABC closes picker. Test saved layouts migrated from old microphone placement.
 - [ ] Rotate phone and test portrait/landscape, return from Settings, disable/reenable keyboard, and reopen apps.
 
 ## Release gate
