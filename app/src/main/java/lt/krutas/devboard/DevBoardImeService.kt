@@ -115,6 +115,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         }
         action("⚙", 39) { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
         action("+ Combo", 74) { startActivity(Intent(this, ComboEditorActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
+        action("📎", 39) { startActivity(Intent(this, FileShareActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
         action("📋", 39) { openClipboard(false) }
         action("⭐", 39) { openClipboard(true) }
         micIndicator = TextView(this).apply {

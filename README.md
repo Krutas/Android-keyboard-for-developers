@@ -28,7 +28,7 @@ An experimental **Android system keyboard** for programming, Termux, SSH termina
 | Clipboard history | ✅ opt-in, subject to Android limits | ✅ in-app history |
 | Microphone / speech-to-text (LT / EN) | Android SpeechRecognizer | Browser Web Speech API |
 | Real voice level indicator | SpeechRecognizer RMS | Web Audio levels where permitted |
-| Picture insertion | Not yet | Temporary local blob link |
+| General file attachment | Android file picker + Share sheet (app-dependent) | Select any file, show metadata, insert temporary local blob link |
 
 **Note:** Modifier combinations and navigation key events depend on the receiving Android app. Some terminal clients do not honor every Ctrl, Alt, function, or system shortcut. Native keyboard integration is not a guarantee that those shortcuts work across all apps. Microphone accuracy and language availability depend on the device's installed speech recognition service.
 
@@ -38,7 +38,8 @@ An experimental **Android system keyboard** for programming, Termux, SSH termina
 2. Open the APK on your Android phone. Android may ask permission to install apps from that source.
 3. Open **DevBoard** → **Enable DevBoard in Android settings**, then **Choose DevBoard as input method**.
 4. In any text field, the DevBoard keyboard will appear. Try `123`, long-press a number, or long-press **Space** to switch LT / EN.
-5. Tap 🎙 for dictation. The app requests Android's standard microphone permission. The recognition engine might use a network service; no OpenAI API is used.
+5. Tap **📎** to choose any file with Android's system file picker, then select a destination app in the Android share chooser. **This is not an automatic upload to the currently focused chat.**
+6. Tap 🎙 for dictation. The app requests Android's standard microphone permission. The recognition engine might use a network service; no OpenAI API is used.
 
 **Security:** Android warns whenever a keyboard is enabled because input methods can see typed text. This app stores local preferences and does not implement custom network calls or analytics. Speech recognition is delegated to the system speech service. Clipboard history is **off by default** and requires opt-in. It is disabled inside password fields; clipboard access is subject to Android permissions and restrictions.
 
@@ -53,9 +54,11 @@ export ANDROID_HOME="$HOME/Android/Sdk"  # or your SDK path
 
 Output: `app/build/outputs/apk/debug/app-debug.apk`. Native Android sources are in `app/src/main/java/lt/krutas/devboard/`.
 
+**File privacy:** The web simulator creates a temporary `blob:` link locally and never uploads the selected file to a server. That link is **not** portable between devices or apps. Native Android uses a `content://` URI with temporary read permission passed to the user-selected share destination.
+
 ## Simulator development
 
-`docs/simulator.html` is a standalone HTML/CSS/JS simulator with a white document canvas, keyboard profiles, theme previews, editing, reusable combos, temporary image links, clipboard, and dictation where the browser supports it.
+`docs/simulator.html` is a standalone HTML/CSS/JS simulator with a white document canvas, keyboard profiles, theme previews, editing, reusable combos, temporary local file links (any file type), clipboard, and dictation where the browser supports it.
 
 ```bash
 cd docs
@@ -88,7 +91,7 @@ docs/devboard-demo.gif      animated README demo
 
 - This is a **developer preview**. No Play Store signature or app store release yet. Debug builds are not appropriate for distributing as production keyboard apps.
 - Terminal shortcuts need testing against Termux, Termius, and other target applications.
-- Rich content image commit, auto layout per-app, and import of web JSON configuration into the Android app are future work. The native editor currently saves its layout separately from the web simulator.
+- Direct file insertion into the currently focused chat is not universal; Android uses the system share chooser here. Automatic per-app file uploads require target-app integration. Auto layout per-app, and import of web JSON configuration into the Android app are future work. The native editor currently saves its layout separately from the web simulator.
 - The web preview uses Samsung A56-like viewport proportions, not a real Android emulator or a physical millimeter-accurate display.
 - The GitHub Pages workflow publishes the web simulator after each update to docs.
 
