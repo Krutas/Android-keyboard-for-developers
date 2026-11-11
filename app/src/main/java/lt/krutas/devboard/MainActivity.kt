@@ -1,6 +1,9 @@
 package lt.krutas.devboard
 
 import android.app.Activity
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -26,6 +29,7 @@ class MainActivity : Activity() {
     private lateinit var keyboardPreview: LinearLayout
     private lateinit var themeLabel: TextView
     private lateinit var keyboardChoices: LinearLayout
+    private lateinit var micPermissionStatus: TextView
     private lateinit var installedKeyboardsToggle: Button
     private var installedKeyboardsExpanded = false
     private fun px(dp: Int) = (resources.displayMetrics.density * dp).roundToInt()
@@ -39,6 +43,7 @@ class MainActivity : Activity() {
         super.onResume()
         if (::keyboardPreview.isInitialized) preview()
         if (::keyboardChoices.isInitialized) renderKeyboardChoices()
+        updateMicPermissionStatus()
     }
     private fun draw() {
         val scroll = ScrollView(this).apply { setBackgroundColor(Color.rgb(16, 24, 39)) }
@@ -101,6 +106,7 @@ class MainActivity : Activity() {
         slider("Key height (dp)", "height", 30, 54, SettingsStore.keyHeight(this))
         slider("Key spacing (dp)", "gap", 0, 8, SettingsStore.gap(this))
         slider("Corner radius (dp)", "radius", 0, 18, SettingsStore.radius(this))
+        checkbox("Button Press Animation", "press_animation", SettingsStore.prefs(this).getBoolean("press_animation", true))
         checkbox("Terminal shortcut rows", "extras", SettingsStore.showExtras(this))
         checkbox("Show F1–F8 bar", "function_keys", SettingsStore.prefs(this).getBoolean("function_keys", false))
         checkbox("Haptic feedback on keys", "haptic", SettingsStore.prefs(this).getBoolean("haptic", false))
@@ -121,7 +127,24 @@ class MainActivity : Activity() {
         column.addView(language)
         detail("Long-press Space to switch languages on the keyboard. Long-press 1–9 for ą č ę ė į š ų ū ž.")
         detail("Microphone uses the installed Android speech recognition service. Permission is requested when you tap 🎙.")
-        column.addView(button("Test microphone permission") { startActivity(Intent(this, MicPermissionActivity::class.java)) })
+        val permissionRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        permissionRow.addView(button("Permissions") {
+            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            })
+        }, LinearLayout.LayoutParams(px(115), ViewGroup.LayoutParams.WRAP_CONTENT))
+        micPermissionStatus = TextView(this).apply {
+            textSize = 12f
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(px(12), 0, 0, 0)
+        }
+        permissionRow.addView(micPermissionStatus,
+            LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+        column.addView(permissionRow)
+        updateMicPermissionStatus()
         title("Privacy", 17)
         detail("Offline key input. No analytics or custom network requests. Speech recognition may use the connected recognizer's cloud services. No API key is needed.")
         column.addView(button("Reset keyboard layout", Color.rgb(109, 55, 58)) {
@@ -131,6 +154,15 @@ class MainActivity : Activity() {
         })
         preview()
     }
+    private fun updateMicPermissionStatus() {
+        if (!::micPermissionStatus.isInitialized) return
+        val granted = checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+        micPermissionStatus.text = if (granted) "Permissions Granted" else "Permission required"
+        micPermissionStatus.setTextColor(
+            if (granted) Color.rgb(67, 209, 112) else Color.rgb(235, 185, 100)
+        )
+    }
+
     private fun renderKeyboardChoices() {
         if (!::keyboardChoices.isInitialized) return
         keyboardChoices.removeAllViews()
