@@ -1,4 +1,4 @@
-# DevBoard for iPhone v0.1 (unsigned preview)
+# DevBoard for iPhone v0.2 (unsigned preview)
 
 The iOS port lives beside the Android source. It has a SwiftUI settings/companion app and a native `UIInputViewController` keyboard extension.
 
@@ -12,11 +12,20 @@ The iOS port lives beside the Android source. It has a SwiftUI settings/companio
 - System keyboard switching via 🌐; a system Share Sheet file picker in the companion app.
 - Local preferences in an App Group; `RequestsOpenAccess = false` by default.
 
+## Changes in iOS v0.2
+
+- Fixed Space labeling: `<`, `space`, and `>` are three **horizontally aligned labels inside one key**, not a wrapping string or separate keys.
+- Added 3 touch zones to that key: left 22% emits `<`, right 22% emits `>`, middle emits a regular space. Available in every keyboard layer.
+- Updated app and extension version metadata to `0.2` (build `2`).
+- The emoji list still relies on system Unicode glyph support; newer emoji may render as missing symbols on older iOS versions.
+
 ## Download built packages
 
-[GitHub Actions iOS v0.1 build](https://github.com/Krutas/Android-keyboard-for-developers/actions/runs/43059201642) **succeeded** and packages:
-- `DevBoard-iOS-v0.1-Simulator.zip`: an iOS Simulator `.app` for Xcode testing.
-- `DevBoard-iOS-v0.1-unsigned.ipa`: a device-targeted app bundle with the keyboard extension, **not signed**.
+The [GitHub Actions iOS workflow](https://github.com/Krutas/Android-keyboard-for-developers/actions/workflows/ios.yml) creates:
+- `DevBoard-iOS-v0.2-Simulator.zip`: an iOS Simulator `.app` for Xcode testing.
+- `DevBoard-iOS-v0.2-unsigned.ipa`: a device-targeted app bundle with the keyboard extension, **not signed**.
+
+Check the most recent successful workflow run for the artifacts. CI results must be verified separately from source changes.
 
 The unsigned IPA **cannot be installed normally on an iPhone**. You must sign the app and extension with valid Apple credentials and provisioning profiles using Xcode or an appropriate signing workflow. The workflow's artifacts expire after 30 days.
 

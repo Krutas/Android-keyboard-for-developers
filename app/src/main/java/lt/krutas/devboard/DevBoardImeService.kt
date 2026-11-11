@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.inputmethodservice.InputMethodService
@@ -475,8 +477,28 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         }
     }
 
+    /** Draw the two bracket labels at the edges of the *same* Space key.
+     * No whitespace padding and no text wrapping, even in narrow layouts.
+     */
+    private class SpaceKeyButton(context: Context) : Button(context) {
+        private val edgePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        override fun onDraw(canvas: Canvas) {
+            super.onDraw(canvas)
+            edgePaint.color = currentTextColor
+            edgePaint.typeface = typeface
+            edgePaint.textSize = textSize
+            val inset = resources.displayMetrics.density * 12f
+            val baseline = height / 2f - (edgePaint.ascent() + edgePaint.descent()) / 2f
+            edgePaint.textAlign = Paint.Align.LEFT
+            canvas.drawText("<", inset, baseline, edgePaint)
+            edgePaint.textAlign = Paint.Align.RIGHT
+            canvas.drawText(">", width - inset, baseline, edgePaint)
+        }
+    }
+
     private fun button(label: String, special: Boolean, position: Int): Button {
-        return Button(this).apply {
+        return (if (label == "Space") SpaceKeyButton(this) else Button(this)).apply {
             val digitHint = if (symbols == 0 && SettingsStore.language(this@DevBoardImeService) == "lt-LT")
                 SettingsStore.ltNumbers[label] else null
             val effective = if (label.length == 1 && label[0].isLetter()) {
@@ -484,7 +506,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             } else label
             text = if (digitHint != null) SpannableString("$digitHint\n$label").apply {
                 setSpan(RelativeSizeSpan(0.69f), 0, digitHint.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            } else if (label == "Space") "<          Space          >" else effective
+            } else effective
             if (digitHint != null) {
                 setLineSpacing(-dp(3).toFloat(), 1f)
                 gravity = Gravity.CENTER
@@ -497,7 +519,10 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             minWidth = 0; minimumWidth = 0; minHeight = 0; minimumHeight = 0
             val selected = (label == "Ctrl" && ctrl) || (label == "Alt" && alt) || (label == "⇧" && (shifted || capsLock))
             background = shape(if (selected) Color.rgb(35, 124, 186) else if (special) palette.specialColor() else palette.keyColor())
-            if (label == "Space") contentDescription = "Space with less-than on the left and greater-than on the right. Long press to change language"
+            if (label == "Space") {
+                setSingleLine(true)
+                contentDescription = "Space with less-than on the left and greater-than on the right. Long press to change language"
+            }
         }
     }
     private fun colorful(index: Int): Int = listOf("#3DDCFF", "#FF6DAF", "#F9D44D", "#87FAAC", "#C9A7FF", "#FF9B4C")

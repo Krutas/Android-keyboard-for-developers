@@ -4,7 +4,7 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Android:** 0.2.3 · **iOS:** 0.1 · [Download APK](releases/DevBoard-v0.2.3.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
+**Android:** 0.2.4 · **iOS:** 0.2 · [Download APK](releases/DevBoard-v0.2.4.apk) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
 
 ## What it does
 
@@ -47,9 +47,22 @@ Emoji appearance depends on OS font support; newly released Unicode 18.0 symbols
 - Added tactile press animations to Android keyboard buttons and the web simulator.
 - Updated the Android app icon to the RGB mechanical keyboard design.
 
+## Fixed in Android 0.2.4 / New in iOS 0.2
+
+- **Space is now a single-line key on both platforms:** the `<` character is painted on the left, `Space` remains centered, and `>` sits on the right. No text padding or wrapping, including narrow layouts.
+- **Three distinct tap zones:** tapping the left 22% inserts `<`, the center inserts a space, and the right 22% inserts `>`. Normal text entry remains unchanged.
+- **Android:** the existing long-press on Space still selects the keyboard language. Native press animation, microphone control, clipboard, profiles and emoji picker are preserved.
+- **iOS:** added the same three-zone Space key to the native keyboard extension across letter, number, symbol and emoji modes. Updated `CFBundleShortVersionString` to `0.2` and build number to `2`.
+- **Web simulator:** keeps all three labels on one line by using a three-column layout for the Space key.
+- **Testing:** added a width/orientation regression checklist for bracket placement and touch targets.
+
+The emoji catalog includes Unicode 18.0 entries, but **some emoji can appear as boxes or incomplete sequences when the device OS lacks matching glyphs**. This release does not ship an emoji font or claim to fix that device-dependent limitation.
+
+See [release history](docs/CHANGELOG.md) and [test checklist](docs/TESTING.md).
+
 ## Install on Android
 
-1. [Download the APK](releases/DevBoard-v0.2.3.apk) and install it.
+1. [Download the APK](releases/DevBoard-v0.2.4.apk) and install it.
 2. Open **DevBoard**, enable it in Android keyboard settings, and select it as your keyboard.
 3. Open any text field. Use **Settings** to customize it or **Profiles** to import layouts.
 
@@ -65,7 +78,7 @@ export ANDROID_HOME="/path/to/android-sdk"
 ./gradlew :app:assembleDebug :app:lintDebug
 ```
 
-Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.3.apk`.
+Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.4.apk`.
 
 ## Privacy
 
@@ -75,4 +88,4 @@ See [testing checklist](docs/TESTING.md) and [source code](app/src/main/java/lt/
 
 ## iPhone version
 
-An initial native iOS keyboard extension and companion app are in [ios/](ios/README.md). [Download the iOS v0.1 build artifact](https://github.com/Krutas/Android-keyboard-for-developers/actions/runs/43059201642) (GitHub Actions, expires after 30 days). They include LT typing, terminal controls, emoji, themes and file sharing from the companion app. **iOS v0.1 compiles successfully in GitHub Actions**, producing a simulator app and unsigned IPA; neither is a signed, device-tested release. Apple's keyboard restrictions prevent direct microphone recording, universal file attachment and Android-style per-app detection.
+The native iOS keyboard extension and SwiftUI companion app are in [ios/](ios/README.md). **iOS v0.2** adds a single-line `<  space  >` key with three touch zones. Its [macOS CI workflow](https://github.com/Krutas/Android-keyboard-for-developers/actions/workflows/ios.yml) builds an iOS Simulator package and an **unsigned** iPhone IPA. The latter requires Apple signing/provisioning to install on a real iPhone. Android-only features (native voice input and unrestricted file selection from the keyboard) are restricted by iOS.

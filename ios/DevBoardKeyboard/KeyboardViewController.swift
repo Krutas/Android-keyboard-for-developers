@@ -19,6 +19,16 @@ private final class EmojiCell: UICollectionViewCell {
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 }
 
+/// Records the original touch location for the three zones inside Space.
+private final class SpaceKeyButton: UIButton {
+    private(set) var touchFraction: CGFloat = 0.5
+
+    override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+        touchFraction = touch.location(in: self).x / max(bounds.width, 1)
+        return super.beginTracking(touch, with: event)
+    }
+}
+
 final class KeyboardViewController: UIInputViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private enum Layer { case letters, numbers, symbols, emoji }
     private struct Key {
@@ -90,8 +100,8 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
 
     private func makeButton(_ key: Key) -> UIButton {
         let (_, buttonColor, foreground) = palette()
-        let button = UIButton(type: .system)
-        button.setTitle(key.label, for: .normal)
+        let button: UIButton = key.id == "space" ? SpaceKeyButton(frame: .zero) : UIButton(type: .system)
+        button.setTitle(key.id == "space" ? nil : key.label, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: key.label.contains("\n") ? 14 : 17, weight: .medium)
         button.titleLabel?.numberOfLines = 2
         button.titleLabel?.textAlignment = .center
@@ -100,7 +110,42 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
         button.backgroundColor = buttonColor
         button.layer.cornerRadius = 6
         button.accessibilityIdentifier = key.id
-        button.addAction(UIAction { [weak self] _ in self?.keyPressed(key.id) }, for: .touchUpInside)
+        if key.id == "space" {
+            button.accessibilityLabel = "Less than, space, greater than"
+            let labels = UIStackView()
+            labels.axis = .horizontal
+            labels.distribution = .equalCentering
+            labels.alignment = .center
+            labels.isUserInteractionEnabled = false
+            labels.translatesAutoresizingMaskIntoConstraints = false
+            for title in ["<", "space", ">"] {
+                let item = UILabel()
+                item.text = title
+                item.textColor = foreground
+                item.font = .systemFont(ofSize: 15, weight: .medium)
+                item.textAlignment = .center
+                item.numberOfLines = 1
+                item.adjustsFontSizeToFitWidth = true
+                item.minimumScaleFactor = 0.8
+                labels.addArrangedSubview(item)
+            }
+            button.addSubview(labels)
+            NSLayoutConstraint.activate([
+                labels.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 10),
+                labels.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -10),
+                labels.centerYAnchor.constraint(equalTo: button.centerYAnchor)
+            ])
+        }
+        button.addAction(UIAction { [weak self, weak button] _ in
+            guard let self = self else { return }
+            if let space = button as? SpaceKeyButton {
+                let id = space.touchFraction < 0.22 ? "spaceLess" :
+                         (space.touchFraction > 0.78 ? "spaceGreater" : "space")
+                self.keyPressed(id)
+            } else {
+                self.keyPressed(key.id)
+            }
+        }, for: .touchUpInside)
         if ["comma", "period"].contains(key.id) || accentedNumbers[key.id] != nil {
             let hold = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(_:)))
             hold.minimumPressDuration = 0.4
@@ -370,6 +415,8 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
             if !saved.isEmpty { proxy.insertText(saved) }
         case "comma": proxy.insertText(",")
         case "period": proxy.insertText(".")
+        case "spaceLess": proxy.insertText("<")
+        case "spaceGreater": proxy.insertText(">")
         case "space":
             let previous = (proxy.documentContextBeforeInput ?? "")
                 .trimmingCharacters(in: .whitespacesAndNewlines)

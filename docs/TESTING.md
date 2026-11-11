@@ -40,7 +40,7 @@ Known constraint: Android apps decide which hardware key events and content MIME
 - [ ] Check the lowest row, portrait and landscape, with minimum and maximum key height and spacing settings.
 - [ ] Test typing and long presses after the row-margin change.
 
-## iOS v0.1 release gate
+## iOS v0.1 release gate (historical)
 - [x] GitHub Actions macOS build succeeded for simulator and unsigned device app (run 43059201642).
 - [x] CI artifact includes `DevBoard-iOS-v0.1-Simulator.zip` and `DevBoard-iOS-v0.1-unsigned.ipa`.
 - [ ] Sign the containing app and keyboard extension using valid Apple provisioning profiles.
@@ -58,3 +58,16 @@ Known constraint: Android apps decide which hardware key events and content MIME
 - [ ] Top right `LT 🎙` starts dictation and long press opens language picker.
 - [ ] Launcher icon shows the updated RGB keyboard artwork.
 - [ ] Web simulator key presses animate; JavaScript console is clear.
+
+## Android v0.2.4 and iOS v0.2: Space single-line regression
+
+- [ ] **One key only:** bottom-row Space has `<` at its left, `Space` (iOS: `space`) centered, and `>` at its right on **the same horizontal line**. No label wrapping, clipping or three separate keys.
+- [ ] Left **22%** of Space inserts `<`; center inserts a regular space; right **22%** inserts `>`.
+- [ ] Repeat touch tests in portrait, landscape, narrow widths, and with the largest font-size setting (Android).
+- [ ] Switch between letters, number/symbol pages and emoji: the Space layout and all three touch zones remain consistent.
+- [ ] Android: long-press center opens language picker; shorter presses still insert exactly one space. Haptic/press animation and Backspace hold remain functional.
+- [ ] iOS: Space key still triggers sentence capitalization after punctuation. App and keyboard extension both advertise `0.2` / build `2`.
+- [ ] Web simulator: browser Space label uses a three-column single-line layout; click the three zones and inspect typed text.
+- [ ] Run Android Gradle `assembleDebug` (and `lintDebug` if available); verify `DevBoard-v0.2.4.apk` signature and version.
+- [ ] Confirm GitHub Actions builds both iOS v0.2 Simulator ZIP and unsigned IPA. Unsigned IPA **does not install on an iPhone** without valid Apple signing.
+- [ ] Real hardware: test emoji display and note any missing glyphs or ZWJ sequences. App uses OS emoji fonts; Unicode 18.0 appearance is not guaranteed.
