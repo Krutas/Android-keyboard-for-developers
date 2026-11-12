@@ -1,6 +1,7 @@
 package lt.krutas.devboard
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -154,9 +155,16 @@ class MainActivity : Activity() {
         title("Privacy", 17)
         detail("Offline key input. No analytics or custom network requests. Speech recognition may use the connected recognizer's cloud services. No API key is needed.")
         column.addView(button("Reset keyboard layout", Color.rgb(109, 55, 58)) {
-            SettingsStore.resetSelectedRows(this)
-            Toast.makeText(this, "Default layout restored", Toast.LENGTH_SHORT).show()
-            preview()
+            AlertDialog.Builder(this)
+                .setTitle("Reset keyboard layout?")
+                .setMessage("Restore the default layout for this profile, language and variant? Custom key positions and deletions will be lost.")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Reset") { _, _ ->
+                    SettingsStore.resetSelectedRows(this)
+                    Toast.makeText(this, "Default layout restored", Toast.LENGTH_SHORT).show()
+                    preview()
+                }
+                .show()
         })
         preview()
     }
@@ -267,9 +275,9 @@ class MainActivity : Activity() {
                 gravity = Gravity.CENTER
             }
             labels.forEachIndexed { index, label ->
-                val chip = TextView(this).apply {
+                val chip = (if (label == "Space") SpaceKeyButton(this) else TextView(this)).apply {
                     val hint = if (SettingsStore.language(this@MainActivity) == "lt-LT" && SettingsStore.layoutVariant(this@MainActivity) == "pc") SettingsStore.ltNumbers[label] else null
-                    text = if (label == "Space") "‹ Space ›" else if (hint != null) "$hint\n$label" else KeyboardMapping.output(label, SettingsStore.layoutVariant(this@MainActivity), false, false)
+                    text = if (hint != null) "$hint\n$label" else KeyboardMapping.output(label, SettingsStore.layoutVariant(this@MainActivity), false, false)
                     gravity = Gravity.CENTER
                     maxLines = if (hint != null) 2 else 1
                     textSize = (SettingsStore.font(this@MainActivity) * .70f).coerceAtLeast(7f)
@@ -284,6 +292,13 @@ class MainActivity : Activity() {
                         setColor(if (special || label.length > 1) theme.specialColor() else theme.keyColor())
                         cornerRadius = px(SettingsStore.radius(this@MainActivity)).toFloat()
                         setStroke(px(1), theme.borderColor())
+                    }
+                    if (this is SpaceKeyButton) {
+                        isAllCaps = false
+                        isClickable = false
+                        isFocusable = false
+                        minWidth = 0; minimumWidth = 0; minHeight = 0; minimumHeight = 0
+                        configureLabels((SettingsStore.font(this@MainActivity) * .70f).roundToInt())
                     }
                 }
                 val weight = if (label == "Space") 4f else 1f

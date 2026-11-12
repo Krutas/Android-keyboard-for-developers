@@ -100,7 +100,7 @@ class ProfileManagerActivity : Activity() {
             } catch (error: Exception) { toast(error.message ?: "Cannot create profile") }
         }
         title("Import / Export")
-        note("Import web simulator JSON or a previously exported Android layout. Only Terminal rows are used. Existing profiles with identical names are replaced.")
+        note("Import web simulator JSON or a previously exported Android layout. Only Terminal rows are used. Conflicting profiles and app assignments require confirmation. Exported active profile, automatic selection and app assignments are restored when present.")
         // Side-by-side actions with equal width; never stack Import and Export.
         val importExportRow = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -194,12 +194,29 @@ class ProfileManagerActivity : Activity() {
                 importRequest -> {
                     val file = contentResolver.openInputStream(uri) ?: error("Cannot open file")
                     val text = file.bufferedReader().use { reader ->
-                        // Bound input size before parsing untrusted JSON.
-                        val buffer = CharArray(256_001)
-                        val count = reader.read(buffer)
-                        String(buffer, 0, count.coerceAtLeast(0))
+                        ProfileImportReader.read(reader, 256_000)
                     }
-                    toast("Imported " + SettingsStore.importProfiles(this, text) + " profile(s)")
+                    val plan = SettingsStore.prepareProfileImport(this, text)
+                    fun applyImport() {
+                        try {
+                            toast("Imported " + SettingsStore.applyProfileImport(this, plan) + " profile(s)")
+                            render()
+                        } catch (error: Exception) {
+                            toast(error.message ?: "Import failed")
+                        }
+                    }
+                    if (plan.conflicts.requiresConfirmation) {
+                        val details = listOfNotNull(
+                            plan.conflicts.profiles.takeIf { it.isNotEmpty() }?.let { "Profiles: " + it.joinToString(", ") },
+                            plan.conflicts.bindings.takeIf { it.isNotEmpty() }?.let { "App assignments: " + it.joinToString(", ") }
+                        ).joinToString("\n")
+                        AlertDialog.Builder(this)
+                            .setTitle("Replace existing data?")
+                            .setMessage("The import will replace:\n$details")
+                            .setNegativeButton("Cancel", null)
+                            .setPositiveButton("Import") { _, _ -> applyImport() }
+                            .show()
+                    } else applyImport()
                 }
                 exportRequest -> {
                     contentResolver.openOutputStream(uri)?.bufferedWriter()?.use {

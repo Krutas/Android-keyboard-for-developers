@@ -27,19 +27,32 @@ class ComboEditorActivity : Activity() {
     }
     private fun render() {
         main.removeAllViews()
+        val recorder = ShortcutRecorder()
         main.addView(TextView(this).apply {
             text = "+ COMBO · Saved shortcuts"; textSize = 21f; setTextColor(Color.WHITE)
         })
         main.addView(TextView(this).apply {
-            text = "Action: tap modifiers and a key below, or record a physical shortcut in the Action field. Text actions accept type:your text. Receiving apps decide which shortcuts they handle."
+            text = "Action: tap the keys below in sequence, or record a physical shortcut in the Action field. Text actions accept type:your text. Receiving apps decide which shortcuts they handle."
             textSize = 12f; setTextColor(Color.LTGRAY); setPadding(0, size(9), 0, size(15))
         })
         labelField = EditText(this).apply { hint = "Button title (e.g. Copy)"; setSingleLine(true); setTextColor(Color.WHITE); setHintTextColor(Color.GRAY) }
         comboField = EditText(this).apply { hint = "Action (e.g. Ctrl+C)"; setSingleLine(true); setTextColor(Color.WHITE); setHintTextColor(Color.GRAY) }
         comboField.showSoftInputOnFocus = false
         comboField.setOnKeyListener { _, code, event ->
-            if (event.action != KeyEvent.ACTION_DOWN) return@setOnKeyListener false
-            if (code in listOf(KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.KEYCODE_CTRL_RIGHT, KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT, KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_SHIFT_RIGHT)) return@setOnKeyListener true
+            if (event.action != KeyEvent.ACTION_DOWN) return@setOnKeyListener true
+            if (code in listOf(KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.KEYCODE_CTRL_RIGHT, KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT, KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_SHIFT_RIGHT)) {
+                val modifier = when (code) {
+                    KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.KEYCODE_CTRL_RIGHT -> "Ctrl"
+                    KeyEvent.KEYCODE_ALT_LEFT, KeyEvent.KEYCODE_ALT_RIGHT -> "Alt"
+                    else -> "Shift"
+                }
+                comboField.setText(listOfNotNull(
+                    if (event.isCtrlPressed || modifier == "Ctrl") "Ctrl" else null,
+                    if (event.isAltPressed || modifier == "Alt") "Alt" else null,
+                    if (event.isShiftPressed || modifier == "Shift") "Shift" else null
+                ).joinToString("+"))
+                return@setOnKeyListener true
+            }
             val key = when (code) {
                 KeyEvent.KEYCODE_DPAD_LEFT -> "←"
                 KeyEvent.KEYCODE_DPAD_RIGHT -> "→"
@@ -56,13 +69,7 @@ class ComboEditorActivity : Activity() {
             true
         }
         main.addView(labelField); main.addView(comboField)
-        val modifiers = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        val ctrl = CheckBox(this).apply { text = "Ctrl"; setTextColor(Color.WHITE) }
-        val alt = CheckBox(this).apply { text = "Alt"; setTextColor(Color.WHITE) }
-        val shift = CheckBox(this).apply { text = "Shift"; setTextColor(Color.WHITE) }
-        listOf(ctrl, alt, shift).forEach(modifiers::addView)
-        main.addView(modifiers)
-        val recordKeys = ('A'..'Z').map { it.toString() } + ('0'..'9').map { it.toString() } +
+        val recordKeys = listOf("Ctrl", "Alt", "Shift") + ('A'..'Z').map { it.toString() } + ('0'..'9').map { it.toString() } +
             listOf("Esc", "Tab", "Space", "Enter", "Backspace", "Delete", "Home", "End", "←", "↑", "↓", "→") + (1..8).map { "F$it" }
         recordKeys.chunked(6).forEach { keys ->
             val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
@@ -70,7 +77,7 @@ class ComboEditorActivity : Activity() {
                 row.addView(Button(this).apply {
                     text = key; isAllCaps = false; textSize = 10f; minWidth = 0; minimumWidth = 0; setPadding(0, 0, 0, 0)
                     setOnClickListener {
-                        comboField.setText(listOfNotNull(if (ctrl.isChecked) "Ctrl" else null, if (alt.isChecked) "Alt" else null, if (shift.isChecked) "Shift" else null, key).joinToString("+"))
+                        comboField.setText(recorder.press(key))
                     }
                 }, LinearLayout.LayoutParams(0, size(42), 1f))
             }
@@ -82,7 +89,7 @@ class ComboEditorActivity : Activity() {
             val line = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
             line.addView(Button(this).apply {
                 text = "${combo.label}  ·  ${combo.action}"; isAllCaps = false
-                setOnClickListener { editing = index; labelField.setText(combo.label); comboField.setText(combo.action) }
+                setOnClickListener { recorder.reset(); editing = index; labelField.setText(combo.label); comboField.setText(combo.action) }
             }, LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
             line.addView(CheckBox(this).apply {
                 isChecked = combo.enabled

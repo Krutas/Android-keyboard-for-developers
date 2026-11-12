@@ -8,6 +8,9 @@ internal object KeyboardMapping {
         listOf("⇧", "z", "ū", "c", "v", "b", "n", "m", "č", "f", "x", "ę", "⌫")
     )
     private val shifted = "1234567890-=[]\\;',./`".zip("!@#\$%^&*()_+{}|:\"<>?~").associate { it.first.toString() to it.second.toString() }
+    fun shiftAfterCommit(manualShift: Boolean, autoCapitalize: Boolean): Boolean =
+        !manualShift && autoCapitalize
+
     fun output(key: String, variant: String, shift: Boolean, caps: Boolean): String = when {
         key.length == 1 && key[0].isLetter() -> if (shift || caps) key.uppercase() else key.lowercase()
         variant == "pc" && shift -> shifted[key] ?: key

@@ -4,7 +4,9 @@ A native developer keyboard for Android and iOS, with an interactive web simulat
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Source version: 0.3 developer preview.** [Try the web simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html) · [Existing downloads](https://github.com/Krutas/Android-keyboard-for-developers/releases) · [0.3 audit and limitations](docs/PARITY-0.3.md)
+**Android and web source: 3.1 test preview.** [Previously published web simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html) · [Existing downloads](https://github.com/Krutas/Android-keyboard-for-developers/releases) · [0.3 audit and limitations](docs/PARITY-0.3.md)
+
+The 3.1 work in this branch improves Android and web settings, profile import/export, shortcut recording, Space labels and narrow-screen Fn visibility. The published simulator and existing releases do not yet contain these branch changes. The side-by-side Android preview uses a separate application ID and separate settings; it has not been verified on a physical device. See the [3.1 function specification](docs/superpowers/plans/2026-11-12-v31-android-web.md).
 
 0.3 adds native LT/EN PC and QWERTY variants, PC Shift symbol mapping, Fn/Combo previews and editors, snippets, held-arrow repeat, layout editing and press-animation controls. Android exposes real microphone permission status; web uses browser permission APIs. iOS microphone access is unavailable to third-party keyboards.
 
@@ -29,10 +31,10 @@ Previous verified downloads remain available: [Android 0.2.5 APK](releases/DevBo
 Requires JDK 17, Android SDK 35 and build tools.
 
 ```bash
-./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintDebug
+./gradlew :app:testDebugUnitTest :app:testPreviewUnitTest :app:assembleDebug :app:assemblePreview :app:lintDebug
 ```
 
-APK: `app/build/outputs/apk/debug/app-debug.apk`. Successful developer-preview builds are debug-signed. Enable DevBoard in Android input settings, then select it through the system keyboard picker. Install only an artifact whose build results have been verified.
+APK: `app/build/outputs/apk/debug/app-debug.apk`. The separately installable test APK is `app/build/outputs/apk/preview/app-preview.apk`, shown as **DevBoard Test**. Successful developer-preview builds are debug-signed. Enable DevBoard in Android input settings, then select it through the system keyboard picker. Install only an artifact whose build results have been verified.
 
 ## iOS and browser verification
 

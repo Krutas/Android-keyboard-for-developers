@@ -4,6 +4,12 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class KeyboardMappingTest {
+    @Test fun manualShiftExpiresWithoutOverridingAutomaticCapitalization() {
+        assertFalse(KeyboardMapping.shiftAfterCommit(true, true))
+        assertFalse(KeyboardMapping.shiftAfterCommit(true, false))
+        assertTrue(KeyboardMapping.shiftAfterCommit(false, true))
+        assertFalse(KeyboardMapping.shiftAfterCommit(false, false))
+    }
     @Test fun shiftAndCapsAreIndependent() {
         val pairs = "1234567890-=[]\\;',./`".zip("!@#\$%^&*()_+{}|:\"<>?~")
         for ((key, symbol) in pairs) {

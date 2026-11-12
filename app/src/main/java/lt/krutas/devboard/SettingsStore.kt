@@ -265,12 +265,22 @@ internal object SettingsStore {
         prefs(c).edit().putString("app_bindings", obj.toString()).apply()
     }
 
-    /** Import the simulator's {version, profiles: {name: {Terminal: [...]}}} format. */
-    fun importProfiles(c: Context, json: String): Int {
+    internal data class ProfileImportPlan(
+        val profiles: Map<String, MutableList<MutableList<String>>>,
+        val variants: Map<String, Map<String, String>>,
+        val bindings: Map<String, String>,
+        val activeProfile: String?,
+        val autoProfile: Boolean?,
+        val conflicts: ImportConflicts
+    )
+
+    /** Parse and validate everything before asking for confirmation or changing settings. */
+    fun prepareProfileImport(c: Context, json: String): ProfileImportPlan {
         require(json.length <= 256_000) { "JSON file exceeds 256 KB" }
         val root = JSONObject(json)
         val source = root.getJSONObject("profiles")
         val imported = linkedMapOf<String, MutableList<MutableList<String>>>()
+        val variantsByProfile = linkedMapOf<String, Map<String, String>>()
         val names = source.keys()
         while (names.hasNext() && imported.size < 30) {
             val name = names.next()
@@ -279,24 +289,59 @@ internal object SettingsStore {
             val arr = if (item is JSONObject) item.optJSONArray("Terminal") else item as? JSONArray
             val parsed = arr?.let { parseRows(it) } ?: continue
             imported[name] = parsed
+            val variants = (item as? JSONObject)?.optJSONObject("variants")
+            val parsedVariants = linkedMapOf<String, String>()
+            for (language in listOf("lt-LT", "en-US")) for (variant in listOf("pc", "qwerty")) {
+                val rows = variants?.optJSONObject("$language:$variant")?.optJSONArray("Terminal")?.let { parseRows(it, false) } ?: continue
+                parsedVariants["$language:$variant"] = rowsArray(rows).toString()
+            }
+            variantsByProfile[name] = parsedVariants
         }
         require(imported.isNotEmpty()) { "No valid Terminal layout in JSON" }
-        // Preserve existing profiles, but replace matching names with imported layouts.
+        val existing = profiles(c)
+        val validNames = existing.keys + imported.keys
+        require(validNames.size <= 30) { "Maximum 30 profiles" }
+        val legacyPanel = root.optJSONObject("profilePanel")
+        val sourceBindings = root.optJSONObject("appBindings") ?: legacyPanel?.optJSONObject("bindings")
+        val incomingBindings = linkedMapOf<String, String>()
+        sourceBindings?.let {
+            val packages = it.keys()
+            while (packages.hasNext()) {
+                val pkg = packages.next()
+                val profile = it.optString(pkg)
+                if (pkg.matches(Regex("[A-Za-z0-9_.]{3,160}")) && profile in validNames) incomingBindings[pkg] = profile
+            }
+        }
+        val existingBindings = appBindings(c)
+        require((existingBindings.keys + incomingBindings.keys).size <= 80) { "Maximum 80 app assignments" }
+        val autoValue = if (root.has("autoProfile")) root.opt("autoProfile") else legacyPanel?.opt("auto")
+        return ProfileImportPlan(
+            imported, variantsByProfile, incomingBindings,
+            root.optString("activeProfile").takeIf { it in validNames },
+            autoValue as? Boolean,
+            ImportConflicts.find(existing.keys, imported.keys, existingBindings, incomingBindings)
+        )
+    }
+
+    fun applyProfileImport(c: Context, plan: ProfileImportPlan): Int {
         val current = profiles(c)
-        current.putAll(imported)
+        current.putAll(plan.profiles)
+        require(current.size <= 30) { "Maximum 30 profiles" }
         saveProfiles(c, current)
         val edit = prefs(c).edit()
-        for (name in imported.keys) {
-            val variants = source.optJSONObject(name)?.optJSONObject("variants")
+        for (name in plan.profiles.keys) {
             for (language in listOf("lt-LT", "en-US")) for (variant in listOf("pc", "qwerty")) {
                 val key = variantKey(c, name, language, variant)
                 edit.remove(key)
-                val rows = variants?.optJSONObject("$language:$variant")?.optJSONArray("Terminal")?.let { parseRows(it, false) } ?: continue
-                edit.putString(variantKey(c, name, language, variant), rowsArray(rows).toString())
+                plan.variants[name]?.get("$language:$variant")?.let { edit.putString(key, it) }
             }
         }
+        plan.activeProfile?.let { edit.putString("active_profile", it) }
+        plan.autoProfile?.let { edit.putBoolean("auto_profile", it) }
+        val bindings = appBindings(c).apply { putAll(plan.bindings) }
+        edit.putString("app_bindings", JSONObject(bindings as Map<*, *>).toString())
         edit.apply()
-        return imported.size
+        return plan.profiles.size
     }
 
     fun exportProfiles(c: Context): String {
@@ -315,6 +360,7 @@ internal object SettingsStore {
         json.put("version", 2)
         json.put("profiles", savedProfiles)
         json.put("activeProfile", activeProfile(c))
+        json.put("autoProfile", autoProfile(c))
         json.put("appBindings", JSONObject(appBindings(c) as Map<*, *>))
         return json.toString(2)
     }

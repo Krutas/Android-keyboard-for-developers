@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application android:label="DevBoard Test" tools:replace="android:label">
+        <service
+            android:name="lt.krutas.devboard.DevBoardImeService"
+            android:label="DevBoard Test"
+            tools:replace="android:label" />
+    </application>
+</manifest>

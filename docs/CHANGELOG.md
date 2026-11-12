@@ -1,5 +1,14 @@
 # DevBoard release notes
 
+## Android and web 3.1 test preview
+
+- Space labels and Fn text adapt to narrow layouts; Fn stays visible when the keyboard scrolls and in emoji mode. Shift state and layout-reset confirmation have been corrected.
+- Profiles and app assignments can be exchanged between Android and the simulator; conflicts require confirmation before replacement. Shortcut recording displays the pressed keys.
+- The web Settings page now has profile controls and honestly reports browser limitations for installed keyboards and per-app selection.
+- Added a side-by-side Android preview application named DevBoard Test with its own package ID, settings and permissions.
+- Android view and unit tests (24 per variant), preview/debug builds, lint and Chromium browser regression tests passed locally. The Android keyboard has not been tested on a physical phone, including touch behavior, microphone and system shortcuts. This is a test build, not a published final release.
+
+
 ## 0.3 developer preview (source; release verification pending)
 
 - Native LT/EN PC/QWERTY, PC Shift symbols and independent Caps Lock. Added missing Latin x to LT QWERTY.

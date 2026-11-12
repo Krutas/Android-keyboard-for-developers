@@ -26,7 +26,7 @@ jobs:
       - name: Test release publication gates
         run: python3 -B -m unittest discover -s tests -p 'test_*.py'
       - name: Test, lint and compile debug APK
-        run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
+        run: ./gradlew --no-daemon :app:testDebugUnitTest :app:testPreviewUnitTest :app:lintDebug :app:lintPreview :app:assembleDebug :app:assemblePreview
       - name: Verify APK version and signature
         run: |
           set -euo pipefail
@@ -36,13 +36,18 @@ jobs:
           import os, re
           from pathlib import Path
           metadata = (Path(os.environ['RUNNER_TEMP']) / 'apk-metadata.txt').read_text().splitlines()[0]
-          for key, value in {'name': 'lt.krutas.devboard', 'versionName': '0.3', 'versionCode': '9'}.items():
+          for key, value in {'name': 'lt.krutas.devboard', 'versionName': '3.1', 'versionCode': '10'}.items():
               match = re.search(rf"\b{key}='([^']*)'", metadata)
               assert match and match.group(1) == value, f'Wrong APK metadata: {metadata}'
           PY
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify app/build/outputs/apk/debug/app-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: DevBoard-v0.3-APK
+          name: DevBoard-v3.1-APK
           path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DevBoard-v3.1-preview-APK
+          path: app/build/outputs/apk/preview/*.apk
           if-no-files-found: error

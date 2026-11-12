@@ -7,8 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.inputmethodservice.InputMethodService
@@ -44,11 +42,14 @@ import kotlin.math.roundToInt
 
 /** A real Android IME. The web simulator is a design tool, not an Android WebView keyboard. */
 class DevBoardImeService : InputMethodService(), RecognitionListener {
+    private lateinit var keyboardRoot: LinearLayout
+    private lateinit var header: LinearLayout
     private lateinit var container: LinearLayout
     private var palette: Palette = SettingsStore.themes[0]
     private var ctrl = false
     private var alt = false
     private var shifted = false
+    private var manualShift = false
     private var capsLock = false
     private var lastShiftTap = 0L
     private var punctuationPopup: PopupWindow? = null
@@ -104,28 +105,33 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         }
 
     override fun onCreateInputView(): View {
-        container = LinearLayout(this).apply {
+        container = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        header = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        keyboardRoot = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(3), dp(5), dp(3), dp(17))
+            addView(header)
+            addView(ScrollView(this@DevBoardImeService).apply {
+                isVerticalScrollBarEnabled = false
+                addView(container, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            }, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
         }
         render()
-        // Let the final row scroll into view on phones with limited IME height.
-        return ScrollView(this).apply {
-            isFillViewport = true
-            isVerticalScrollBarEnabled = false
-            addView(container, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-        }
+        return keyboardRoot
     }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         lastInput = info
-        ctrl = false; alt = false; shifted = false; capsLock = false; symbols = 0; emojiOpen = false
-        val variation = (info?.inputType ?: 0) and InputType.TYPE_MASK_VARIATION
-        passwordField = variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
-            variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
-            variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD ||
-            variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD
+        ctrl = false; alt = false; shifted = false; manualShift = false; capsLock = false; lastShiftTap = 0L; symbols = 0; emojiOpen = false
+        val inputType = info?.inputType ?: 0
+        val inputClass = inputType and InputType.TYPE_MASK_CLASS
+        val variation = inputType and InputType.TYPE_MASK_VARIATION
+        passwordField = (inputClass == InputType.TYPE_CLASS_TEXT && variation in listOf(
+            InputType.TYPE_TEXT_VARIATION_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD
+        )) || (inputClass == InputType.TYPE_CLASS_NUMBER && variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD)
         shifted = shouldCapitalize()
         if (SettingsStore.captureClipboard(this) && !clipboardListenerAdded) {
             clipboard.addPrimaryClipChangedListener(clipboardListener)
@@ -173,7 +179,9 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 textSize = 13f
                 minHeight = 0; minimumHeight = 0; minWidth = 0; minimumWidth = 0
                 setPadding(dp(2), 0, dp(2), 0)
-                background = shape(palette.specialColor())
+                isSelected = label == "Fn" && SettingsStore.prefs(this@DevBoardImeService).getBoolean("function_keys", false)
+                if (label == "Fn") contentDescription = if (isSelected) "Fn on. Hide F1–F8" else "Fn off. Show F1–F8"
+                background = shape(if (isSelected) Color.rgb(35, 124, 186) else palette.specialColor())
                 setOnClickListener { run() }
                 bindPressAnimation(this)
             }
@@ -347,6 +355,8 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             currentInputConnection?.commitText(emoji, 1)
             EmojiCatalog.remember(this, emoji)
             if (!capsLock) shifted = shouldCapitalize()
+            manualShift = false
+            lastShiftTap = 0L
         }
         panel.addView(grid, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(239)))
         show(if (emojiCategory == 0 && EmojiCatalog.recent(this).isEmpty()) 1 else emojiCategory)
@@ -366,7 +376,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         (if (shifted) KeyEvent.META_SHIFT_ON else 0)
 
     private fun releaseModifiers() {
-        ctrl = false; alt = false; shifted = false
+        ctrl = false; alt = false; shifted = false; manualShift = false; lastShiftTap = 0L
         render()
     }
 
@@ -382,6 +392,10 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 else -> KeyEvent.KEYCODE_F1 + index
             }
             val b = button(label, true, index)
+            b.setSingleLine(true)
+            b.setHorizontallyScrolling(false)
+            b.includeFontPadding = false
+            b.setAutoSizeTextTypeUniformWithConfiguration(8, SettingsStore.font(this).coerceAtLeast(8), 1, android.util.TypedValue.COMPLEX_UNIT_SP)
             b.setOnClickListener {
                 if (SettingsStore.prefs(this).getBoolean("haptic", false))
                     b.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
@@ -410,15 +424,17 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         repeatHandler.removeCallbacks(repeatArrowMovement)
         repeatHandler.removeCallbacks(repeatDeletion)
         palette = SettingsStore.theme(this)
+        keyboardRoot.setBackgroundColor(palette.bg())
         container.setBackgroundColor(palette.bg())
         container.removeAllViews()
-        container.addView(bar())
+        header.removeAllViews()
+        header.addView(bar())
+        if (SettingsStore.prefs(this).getBoolean("function_keys", false)) header.addView(functionStrip())
         if (micPanelVisible) container.addView(micPanel())
         if (emojiOpen) {
             container.addView(emojiPanel())
             return
         }
-        if (SettingsStore.prefs(this).getBoolean("function_keys", false)) container.addView(functionStrip())
         val combos = SettingsStore.combos(this).filter { it.enabled }
         if (combos.isNotEmpty()) {
             val strip = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
@@ -458,6 +474,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 b.setOnTouchListener { view, event ->
                     when (event.actionMasked) {
                         MotionEvent.ACTION_DOWN -> {
+                            if (label != "⇧") lastShiftTap = 0L
                             if (SettingsStore.prefs(this).getBoolean("press_animation", true)) {
                                 view.animate().cancel()
                                 view.animate().scaleX(0.95f).scaleY(0.90f)
@@ -513,6 +530,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 if (label == "⇧") b.setOnLongClickListener {
                     capsLock = !capsLock
                     shifted = false
+                    manualShift = false
                     lastShiftTap = 0L
                     render()
                     true
@@ -535,28 +553,9 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
         }
     }
 
-    /** Draw the two bracket labels at the edges of the *same* Space key.
-     * No whitespace padding and no text wrapping, even in narrow layouts.
-     */
-    private class SpaceKeyButton(context: Context) : Button(context) {
-        private val edgePaint = Paint(Paint.ANTI_ALIAS_FLAG)
-
-        override fun onDraw(canvas: Canvas) {
-            super.onDraw(canvas)
-            edgePaint.color = currentTextColor
-            edgePaint.typeface = typeface
-            edgePaint.textSize = textSize
-            val inset = resources.displayMetrics.density * 12f
-            val baseline = height / 2f - (edgePaint.ascent() + edgePaint.descent()) / 2f
-            edgePaint.textAlign = Paint.Align.LEFT
-            canvas.drawText("<", inset, baseline, edgePaint)
-            edgePaint.textAlign = Paint.Align.RIGHT
-            canvas.drawText(">", width - inset, baseline, edgePaint)
-        }
-    }
-
     private fun bindPressAnimation(view: View) {
         view.setOnTouchListener { target, event ->
+            if (event.actionMasked == MotionEvent.ACTION_DOWN) lastShiftTap = 0L
             if (SettingsStore.prefs(this).getBoolean("press_animation", true)) {
                 when (event.actionMasked) {
                     MotionEvent.ACTION_DOWN -> { target.animate().cancel(); target.animate().scaleX(.95f).scaleY(.90f).alpha(.79f).setDuration(70).start() }
@@ -593,7 +592,7 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             val selected = (label == "Ctrl" && ctrl) || (label == "Alt" && alt) || (label == "⇧" && (shifted || capsLock))
             background = shape(if (selected) Color.rgb(35, 124, 186) else if (special) palette.specialColor() else palette.keyColor())
             if (label == "Space") {
-                setSingleLine(true)
+                (this as SpaceKeyButton).configureLabels(SettingsStore.font(this@DevBoardImeService))
                 contentDescription = "Space with less-than on the left and greater-than on the right. Long press to change language"
             }
         }
@@ -666,7 +665,9 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
     }
     private fun commit(text: String) {
         currentInputConnection?.commitText(text, 1) ?: return
-        if (!capsLock) shifted = shouldCapitalize()
+        if (!capsLock) shifted = KeyboardMapping.shiftAfterCommit(manualShift, shouldCapitalize())
+        manualShift = false
+        lastShiftTap = 0L
         if (::container.isInitialized) render()
     }
     private fun hardware(key: Int, mods: Int = 0) {
@@ -686,13 +687,16 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                 if (capsLock) {
                     capsLock = false
                     shifted = false
+                    manualShift = false
                     lastShiftTap = 0L
-                } else if (now - lastShiftTap <= 420L) {
+                } else if (lastShiftTap != 0L && now - lastShiftTap <= 420L) {
                     capsLock = true
                     shifted = false
+                    manualShift = false
                     lastShiftTap = 0L
                 } else {
                     shifted = !shifted
+                    manualShift = shifted
                     lastShiftTap = now
                 }
                 render()
