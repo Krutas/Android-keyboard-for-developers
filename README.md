@@ -4,7 +4,7 @@ A customizable developer keyboard for Android. Built for Termux, terminals, SSH 
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Android:** 0.2.4 · **iOS:** 0.2 · [Android APK](releases/DevBoard-v0.2.4.apk) · [iOS v0.2 packages](https://github.com/Krutas/Android-keyboard-for-developers/releases/tag/ios-v0.2) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
+**Android:** 0.2.5 · **iOS:** 0.2.5 · [Android APK](releases/DevBoard-v0.2.5.apk) · [iOS unsigned IPA](releases/DevBoard-iOS-v0.2.5-unsigned.ipa) · [iOS Simulator ZIP](releases/DevBoard-iOS-v0.2.5-Simulator.zip) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
 
 ## What it does
 
@@ -58,19 +58,19 @@ Emoji appearance depends on OS font support; newly released Unicode 18.0 symbols
 
 The emoji catalog includes Unicode 18.0 entries, but **some emoji can appear as boxes or incomplete sequences when the device OS lacks matching glyphs**. This release does not ship an emoji font or claim to fix that device-dependent limitation.
 
-## Unreleased fixes (source after v0.2.4 / iOS v0.2)
+## Released in Android / iOS 0.2.5 (2026-11-12)
 
 - Raised the Android punctuation choices for long-press `.` and `,` by an additional key height so the holding finger cannot cover the menu; the web simulator now uses the same clearance.
 - Added long-press Shift to toggle Caps Lock on Android, iOS and the simulator. Double-tap Shift remains available, with `⇪` visibly indicating the locked state.
 - Reduced extra spacing inside the simulator's one-line `< Space >` label.
 
-These changes are in source control but are **not included in the v0.2.4 Android APK or the existing iOS v0.2 packages**. A new build and on-device verification are required.
+Android v0.2.5 APK and iOS v0.2.5 unsigned IPA / Simulator ZIP were generated and committed to `main`. Physical-device verification is still pending. The iOS IPA requires Apple signing and provisioning before installation.
 
 See [release history](docs/CHANGELOG.md) and [test checklist](docs/TESTING.md).
 
 ## Install on Android
 
-1. [Download the APK](releases/DevBoard-v0.2.4.apk) and install it.
+1. [Download the APK](releases/DevBoard-v0.2.5.apk) and install it.
 2. Open **DevBoard**, enable it in Android keyboard settings, and select it as your keyboard.
 3. Open any text field. Use **Settings** to customize it or **Profiles** to import layouts.
 
@@ -86,7 +86,7 @@ export ANDROID_HOME="/path/to/android-sdk"
 ./gradlew :app:assembleDebug :app:lintDebug
 ```
 
-Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.4.apk`.
+Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.5.apk`.
 
 ## Privacy
 
