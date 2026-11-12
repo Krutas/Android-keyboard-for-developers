@@ -2,21 +2,21 @@ import Foundation
 
 /// Key identifiers remain stable when their displayed Shift legend changes.
 enum KeyboardMapping {
-    static let ltRows = [
+    static let ltRows: [[String]] = [
         ["ą", "ž", "e", "r", "t", "y", "u", "i", "o", "p", "į", "w"],
         ["a", "s", "d", "š", "g", "h", "j", "k", "l", "ų", "ė", "q"],
         ["⇧", "z", "ū", "c", "v", "b", "n", "m", "č", "f", "x", "ę", "⌫"]
     ]
-    static let baseRows = [
+    static let baseRows: [[String]] = [
         ["Esc", "Ctrl", "Alt", "Tab", "Del", "End", "PgUp", "PgDn"],
         ["←", "↓", "↑", "→", "Home", "/", "⌫"],
-        Array("1234567890").map(String.init),
-        Array("qwertyuiop").map(String.init),
-        Array("asdfghjkl").map(String.init),
-        ["⇧"] + Array("zxcvbnm").map(String.init) + ["⌫"],
+        Array("1234567890").map { String($0) },
+        Array("qwertyuiop").map { String($0) },
+        Array("asdfghjkl").map { String($0) },
+        ["⇧"] + Array("zxcvbnm").map { String($0) } + ["⌫"],
         ["123", "😀", ",", "Space", ".", "↵"]
     ]
-    static let shifted = Dictionary(uniqueKeysWithValues: zip(Array("1234567890-=[]\\;',./`"), Array("!@#$%^&*()_+{}|:\"<>?~")).map { (String($0), String($1)) })
+    static let shifted: [String: String] = Dictionary(uniqueKeysWithValues: zip(Array("1234567890-=[]\\;',./`"), Array("!@#$%^&*()_+{}|:\"<>?~")).map { (String($0), String($1)) })
     static func output(_ key: String, variant: String, shift: Bool, caps: Bool) -> String {
         if key.count == 1, let c = key.first, c.isLetter { return shift || caps ? key.uppercased() : key.lowercased() }
         return variant == "pc" && shift ? (shifted[key] ?? key) : key

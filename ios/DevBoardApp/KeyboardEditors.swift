@@ -76,7 +76,7 @@ struct ComboEditor: View {
     @Binding var combos: [SavedCombo]
     @State private var draft = SavedCombo(name: "", key: "")
     @State private var editing: UUID?
-    private let keys = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890").map(String.init) + ["Tab", "Enter", "Esc", "Space", "⌫", "Del", "Home", "End", "←", "↑", "↓", "→"] + (1...8).map { "F\($0)" }
+    private let keys: [String] = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890").map { String($0) } + ["Tab", "Enter", "Esc", "Space", "⌫", "Del", "Home", "End", "←", "↑", "↓", "→"] + (1...8).map { "F\($0)" }
     var body: some View {
         Form {
             TextField("Button name", text: $draft.name)
