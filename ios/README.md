@@ -1,4 +1,4 @@
-# DevBoard for iPhone v0.2 (unsigned preview)
+# DevBoard for iPhone v0.2.5 (unsigned preview)
 
 The iOS port lives beside the Android source. It has a SwiftUI settings/companion app and a native `UIInputViewController` keyboard extension.
 
@@ -19,11 +19,18 @@ The iOS port lives beside the Android source. It has a SwiftUI settings/companio
 - Updated app and extension version metadata to `0.2` (build `2`).
 - The emoji list still relies on system Unicode glyph support; newer emoji may render as missing symbols on older iOS versions.
 
+## iOS v0.2.5
+
+- Long-press Shift Caps Lock and punctuation popup positioning updated in source.
+- New unsigned device IPA: [`DevBoard-iOS-v0.2.5-unsigned.ipa`](../releases/DevBoard-iOS-v0.2.5-unsigned.ipa).
+- New simulator package: [`DevBoard-iOS-v0.2.5-Simulator.zip`](../releases/DevBoard-iOS-v0.2.5-Simulator.zip).
+- Both packages are in GitHub `main`. The IPA is not signed, and physical-device verification is pending.
+
 ## Download built packages
 
 The [GitHub Actions iOS workflow](https://github.com/Krutas/Android-keyboard-for-developers/actions/workflows/ios.yml) creates:
-- `DevBoard-iOS-v0.2-Simulator.zip`: an iOS Simulator `.app` for Xcode testing.
-- `DevBoard-iOS-v0.2-unsigned.ipa`: a device-targeted app bundle with the keyboard extension, **not signed**.
+- `DevBoard-iOS-v0.2.5-Simulator.zip`: an iOS Simulator `.app` for Xcode testing.
+- `DevBoard-iOS-v0.2.5-unsigned.ipa`: a device-targeted app bundle with the keyboard extension, **not signed**.
 
 Check the most recent successful workflow run for the artifacts. CI results must be verified separately from source changes.
 
