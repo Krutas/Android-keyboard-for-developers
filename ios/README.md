@@ -26,3 +26,5 @@ Terminal mode inserts ANSI/control text for compatible terminal apps. It does no
 Native touch behavior, orientation, paste approval, App Group provisioning, accessibility and physical iPhone behavior still need manual testing. Emoji use OS fonts; newly introduced glyphs may be missing.
 
 References: [Apple custom keyboards](https://developer.apple.com/documentation/uikit/creating-a-custom-keyboard), [restrictions](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/CustomKeyboard.html), [open access](https://developer.apple.com/documentation/uikit/configuring-open-access-for-a-custom-keyboard).
+
+Previous packages: [0.2.5 unsigned IPA](../releases/DevBoard-iOS-v0.2.5-unsigned.ipa) and [0.2.5 Simulator ZIP](../releases/DevBoard-iOS-v0.2.5-Simulator.zip). They do not include 0.2.6 changes; physical-device verification was also pending for those builds.

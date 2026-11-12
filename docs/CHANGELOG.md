@@ -9,6 +9,16 @@
 - Added Android JUnit, browser interaction tests and macOS Swift mapping tests. Android 0.2.6 (8), iOS 0.2.6 (4).
 - **Unfinished:** iOS clipboard requires approval for optional Full Access. Device testing and Apple signing remain. See [audit and limitations](PARITY-0.2.6.md). Local Android JUnit/build/lint, APK signature/version, browser regression and five publication-gate checks passed. No successful iOS build or published 0.2.6 packages are claimed here yet.
 
+## Android 0.2.5 / iOS 0.2.5 (2026-11-12)
+
+- Android APK: `releases/DevBoard-v0.2.5.apk` (debug-signed developer build).
+- iOS unsigned IPA: `releases/DevBoard-iOS-v0.2.5-unsigned.ipa` (requires Apple signing and provisioning).
+- iOS Simulator: `releases/DevBoard-iOS-v0.2.5-Simulator.zip`.
+- Source fixes since 0.2.4: long-press Shift Caps Lock, raised punctuation popups for `.` and `,`, and tighter single-line `< Space >` labeling.
+- Web simulator: Fn / Combo controls, keyboard preview, language layout selectors, button-press animation toggle and permission-state handling.
+- Builds reported successful and artifacts committed to `main` (`94594ec`). Physical Android/iPhone testing remains pending; unsigned IPA is not directly installable on iPhone.
+
+
 ## Android 0.2.4 / iOS 0.2 (2026-11-11)
 
 **Fixed:** The `<`, Space and `>` legends previously relied on whitespace in the Android button label, which could wrap on narrow screens. Android now draws the brackets as independent glyphs at the edges of a single Space button, while the normal Space title stays centered.

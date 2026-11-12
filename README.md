@@ -12,6 +12,8 @@ A native developer keyboard for Android and iOS, with an interactive web simulat
 
 Space is one key with decorative `<` and `>` labels: every position inserts a normal space. Hold Space for language selection. PC layouts use Shift for number/punctuation symbols and LT number holds for accented letters; LT QWERTY has dedicated Lithuanian letters. Each language remembers its variant; Caps Lock changes letters only.
 
+Previous verified downloads remain available: [Android 0.2.5 APK](releases/DevBoard-v0.2.5.apk), [unsigned iOS IPA](releases/DevBoard-iOS-v0.2.5-unsigned.ipa), [iOS Simulator ZIP](releases/DevBoard-iOS-v0.2.5-Simulator.zip). These do not include the 0.2.6 changes.
+
 ## Features
 
 - Esc, Ctrl, Alt, Tab, arrows, Home, End, Delete, PgUp/PgDn and optional F1–F8.
