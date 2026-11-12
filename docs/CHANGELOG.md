@@ -1,5 +1,15 @@
 # DevBoard release notes
 
+## Android 0.2.5 / iOS 0.2.5 (2026-11-12)
+
+- Android APK: `releases/DevBoard-v0.2.5.apk` (debug-signed developer build).
+- iOS unsigned IPA: `releases/DevBoard-iOS-v0.2.5-unsigned.ipa` (requires Apple signing and provisioning).
+- iOS Simulator: `releases/DevBoard-iOS-v0.2.5-Simulator.zip`.
+- Source fixes since 0.2.4: long-press Shift Caps Lock, raised punctuation popups for `.` and `,`, and tighter single-line `< Space >` labeling.
+- Web simulator: Fn / Combo controls, keyboard preview, language layout selectors, button-press animation toggle and permission-state handling.
+- Builds reported successful and artifacts committed to `main` (`94594ec`). Physical Android/iPhone testing remains pending; unsigned IPA is not directly installable on iPhone.
+
+
 ## Android 0.2.4 / iOS 0.2 (2026-11-11)
 
 **Fixed:** The `<`, Space and `>` legends previously relied on whitespace in the Android button label, which could wrap on narrow screens. Android now draws the brackets as independent glyphs at the edges of a single Space button, while the normal Space title stays centered.
