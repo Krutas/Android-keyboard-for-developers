@@ -4,15 +4,15 @@ A native developer keyboard for Android and iOS, with an interactive web simulat
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Source version: 0.2.6 developer preview.** [Try the web simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html) · [Existing downloads](https://github.com/Krutas/Android-keyboard-for-developers/releases) · [0.2.6 audit and limitations](docs/PARITY-0.2.6.md)
+**Source version: 0.3 developer preview.** [Try the web simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html) · [Existing downloads](https://github.com/Krutas/Android-keyboard-for-developers/releases) · [0.3 audit and limitations](docs/PARITY-0.3.md)
 
-0.2.6 adds native LT/EN PC and QWERTY variants, PC Shift symbol mapping, Fn/Combo previews and editors, snippets, held-arrow repeat, layout editing and press-animation controls. Android exposes real microphone permission status; web uses browser permission APIs. iOS microphone access is unavailable to third-party keyboards.
+0.3 adds native LT/EN PC and QWERTY variants, PC Shift symbol mapping, Fn/Combo previews and editors, snippets, held-arrow repeat, layout editing and press-animation controls. Android exposes real microphone permission status; web uses browser permission APIs. iOS microphone access is unavailable to third-party keyboards.
 
-**Full parity is not yet complete:** iOS clipboard access requires optional Full Access, and approval to enable that capability is pending. iOS hardware shortcuts also have platform restrictions. Build success and device validation are separate; see the [verification record](docs/PARITY-0.2.6.md).
+**Full parity is not yet complete:** v0.3 keeps iOS Full Access disabled, so clipboard access is unavailable. iOS hardware shortcuts also have platform restrictions. Build success and device validation are separate; see the [verification record](docs/PARITY-0.3.md).
 
 Space is one key with decorative `<` and `>` labels: every position inserts a normal space. Hold Space for language selection. PC layouts use Shift for number/punctuation symbols and LT number holds for accented letters; LT QWERTY has dedicated Lithuanian letters. Each language remembers its variant; Caps Lock changes letters only.
 
-Previous verified downloads remain available: [Android 0.2.5 APK](releases/DevBoard-v0.2.5.apk), [unsigned iOS IPA](releases/DevBoard-iOS-v0.2.5-unsigned.ipa), [iOS Simulator ZIP](releases/DevBoard-iOS-v0.2.5-Simulator.zip). These do not include the 0.2.6 changes.
+Previous verified downloads remain available: [Android 0.2.5 APK](releases/DevBoard-v0.2.5.apk), [unsigned iOS IPA](releases/DevBoard-iOS-v0.2.5-unsigned.ipa), [iOS Simulator ZIP](releases/DevBoard-iOS-v0.2.5-Simulator.zip). These do not include the 0.3 changes.
 
 ## Features
 
@@ -48,6 +48,6 @@ CI runs the same tests and captures a screenshot. For interactive microphone tes
 
 ## Privacy and limits
 
-Settings and snippets are local. DevBoard makes no custom keystroke network requests. Speech recognition may use the system/browser provider's cloud service. iOS Full Access remains disabled in the current configuration; the clipboard feature is unavailable there until that change is approved. Password fields may use the system keyboard. Terminal key support depends on the receiving app.
+Settings and snippets are local. DevBoard makes no custom keystroke network requests. Speech recognition may use the system/browser provider's cloud service. iOS Full Access remains disabled in v0.3; the clipboard feature is unavailable there. Password fields may use the system keyboard. Terminal key support depends on the receiving app.
 
 [Release history](docs/CHANGELOG.md) · [Test checklist](docs/TESTING.md) · [License](LICENSE)

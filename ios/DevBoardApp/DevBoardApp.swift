@@ -83,7 +83,7 @@ struct ContentView: View {
                         if !$0 { SharedSettings.clips = [] }
                     }
                     Button("Clear clipboard history") { SharedSettings.clips = [] }
-                    Text("Clipboard is unavailable in this build. Optional Full Access support awaits approval. No background recording.").font(.caption)
+                    Text("Clipboard is unavailable in this build because Full Access is disabled. No background recording.").font(.caption)
                 }
                 Section("Share a file") {
                     Button("Choose any file") { showFilePicker = true }

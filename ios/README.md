@@ -1,10 +1,10 @@
-# DevBoard iOS 0.2.6 developer preview
+# DevBoard iOS 0.3 developer preview
 
 Native SwiftUI companion app and UIKit keyboard extension. Includes LT/EN PC and QWERTY variants, Shift/Caps mapping, F1–F8, enabled combo strip and companion recorder/editor, text-only snippets, arrow/backspace repeat, layout swap/delete/reset, live preview and optional press animations. Space always inserts a space; its brackets are decorative. Hold Space or LT/EN mic for language selection.
 
 The keyboard microphone button switches to another installed keyboard for system dictation. **It does not record audio.**
 
-Full Android parity is not claimed. Clipboard access is currently blocked by `RequestsOpenAccess: false`; approval to enable optional Full Access is pending. Basic typing and reading companion settings use the existing App Group. Shared keyboard-side writes require Full Access; language/Fn switches remain available in the session. See [the complete audit and limitations](../docs/PARITY-0.2.6.md).
+Full Android parity is not claimed. v0.3 keeps `RequestsOpenAccess: false`; clipboard access is unavailable. Basic typing and reading companion settings use the existing App Group. Shared keyboard-side writes require Full Access; language/Fn switches remain available in the session. See [the complete audit and limitations](../docs/PARITY-0.3.md).
 
 ## Build and packages
 
@@ -12,10 +12,10 @@ On macOS, install Xcode and XcodeGen, run `xcodegen generate` in `ios/`, then bu
 
 The [iOS CI workflow](https://github.com/Krutas/Android-keyboard-for-developers/actions/workflows/ios.yml) runs shared mapping tests and builds:
 
-- `DevBoard-iOS-v0.2.6-Simulator.zip`: simulator app with keyboard extension.
-- `DevBoard-iOS-v0.2.6-unsigned.ipa`: device app and extension, **not installable normally until signed**.
+- `DevBoard-iOS-v0.3-Simulator.zip`: simulator app with keyboard extension.
+- `DevBoard-iOS-v0.3-unsigned.ipa`: device app and extension, **not installable normally until signed**.
 
-CI checks version `0.2.6` (build `4`) for app and extension in both builds before uploading. Packages must only be published after the exact source revision passes CI. CI artifacts expire after 30 days.
+CI checks version `0.3` (build `5`) for app and extension in both builds before uploading. Packages must only be published after the exact source revision passes CI. CI artifacts expire after 30 days.
 
 ## Enable on iPhone
 
@@ -27,4 +27,4 @@ Native touch behavior, orientation, paste approval, App Group provisioning, acce
 
 References: [Apple custom keyboards](https://developer.apple.com/documentation/uikit/creating-a-custom-keyboard), [restrictions](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/CustomKeyboard.html), [open access](https://developer.apple.com/documentation/uikit/configuring-open-access-for-a-custom-keyboard).
 
-Previous packages: [0.2.5 unsigned IPA](../releases/DevBoard-iOS-v0.2.5-unsigned.ipa) and [0.2.5 Simulator ZIP](../releases/DevBoard-iOS-v0.2.5-Simulator.zip). They do not include 0.2.6 changes; physical-device verification was also pending for those builds.
+Previous packages: [0.2.5 unsigned IPA](../releases/DevBoard-iOS-v0.2.5-unsigned.ipa) and [0.2.5 Simulator ZIP](../releases/DevBoard-iOS-v0.2.5-Simulator.zip). They do not include 0.3 changes; physical-device verification was also pending for those builds.

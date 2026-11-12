@@ -1,13 +1,14 @@
 # DevBoard release notes
 
-## 0.2.6 developer preview (source; release verification pending)
+## 0.3 developer preview (source; release verification pending)
 
 - Native LT/EN PC/QWERTY, PC Shift symbols and independent Caps Lock. Added missing Latin x to LT QWERTY.
 - Native Fn/Combo previews, Android shortcut recorder/validation, iOS companion Combo editor and enabled shortcut strip.
 - iOS snippet list, layout editor, held-arrow/backspace repeat and press-animation control. Space brackets are decorative on all platforms.
 - Fixed Android End import, per-variant layout persistence/profile JSON, clipboard-listener lifetime and repeat cleanup. Fixed iOS forward Delete at the end of text.
-- Added Android JUnit, browser interaction tests and macOS Swift mapping tests. Android 0.2.6 (8), iOS 0.2.6 (4).
-- **Unfinished:** iOS clipboard requires approval for optional Full Access. Device testing and Apple signing remain. See [audit and limitations](PARITY-0.2.6.md). Local Android JUnit/build/lint, APK signature/version, browser regression and five publication-gate checks passed. No successful iOS build or published 0.2.6 packages are claimed here yet.
+- Added Android JUnit, browser interaction tests and macOS Swift mapping tests. Android 0.3 (9), iOS 0.3 (5).
+- Fixed Android repeat after sliding off an arrow/Backspace key. Strengthened final-SHA CI and package verification before release publication.
+- **Limitations:** iOS Full Access remains disabled, so clipboard is unavailable. Device testing and Apple signing remain. See [audit and limitations](PARITY-0.3.md). Publication requires Android, web, iOS and Pages CI to pass on the final pushed v0.3 SHA; release notes link the qualifying runs.
 
 ## Android 0.2.5 / iOS 0.2.5 (2026-11-12)
 

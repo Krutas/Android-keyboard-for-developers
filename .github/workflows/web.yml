@@ -2,7 +2,6 @@ name: Web parity tests
 on:
   push:
     branches: [main]
-    paths: ['docs/**', 'tests/web-parity.cjs', '.github/workflows/web.yml']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -26,5 +25,5 @@ jobs:
         run: node tests/web-parity.cjs
       - uses: actions/upload-artifact@v4
         with:
-          name: DevBoard-web-preview
+          name: DevBoard-v0.3-web-preview
           path: ${{ runner.temp }}/devboard-web.png

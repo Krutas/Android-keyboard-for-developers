@@ -2,7 +2,7 @@ import Foundation
 
 /// Host app writes preferences; keyboard extension reads them from the App Group.
 enum SharedSettings {
-    // Optional Full Access expansion awaits explicit user approval.
+    // v0.3 keeps Full Access disabled; clipboard is unavailable.
     static let requestsFullAccess = false
     static var sessionLanguage: String?
     static let appGroupID = "group.lt.krutas.devboard"

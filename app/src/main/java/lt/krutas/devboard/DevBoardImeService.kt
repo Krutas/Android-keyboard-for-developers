@@ -475,6 +475,16 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
                                 repeatHandler.postDelayed(repeatDeletion, 450L)
                             }
                         }
+                        MotionEvent.ACTION_MOVE -> {
+                            if (event.x < 0 || event.x >= view.width || event.y < 0 || event.y >= view.height) {
+                                repeatingArrow = null
+                                repeatingDelete = false
+                                repeatHandler.removeCallbacks(repeatArrowMovement)
+                                repeatHandler.removeCallbacks(repeatDeletion)
+                                view.animate().cancel()
+                                view.scaleX = 1f; view.scaleY = 1f; view.alpha = 1f
+                            }
+                        }
                         MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                             if (SettingsStore.prefs(this).getBoolean("press_animation", true)) {
                                 view.animate().cancel()

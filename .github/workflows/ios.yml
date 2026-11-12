@@ -3,10 +3,6 @@ name: iOS build
 on:
   push:
     branches: [main]
-    paths:
-      - "ios/**"
-      - ".github/workflows/ios.yml"
-      - "tests/MappingTests.swift"
   workflow_dispatch:
 
 permissions:
@@ -36,7 +32,7 @@ jobs:
           mkdir -p releases
           ditto -c -k --sequesterRsrc --keepParent \
             "$RUNNER_TEMP/DevBoardSimulator/Build/Products/Release-iphonesimulator/DevBoard.app" \
-            "releases/DevBoard-iOS-v0.2.6-Simulator.zip"
+            "releases/DevBoard-iOS-v0.3-Simulator.zip"
       - name: Build and package unsigned iPhone IPA
         run: |
           set -euo pipefail
@@ -48,8 +44,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/DevBoardPayload/Payload"
           ditto "$app" "$RUNNER_TEMP/DevBoardPayload/Payload/DevBoard.app"
           (cd "$RUNNER_TEMP/DevBoardPayload" && zip -q -r \
-            "$GITHUB_WORKSPACE/releases/DevBoard-iOS-v0.2.6-unsigned.ipa" Payload)
-          unzip -l releases/DevBoard-iOS-v0.2.6-unsigned.ipa | grep -F \
+            "$GITHUB_WORKSPACE/releases/DevBoard-iOS-v0.3-unsigned.ipa" Payload)
+          unzip -l releases/DevBoard-iOS-v0.3-unsigned.ipa | grep -F \
             "Payload/DevBoard.app/PlugIns/DevBoardKeyboard.appex/Info.plist"
       - name: Verify iOS app and extension versions
         run: |
@@ -63,14 +59,14 @@ jobs:
               version = metadata.get('CFBundleShortVersionString')
               build = metadata.get('CFBundleVersion')
               print(f'{target}: {version} ({build})')
-              assert version == '0.2.6' and build == '4', f'Wrong iOS metadata: {target}: {version} ({build})'
+              assert version == '0.3' and build == '5', f'Wrong iOS metadata: {target}: {version} ({build})'
           PY
       - name: Upload iOS packages
         uses: actions/upload-artifact@v4
         with:
-          name: DevBoard-iOS-v0.2.6
+          name: DevBoard-iOS-v0.3
           path: |
-            releases/DevBoard-iOS-v0.2.6-Simulator.zip
-            releases/DevBoard-iOS-v0.2.6-unsigned.ipa
+            releases/DevBoard-iOS-v0.3-Simulator.zip
+            releases/DevBoard-iOS-v0.3-unsigned.ipa
           if-no-files-found: error
           retention-days: 30

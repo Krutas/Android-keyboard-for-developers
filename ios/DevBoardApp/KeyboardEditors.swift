@@ -7,9 +7,18 @@ struct KeyboardPreview: View {
     let combos: [SavedCombo]
     var body: some View {
         VStack(spacing: 3) {
-            previewRow(["⚙", "+ Combo", "Fn", "📋", "⭐", SharedSettings.language == "lt-LT" ? "LT 🎙" : "EN 🎙"])
+            previewRow(["Fn", "📋", "⭐", SharedSettings.language == "lt-LT" ? "LT 🎙" : "EN 🎙", "LT/EN", "🌐"])
             if functionKeys { previewRow((1...8).map { "F\($0)" }) }
-            ForEach(Array(combos.filter(\.enabled).enumerated()), id: \.offset) { _, combo in previewRow([combo.name]) }
+            if combos.contains(where: \.enabled) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 4) {
+                        ForEach(combos.filter(\.enabled)) { combo in
+                            Text(combo.name).font(.system(size: 9, design: .monospaced))
+                                .frame(width: 70, height: 24).background(Color.secondary.opacity(0.2)).cornerRadius(3)
+                        }
+                    }
+                }
+            }
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in previewRow(row) }
         }.padding(5).background(theme == "light" ? Color.gray.opacity(0.15) : theme == "matrix" ? Color.green.opacity(0.2) : Color.black.opacity(0.3)).accessibilityLabel("Live keyboard preview")
     }
