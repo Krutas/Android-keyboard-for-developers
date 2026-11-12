@@ -6,8 +6,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: 5.9
-    MARKETING_VERSION: "0.2.5"
-    CURRENT_PROJECT_VERSION: "3"
+    MARKETING_VERSION: "0.2.6"
+    CURRENT_PROJECT_VERSION: "4"
     TARGETED_DEVICE_FAMILY: "1,2"
 targets:
   DevBoard:
@@ -24,8 +24,8 @@ targets:
       path: DevBoardApp/Info.plist
       properties:
         CFBundleDisplayName: DevBoard
-        CFBundleShortVersionString: "0.2.5"
-        CFBundleVersion: "3"
+        CFBundleShortVersionString: "0.2.6"
+        CFBundleVersion: "4"
         UILaunchScreen: {}
     dependencies:
       - target: DevBoardKeyboard
@@ -44,8 +44,8 @@ targets:
       path: DevBoardKeyboard/Info.plist
       properties:
         CFBundleDisplayName: DevBoard Keyboard
-        CFBundleShortVersionString: "0.2.5"
-        CFBundleVersion: "3"
+        CFBundleShortVersionString: "0.2.6"
+        CFBundleVersion: "4"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.keyboard-service
           NSExtensionPrincipalClass: "$(PRODUCT_MODULE_NAME).KeyboardViewController"

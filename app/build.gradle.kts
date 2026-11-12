@@ -10,8 +10,8 @@ android {
         applicationId = "lt.krutas.devboard"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "0.2.5"
+        versionCode = 8
+        versionName = "0.2.6"
     }
     buildTypes { release { isMinifyEnabled = false } }
     compileOptions {
@@ -19,4 +19,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
+}
+
+dependencies {
+    testImplementation("junit:junit:4.13.2")
 }

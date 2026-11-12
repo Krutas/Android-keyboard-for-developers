@@ -19,16 +19,6 @@ private final class EmojiCell: UICollectionViewCell {
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 }
 
-/// Records the original touch location for the three zones inside Space.
-private final class SpaceKeyButton: UIButton {
-    private(set) var touchFraction: CGFloat = 0.5
-
-    override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
-        touchFraction = touch.location(in: self).x / max(bounds.width, 1)
-        return super.beginTracking(touch, with: event)
-    }
-}
-
 final class KeyboardViewController: UIInputViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private enum Layer { case letters, numbers, symbols, emoji }
     private struct Key {
@@ -46,6 +36,12 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
     private let popup = UIStackView()
     private var popupHeightAdded = false
     private var keyboardHeightConstraint: NSLayoutConstraint!
+    private var repeatTimer: Timer?
+    private var heldKey: String?
+    private var repeated = false
+    private var repeatTicks = 0
+    private var heldModifiers = (false, false, false)
+    private var fn = SharedSettings.functionKeys
     private var layer: Layer = .letters
     private var emojiCategory = 1
     private var emojiItems: [[String]] = []
@@ -79,14 +75,21 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        fn = SharedSettings.functionKeys
+        if SharedSettings.profile == "terminal" { shift = false }
         render()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        stopRepeat()
+        super.viewWillDisappear(animated)
     }
 
     override func textDidChange(_ textInput: UITextInput?) {
         super.textDidChange(textInput)
         let before = textDocumentProxy.documentContextBeforeInput ?? ""
-        if before.isEmpty || before.hasSuffix("\n") { shift = true }
-        if layer != .emoji { render() }
+        if !capsLock && SharedSettings.profile != "terminal" && (before.isEmpty || before.hasSuffix("\n")) { shift = true }
+        if layer != .emoji && heldKey == nil { render() }
     }
 
     private func palette() -> (UIColor, UIColor, UIColor) {
@@ -100,7 +103,7 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
 
     private func makeButton(_ key: Key) -> UIButton {
         let (_, buttonColor, foreground) = palette()
-        let button: UIButton = key.id == "space" ? SpaceKeyButton(frame: .zero) : UIButton(type: .system)
+        let button = UIButton(type: .system)
         button.setTitle(key.id == "space" ? nil : key.label, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: key.label.contains("\n") ? 14 : 17, weight: .medium)
         button.titleLabel?.numberOfLines = 2
@@ -114,7 +117,7 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
             button.accessibilityLabel = capsLock ? "Caps Lock on. Tap to disable" : "Shift. Double tap or hold for Caps Lock"
         }
         if key.id == "space" {
-            button.accessibilityLabel = "Less than, space, greater than"
+            button.accessibilityLabel = "Space. Hold to choose language. Brackets are decorative"
             let labels = UIStackView()
             labels.axis = .horizontal
             labels.distribution = .equalCentering
@@ -139,19 +142,28 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
                 labels.centerYAnchor.constraint(equalTo: button.centerYAnchor)
             ])
         }
-        button.addAction(UIAction { [weak self, weak button] _ in
-            guard let self = self else { return }
-            if let space = button as? SpaceKeyButton {
-                let id = space.touchFraction < 0.22 ? "spaceLess" :
-                         (space.touchFraction > 0.78 ? "spaceGreater" : "space")
-                self.keyPressed(id)
-            } else {
-                self.keyPressed(key.id)
-            }
+        button.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
+            self.stopRepeat()
+            if self.repeated { self.repeated = false; return }
+            self.keyPressed(key.id)
         }, for: .touchUpInside)
-        if ["comma", "period", "shift"].contains(key.id) || accentedNumbers[key.id] != nil {
+        button.addAction(UIAction { [weak self, weak button] _ in
+            guard let self else { return }
+            self.repeated = false
+            if SharedSettings.pressAnimation, let button {
+                UIView.animate(withDuration: 0.07) { button.transform = CGAffineTransform(scaleX: 0.95, y: 0.9); button.alpha = 0.79 }
+            }
+            if ["left", "right", "up", "down", "backspace"].contains(key.id) { self.startRepeat(key.id) }
+        }, for: .touchDown)
+        button.addAction(UIAction { [weak self, weak button] _ in
+            self?.stopRepeat()
+            if let button { UIView.animate(withDuration: 0.12) { button.transform = .identity; button.alpha = 1 } }
+        }, for: [.touchUpInside, .touchUpOutside, .touchCancel, .touchDragExit])
+        if ["comma", "period", "shift", "space", "mic"].contains(key.id) ||
+            (layer == .letters && SharedSettings.language == "lt-LT" && SharedSettings.variant == "pc" && accentedNumbers[key.id] != nil) {
             let hold = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(_:)))
-            hold.minimumPressDuration = 0.4
+            hold.minimumPressDuration = 0.5
             button.addGestureRecognizer(hold)
         }
         return button
@@ -190,13 +202,10 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
             toolbar.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor),
             toolbar.heightAnchor.constraint(equalTo: scroll.frameLayoutGuide.heightAnchor)
         ])
-        for key in [
-            Key("Esc", "esc"), Key("Tab", "tab"), Key(ctrl ? "Ctrl●" : "Ctrl", "ctrl"),
-            Key(alt ? "Alt●" : "Alt", "alt"), Key("🎙️", "mic"),
-            Key("←", "left"), Key("↑", "up"), Key("↓", "down"), Key("→", "right"),
-            Key("Home", "home"), Key("Del", "delete"), Key("Pg↑", "pageup"),
-            Key("Pg↓", "pagedown"), Key("📋", "snippet")
-        ] {
+        let toolbarKeys = [Key("Fn", "fn"), Key("📋", "clipboard"), Key("⭐", "snippet"),
+                           Key(SharedSettings.language == "lt-LT" ? "LT 🎙" : "EN 🎙", "mic"),
+                           Key("LT/EN", "language"), Key("🌐", "globe")]
+        for key in toolbarKeys {
             let button = makeButton(key)
             button.widthAnchor.constraint(greaterThanOrEqualToConstant: key.id == "mic" ? 39 : 47).isActive = true
             toolbar.addArrangedSubview(button)
@@ -288,7 +297,28 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
             vertical.removeArrangedSubview($0)
             $0.removeFromSuperview()
         }
+        stopRepeat()
         addToolbar()
+        if fn { addRow((1...8).map { Key("F\($0)") }) }
+        let combos = SharedSettings.combos.filter { $0.enabled }
+        if !combos.isEmpty {
+            let scroll = UIScrollView(); scroll.showsHorizontalScrollIndicator = false
+            scroll.heightAnchor.constraint(equalToConstant: 35).isActive = true
+            let strip = UIStackView(); strip.axis = .horizontal; strip.spacing = 4
+            strip.translatesAutoresizingMaskIntoConstraints = false; scroll.addSubview(strip)
+            for combo in combos {
+                let button = makeButton(Key(combo.name, "combo:" + combo.id.uuidString))
+                button.widthAnchor.constraint(equalToConstant: 92).isActive = true; strip.addArrangedSubview(button)
+            }
+            NSLayoutConstraint.activate([strip.leadingAnchor.constraint(equalTo: scroll.contentLayoutGuide.leadingAnchor),
+                strip.trailingAnchor.constraint(equalTo: scroll.contentLayoutGuide.trailingAnchor),
+                strip.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor), strip.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor),
+                strip.heightAnchor.constraint(equalTo: scroll.frameLayoutGuide.heightAnchor)])
+            vertical.addArrangedSubview(scroll)
+        }
+        if layer != .emoji {
+            for row in SharedSettings.rows.prefix(2) { addRow(row.map(mappedKey)) }
+        }
         popup.axis = .horizontal
         popup.spacing = 4
         popup.isHidden = true
@@ -302,23 +332,7 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
 
         switch layer {
         case .letters:
-            let nums = (0...9).map { index -> Key in
-                let digit = index == 9 ? "0" : String(index + 1)
-                let label = digit + (accentedNumbers[digit].map { "\n" + $0 } ?? "")
-                return Key(label, digit)
-            }
-            addRow(nums)
-            addRow(Array("qwertyuiop").map { Key(shift || capsLock ? String($0).uppercased() : String($0), String($0)) })
-            addRow(Array("asdfghjkl").map { Key(shift || capsLock ? String($0).uppercased() : String($0), String($0)) })
-            let lowerChars = Array("zxcvbnm").map { String($0) }
-            let lowerKeys: [Key] = lowerChars.map { character in
-                let label = (shift || capsLock) ? character.uppercased() : character
-                return Key(label, character)
-            }
-            var bottomKeys: [Key] = [Key(capsLock ? "⇪" : "⇧", "shift", 1.5)]
-            bottomKeys.append(contentsOf: lowerKeys)
-            bottomKeys.append(Key("⌫", "backspace", 1.5))
-            addRow(bottomKeys)
+            for row in SharedSettings.rows.dropFirst(2).dropLast() { addRow(row.map(mappedKey)) }
         case .numbers:
             addRow(Array("1234567890").map { Key(String($0)) })
             addRow(["@", "#", "$", "%", "&", "-", "+", "(", ")", "/"].map { Key($0) })
@@ -336,12 +350,10 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
         case .emoji:
             addEmojiPanel()
         }
-        addRow([
-            Key(layer == .letters ? "123" : "ABC", layer == .letters ? "numbers" : "letters"),
-            Key("🌐", "globe"), Key(layer == .emoji ? "ABC" : "😀", "emoji"),
-            Key(",", "comma"), Key("space", "space", 4),
-            Key(".", "period"), Key("↵", "return", 1.4)
-        ])
+        if layer == .letters { addRow(SharedSettings.rows.last!.map(mappedKey)) }
+        else { addRow([Key("ABC", "letters"), Key("🌐", "globe"), Key("😀", "emoji"),
+                       Key(",", "comma"), Key("space", "space", 4), Key(".", "period"), Key("↵", "return")]) }
+        keyboardHeightConstraint.constant = CGFloat(vertical.arrangedSubviews.filter { !$0.isHidden }.count * 50 + 10) + (layer == .emoji ? 171 : 0)
         // Palette configured before key creation; used for future accessibility contrast tweaks.
         _ = foreground
     }
@@ -349,9 +361,11 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
     @objc private func longPressed(_ recognizer: UILongPressGestureRecognizer) {
         guard recognizer.state == .began,
               let id = recognizer.view?.accessibilityIdentifier else { return }
-        if id == "shift" {
+        if id == "space" || id == "mic" {
+            showChoices(["language:lt-LT", "language:en-US"])
+        } else if id == "shift" {
             capsLock.toggle()
-            shift = capsLock
+            shift = false
             lastShiftTap = .distantPast
             render()
         } else if id == "comma" {
@@ -366,41 +380,116 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
     private func showChoices(_ options: [String]) {
         popup.arrangedSubviews.forEach { popup.removeArrangedSubview($0); $0.removeFromSuperview() }
         for option in options {
-            let button = makeButton(Key(option, "choice:" + option))
+            let title = option == "language:lt-LT" ? "Lithuanian" : option == "language:en-US" ? "English" : option
+            let button = makeButton(Key(title, option.hasPrefix("language:") ? option : "choice:" + option))
             popup.addArrangedSubview(button)
         }
         popup.isHidden = false
-        keyboardHeightConstraint.constant = 350
+        keyboardHeightConstraint.constant += 40
     }
 
     private func terminalSequence(_ key: String) -> String? {
         guard SharedSettings.profile == "terminal" else { return nil }
-        return [
-            "up": "\u{1B}[A", "down": "\u{1B}[B", "right": "\u{1B}[C",
-            "left": "\u{1B}[D", "home": "\u{1B}[H",
-            "pageup": "\u{1B}[5~", "pagedown": "\u{1B}[6~",
-            "esc": "\u{1B}", "tab": "\t"
-        ][key]
+        return KeyboardMapping.terminalSequence(key, ctrl: ctrl, alt: alt, shift: shift)
     }
 
-    private func keyPressed(_ key: String) {
+    private func mappedKey(_ label: String) -> Key {
+        let ids = ["Esc": "esc", "Ctrl": "ctrl", "Alt": "alt", "Tab": "tab", "Del": "delete", "End": "end",
+                   "PgUp": "pageup", "PgDn": "pagedown", "Home": "home", "←": "left", "→": "right", "↑": "up", "↓": "down",
+                   "⇧": "shift", "⌫": "backspace", "Space": "space", "↵": "return", "😀": "emoji", ",": "comma", ".": "period"]
+        var title = KeyboardMapping.output(label, variant: SharedSettings.variant, shift: shift, caps: capsLock)
+        if label == "⇧" { title = capsLock ? "⇪" : "⇧" }
+        if layer == .letters && SharedSettings.language == "lt-LT" && SharedSettings.variant == "pc", let hint = accentedNumbers[label] { title = hint + "\n" + title }
+        return Key(title, ids[label] ?? label, label == "Space" ? 4 : 1)
+    }
+
+    private func setLanguage(_ value: String) {
+        SharedSettings.sessionLanguage = value
+        if hasFullAccess { SharedSettings.language = value }
+    }
+
+    private func startRepeat(_ key: String) {
+        stopRepeat(); heldKey = key; repeatTicks = 0; heldModifiers = (ctrl, alt, shift)
+        repeatTimer = Timer.scheduledTimer(withTimeInterval: 0.065, repeats: true) { [weak self] _ in
+            guard let self, let held = self.heldKey else { return }
+            self.repeatTicks += 1
+            if self.repeatTicks < 7 { return }
+            self.repeated = true
+            (self.ctrl, self.alt, self.shift) = self.heldModifiers
+            self.keyPressed(held, refresh: false)
+        }
+    }
+    private func stopRepeat() { repeatTimer?.invalidate(); repeatTimer = nil; heldKey = nil }
+
+    private func showItems(_ items: [String]) {
+        if items.isEmpty { showMessage("No saved items. Add snippets in the DevBoard app."); return }
+        popup.arrangedSubviews.forEach { popup.removeArrangedSubview($0); $0.removeFromSuperview() }
+        let scroll = UIScrollView()
+        let list = UIStackView(); list.axis = .horizontal; list.spacing = 4
+        list.translatesAutoresizingMaskIntoConstraints = false; scroll.addSubview(list)
+        for item in items {
+            let button = makeButton(Key(String(item.prefix(24)), "choice:" + item))
+            button.widthAnchor.constraint(equalToConstant: 160).isActive = true; list.addArrangedSubview(button)
+        }
+        NSLayoutConstraint.activate([list.leadingAnchor.constraint(equalTo: scroll.contentLayoutGuide.leadingAnchor),
+            list.trailingAnchor.constraint(equalTo: scroll.contentLayoutGuide.trailingAnchor),
+            list.topAnchor.constraint(equalTo: scroll.contentLayoutGuide.topAnchor), list.bottomAnchor.constraint(equalTo: scroll.contentLayoutGuide.bottomAnchor),
+            list.heightAnchor.constraint(equalTo: scroll.frameLayoutGuide.heightAnchor)])
+        popup.addArrangedSubview(scroll); popup.isHidden = false; keyboardHeightConstraint.constant += 40
+    }
+    private func showMessage(_ message: String) {
+        popup.arrangedSubviews.forEach { popup.removeArrangedSubview($0); $0.removeFromSuperview() }
+        let label = UILabel(); label.text = message; label.font = .systemFont(ofSize: 11); label.numberOfLines = 2
+        label.textColor = palette().2; popup.addArrangedSubview(label); popup.isHidden = false; keyboardHeightConstraint.constant += 40
+    }
+    private func runCombo(_ combo: SavedCombo) {
+        let aliases = ["Enter": "return", "Esc": "esc", "Space": "space"]
+        let key = aliases[combo.key] ?? mappedKey(combo.key).id
+        if SharedSettings.profile != "terminal" && (combo.ctrl || combo.alt || combo.shift || key.hasPrefix("F")) {
+            showMessage("This shortcut requires a compatible terminal. iOS cannot send hardware shortcuts."); return
+        }
+        ctrl = combo.ctrl; alt = combo.alt; shift = combo.shift
+        keyPressed(key)
+        ctrl = false; alt = false; if !capsLock { shift = false }; render()
+    }
+
+    private func keyPressed(_ key: String, refresh: Bool = true) {
         let proxy = textDocumentProxy
+        if key.hasPrefix("choice:") {
+            proxy.insertText(String(key.dropFirst(7))); ctrl = false; alt = false; if !capsLock { shift = false }; render(); return
+        }
+        if key.hasPrefix("combo:"), let combo = SharedSettings.combos.first(where: { "combo:" + $0.id.uuidString == key }) { runCombo(combo); return }
+        if key.hasPrefix("language:") { setLanguage(String(key.dropFirst(9))); render(); return }
         switch key {
-        case "shift":
-            if Date().timeIntervalSince(lastShiftTap) < 0.4 {
-                capsLock.toggle()
-                shift = capsLock
-            } else {
-                shift = !shift
-                capsLock = false
+        case "fn":
+            fn.toggle(); if hasFullAccess { SharedSettings.functionKeys = fn }
+        case "language":
+            setLanguage(SharedSettings.language == "lt-LT" ? "en-US" : "lt-LT")
+        case "clipboard":
+            render()
+            guard hasFullAccess else {
+                let extensionInfo = Bundle.main.object(forInfoDictionaryKey: "NSExtension") as? [String: Any]
+                let attributes = extensionInfo?["NSExtensionAttributes"] as? [String: Any]
+                showMessage(attributes?["RequestsOpenAccess"] as? Bool == true ? "Clipboard requires Allow Full Access in iOS keyboard settings." : "Clipboard is disabled: this build does not request Full Access.")
+                return
             }
-            lastShiftTap = Date()
+            let current = UIPasteboard.general.string ?? ""
+            if SharedSettings.captureClipboard && !current.isEmpty {
+                SharedSettings.clips = [String(current.prefix(2000))] + SharedSettings.clips.filter { $0 != current }
+            }
+            showItems((current.isEmpty ? [] : [current]) + SharedSettings.clips.filter { $0 != current }); return
+        case "shift":
+            if capsLock { capsLock = false; shift = false; lastShiftTap = .distantPast }
+            else if Date().timeIntervalSince(lastShiftTap) < 0.42 { capsLock = true; shift = false; lastShiftTap = .distantPast }
+            else { shift.toggle(); lastShiftTap = Date() }
         case "backspace":
             proxy.deleteBackward()
         case "delete":
-            // UITextDocumentProxy has no forward-delete API; reposition then delete.
-            proxy.adjustTextPosition(byCharacterOffset: 1)
-            proxy.deleteBackward()
+            if let sequence = terminalSequence(key) { proxy.insertText(sequence) }
+            else if let after = proxy.documentContextAfterInput, !after.isEmpty {
+                // At the document end do nothing; moving there then deleting would erase the previous character.
+                proxy.adjustTextPosition(byCharacterOffset: 1); proxy.deleteBackward()
+            }
         case "ctrl": ctrl.toggle()
         case "alt": alt.toggle()
         case "globe", "mic":
@@ -419,47 +508,56 @@ final class KeyboardViewController: UIInputViewController, UICollectionViewDataS
                 emojiGrid?.setContentOffset(.zero, animated: false)
             }
         case "snippet":
-            let saved = SharedSettings.snippet
-            if !saved.isEmpty { proxy.insertText(saved) }
-        case "comma": proxy.insertText(",")
-        case "period": proxy.insertText(".")
-        case "spaceLess": proxy.insertText("<")
-        case "spaceGreater": proxy.insertText(">")
+            render(); showItems(SharedSettings.snippets); return
+        case "comma": proxy.insertText(KeyboardMapping.output(",", variant: SharedSettings.variant, shift: layer == .letters && shift, caps: false)); if !capsLock { shift = false }
+        case "period": proxy.insertText(KeyboardMapping.output(".", variant: SharedSettings.variant, shift: layer == .letters && shift, caps: false)); if !capsLock { shift = false }
         case "space":
             let previous = (proxy.documentContextBeforeInput ?? "")
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             proxy.insertText(" ")
-            if [".", "!", "?"].contains(where: { previous.hasSuffix($0) }) {
+            shift = false
+            if !capsLock && SharedSettings.profile != "terminal" && [".", "!", "?"].contains(where: { previous.hasSuffix($0) }) {
                 shift = true
             }
         case "return":
             proxy.insertText("\n")
-            shift = true
+            shift = SharedSettings.profile != "terminal" && !capsLock
         case "left", "right":
             if let sequence = terminalSequence(key) {
                 proxy.insertText(sequence)
             } else {
                 proxy.adjustTextPosition(byCharacterOffset: key == "left" ? -1 : 1)
             }
-        case "up", "down", "home", "pageup", "pagedown", "esc", "tab":
+        case "up", "down", "home", "end", "pageup", "pagedown", "esc", "tab", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8":
             if let sequence = terminalSequence(key) { proxy.insertText(sequence) }
+            else if key == "tab" { proxy.insertText("\t") }
+            else {
+                let before = proxy.documentContextBeforeInput ?? ""
+                let after = proxy.documentContextAfterInput ?? ""
+                if key == "home" { proxy.adjustTextPosition(byCharacterOffset: -(before.components(separatedBy: "\n").last?.count ?? 0)) }
+                else if key == "end" { proxy.adjustTextPosition(byCharacterOffset: after.components(separatedBy: "\n").first?.count ?? 0) }
+                else { if refresh { render(); showMessage("iOS cannot send this key outside a compatible terminal.") }; return }
+            }
+            ctrl = false; alt = false
         default:
             let value = key.hasPrefix("choice:") ? String(key.dropFirst(7)) : key
-            var text = value
+            var text = key.hasPrefix("choice:") ? value : KeyboardMapping.output(value, variant: layer == .letters ? SharedSettings.variant : "qwerty", shift: shift, caps: capsLock)
             if value.count == 1, let char = value.first, char.isLetter {
-                if shift || capsLock { text = value.uppercased() }
+                if !key.hasPrefix("choice:") && (shift || capsLock) { text = value.uppercased() }
                 if ctrl, let ascii = char.lowercased().utf8.first, (97...122).contains(ascii) {
                     text = String(UnicodeScalar(Int(ascii) - 96)!)
                 }
                 if !capsLock { shift = false }
             }
+            if ctrl && SharedSettings.profile != "terminal" { render(); showMessage("Ctrl shortcuts require a compatible terminal on iOS."); ctrl = false; alt = false; return }
+            if !capsLock { shift = false }
             if alt && SharedSettings.profile == "terminal" { text = "\u{1B}" + text }
             ctrl = false
             alt = false
             proxy.insertText(text)
         }
+        if !["shift", "ctrl", "alt"].contains(key) && !key.hasPrefix("emojiGroup:") { ctrl = false; alt = false }
         popup.isHidden = true
-        keyboardHeightConstraint.constant = 312
-        render()
+        if refresh { render() }
     }
 }

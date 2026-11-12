@@ -126,7 +126,12 @@ class MainActivity : Activity() {
             draw()
         }
         column.addView(language)
-        detail("Long-press Space to switch languages on the keyboard. Long-press 1–9 for ą č ę ė į š ų ū ž.")
+        column.addView(button("Layout: ${SettingsStore.layoutVariant(this).uppercase()} · tap to switch PC/QWERTY") {
+            val next = if (SettingsStore.layoutVariant(this) == "pc") "qwerty" else "pc"
+            SettingsStore.prefs(this).edit().putString("variant_${SettingsStore.language(this)}", next).apply()
+            draw()
+        })
+        detail("Each language remembers PC/QWERTY. LT PC: hold 1–9 for Lithuanian letters. LT QWERTY: dedicated Lithuanian letters. PC Shift maps number/punctuation symbols; Caps Lock changes letters only.")
         detail("Microphone uses the installed Android speech recognition service. Permission is requested when you tap 🎙.")
         val permissionRow = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -249,7 +254,7 @@ class MainActivity : Activity() {
         val functionKeys = SettingsStore.prefs(this).getBoolean("function_keys", false)
         val activeCombos = SettingsStore.combos(this).filter { it.enabled }
         themeLabel.text = "Theme: ${theme.name} · Profile: ${SettingsStore.activeProfile(this)} · " +
-            "Fn: ${if (functionKeys) "on" else "off"} · Combos: ${activeCombos.size}"
+            "${SettingsStore.language(this)} ${SettingsStore.layoutVariant(this).uppercase()} · Fn: ${if (functionKeys) "on" else "off"} · Combos: ${activeCombos.size}"
         keyboardPreview.removeAllViews()
         keyboardPreview.setBackgroundColor(theme.bg())
 
@@ -263,9 +268,10 @@ class MainActivity : Activity() {
             }
             labels.forEachIndexed { index, label ->
                 val chip = TextView(this).apply {
-                    text = if (label == "Space") "‹ Space ›" else label
+                    val hint = if (SettingsStore.language(this@MainActivity) == "lt-LT" && SettingsStore.layoutVariant(this@MainActivity) == "pc") SettingsStore.ltNumbers[label] else null
+                    text = if (label == "Space") "‹ Space ›" else if (hint != null) "$hint\n$label" else KeyboardMapping.output(label, SettingsStore.layoutVariant(this@MainActivity), false, false)
                     gravity = Gravity.CENTER
-                    maxLines = 1
+                    maxLines = if (hint != null) 2 else 1
                     textSize = (SettingsStore.font(this@MainActivity) * .70f).coerceAtLeast(7f)
                     typeface = Typeface.MONOSPACE
                     setTextColor(

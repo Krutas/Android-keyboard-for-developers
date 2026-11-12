@@ -1,54 +1,28 @@
-# DevBoard for iPhone v0.2 (unsigned preview)
+# DevBoard iOS 0.2.6 developer preview
 
-The iOS port lives beside the Android source. It has a SwiftUI settings/companion app and a native `UIInputViewController` keyboard extension.
+Native SwiftUI companion app and UIKit keyboard extension. Includes LT/EN PC and QWERTY variants, Shift/Caps mapping, F1–F8, enabled combo strip and companion recorder/editor, text-only snippets, arrow/backspace repeat, layout swap/delete/reset, live preview and optional press animations. Space always inserts a space; its brackets are decorative. Hold Space or LT/EN mic for language selection.
 
-## Included
+The keyboard microphone button switches to another installed keyboard for system dictation. **It does not record audio.**
 
-- LT/EN letters, Lithuanian number-key long presses, number and symbol layers.
-- Terminal toolbar: Esc, Tab, Ctrl, Alt, arrows, Home, Delete, PgUp/PgDown.
-- Shift, Caps Lock, automatic sentence capital letters after punctuation and space.
-- Long-press comma/period symbols, emoji and a reusable text snippet.
-- Dark, light and Matrix themes; Standard/Terminal profile selection.
-- System keyboard switching via 🌐; a system Share Sheet file picker in the companion app.
-- Local preferences in an App Group; `RequestsOpenAccess = false` by default.
+Full Android parity is not claimed. Clipboard access is currently blocked by `RequestsOpenAccess: false`; approval to enable optional Full Access is pending. Basic typing and reading companion settings use the existing App Group. Shared keyboard-side writes require Full Access; language/Fn switches remain available in the session. See [the complete audit and limitations](../docs/PARITY-0.2.6.md).
 
-## Changes in iOS v0.2
+## Build and packages
 
-- Fixed Space labeling: `<`, `space`, and `>` are three **horizontally aligned labels inside one key**, not a wrapping string or separate keys.
-- Added 3 touch zones to that key: left 22% emits `<`, right 22% emits `>`, middle emits a regular space. Available in every keyboard layer.
-- Updated app and extension version metadata to `0.2` (build `2`).
-- The emoji list still relies on system Unicode glyph support; newer emoji may render as missing symbols on older iOS versions.
+On macOS, install Xcode and XcodeGen, run `xcodegen generate` in `ios/`, then build the DevBoard scheme. Set an Apple team for **both** targets and provision `group.lt.krutas.devboard` (or replace bundle/group IDs with your own).
 
-## Download built packages
+The [iOS CI workflow](https://github.com/Krutas/Android-keyboard-for-developers/actions/workflows/ios.yml) runs shared mapping tests and builds:
 
-The [GitHub Actions iOS workflow](https://github.com/Krutas/Android-keyboard-for-developers/actions/workflows/ios.yml) creates:
-- `DevBoard-iOS-v0.2-Simulator.zip`: an iOS Simulator `.app` for Xcode testing.
-- `DevBoard-iOS-v0.2-unsigned.ipa`: a device-targeted app bundle with the keyboard extension, **not signed**.
+- `DevBoard-iOS-v0.2.6-Simulator.zip`: simulator app with keyboard extension.
+- `DevBoard-iOS-v0.2.6-unsigned.ipa`: device app and extension, **not installable normally until signed**.
 
-Check the most recent successful workflow run for the artifacts. CI results must be verified separately from source changes.
+CI checks version `0.2.6` (build `4`) for app and extension in both builds before uploading. Packages must only be published after the exact source revision passes CI. CI artifacts expire after 30 days.
 
-The unsigned IPA **cannot be installed normally on an iPhone**. You must sign the app and extension with valid Apple credentials and provisioning profiles using Xcode or an appropriate signing workflow. The workflow's artifacts expire after 30 days.
+## Enable on iPhone
 
-## Build on macOS
+After signing and installing: Settings → General → Keyboard → Keyboards → Add New Keyboard → DevBoard. In a text field, hold 🌐 to select it. Password and certain phone fields use Apple's keyboard; apps may disallow third-party keyboards.
 
-1. Install **Xcode** and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
-2. In this folder run `xcodegen generate` and open `DevBoard.xcodeproj`.
-3. Set your Apple Development Team for **both targets**: DevBoard and DevBoardKeyboard.
-4. Create/register an App Group called `group.lt.krutas.devboard`, enable it in both targets' entitlements, or change the group and bundle IDs to available identifiers.
-5. Run the containing app on an iPhone. Then open **Settings → General → Keyboard → Keyboards → Add New Keyboard → DevBoard**.
-6. In a text field hold 🌐 and select DevBoard. A signed IPA requires an Apple signing configuration; CI provides an unsigned IPA package.
+Terminal mode inserts ANSI/control text for compatible terminal apps. It does not send universal hardware events. Standard mode cannot provide vertical cursor navigation, hardware F-keys, universal Ctrl shortcuts or Shift selection. iOS also restricts host-app identification, direct file attachment and keyboard microphone access. Share files from the companion app.
 
-## Platform limits
+Native touch behavior, orientation, paste approval, App Group provisioning, accessibility and physical iPhone behavior still need manual testing. Emoji use OS fonts; newly introduced glyphs may be missing.
 
-- **No microphone in a third-party keyboard extension.** 🎙️ switches to the next installed keyboard for iOS dictation. This is not direct speech-to-text inside DevBoard.
-- **No universal file attachment from a keyboard.** The companion app has a document picker and Share Sheet.
-- **No guaranteed hardware-style key events.** Some terminal apps may interpret inserted ANSI sequences; other apps may ignore them.
-- Password and some phone fields use the Apple keyboard. Apps can also disable third-party keyboards.
-- iOS does not give a keyboard the host app's identity for Android-style automatic profile switching.
-- CI builds the source, but physical iPhone tests, accessibility, App Group signing and App Store review remain.
-
-References: [Apple custom keyboard guide](https://developer.apple.com/documentation/uikit/creating-a-custom-keyboard), [custom keyboard restrictions](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/CustomKeyboard.html).
-
-The iOS code is a first implementation, not full Android feature parity. Do not publish it as a verified iOS release until signed, built and tested on iPhone.
-
-Emoji picker: offline Unicode 18.0 RGI catalog, nine categories, Recent (48 entries), virtualized scrolling. Appearance varies by OS emoji font support. Source: https://www.unicode.org/Public/emoji/latest/emoji-test.txt (Unicode License).
+References: [Apple custom keyboards](https://developer.apple.com/documentation/uikit/creating-a-custom-keyboard), [restrictions](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/CustomKeyboard.html), [open access](https://developer.apple.com/documentation/uikit/configuring-open-access-for-a-custom-keyboard).

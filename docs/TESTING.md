@@ -1,3 +1,25 @@
+# DevBoard 0.2.6 verification
+
+Automated checks: `:app:testDebugUnitTest :app:assembleDebug :app:lintDebug`, `node tests/web-parity.cjs` (Playwright), and `tests/MappingTests.swift` in macOS CI. Read [the audit](PARITY-0.2.6.md) for actual results and remaining gaps.
+
+Manual acceptance still required:
+
+- [ ] Android and iPhone: select LT PC, LT QWERTY, EN PC, EN QWERTY; switch languages and confirm remembered variants.
+- [ ] PC Shift produces number/punctuation symbols; one-shot Shift resets; double-tap and hold Caps Lock affect letters only. Symbol pages remain literal.
+- [ ] LT PC number holds insert all nine letters; LT QWERTY has all nine letters and all 26 Latin letters, including x.
+- [ ] Fn shows eight keys; enabled combos appear in both keyboard and preview. Record/edit/disable/delete a shortcut and verify execution in a supported terminal/editor.
+- [ ] Snippets preserve exact multiline text, remain separate from clipboard history, and support edit/delete. Android password fields reject clipboard access.
+- [ ] Hold every arrow, release, slide away, cancel touch, switch keyboard and rotate: repeat stops. Test modifiers in compatible editors/terminals.
+- [ ] Swap keys, hold-delete, cancel reset, confirm reset; relaunch and switch variants/profiles. Android/web JSON round trip preserves variant rows.
+- [ ] Animation toggle persists; held Backspace, Shift, punctuation and Space language selection remain usable.
+- [ ] Space edges and center each insert one space in letters, symbols and emoji modes. Labels fit narrow widths.
+- [ ] Android mic grant, deny, revoke and permanently-deny paths show honest status; no-recognizer path is clear. Dictation Finish/Cancel, LT/EN and late-result cancellation need device verification.
+- [ ] iOS mic switches keyboard without requesting mic access. Clipboard is explicitly unavailable in the current build (Full Access change pending approval).
+- [ ] Browser microphone deny/grant/revoke, unsupported API, recognition errors and speech output on HTTPS/localhost.
+- [ ] iPhone signing, App Group preferences, accessibility and orientation. Native theme/profile settings are more limited than Android.
+
+The older checklists below are historical. In 0.2.6 Space brackets are decorative, superseding the old three-zone behavior. Historical checked items do not certify 0.2.6 hardware testing.
+
 # DevBoard acceptance test checklist
 
 ## Simulator (Chrome, secure origin)

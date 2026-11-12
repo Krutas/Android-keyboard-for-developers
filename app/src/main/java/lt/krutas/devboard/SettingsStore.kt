@@ -45,8 +45,8 @@ internal object SettingsStore {
     )
 
     val defaultRows = listOf(
-        listOf("Esc", "Ctrl", "Alt", "Tab", "/", "Home", "PgUp"),
-        listOf("←", "↑", "↓", "→", "Enter", "Del", "PgDn"),
+        listOf("Esc", "Ctrl", "Alt", "Tab", "Del", "End", "PgUp", "PgDn"),
+        listOf("←", "↓", "↑", "→", "Home", "/", "⌫"),
         listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "0"),
         listOf("Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"),
         listOf("A", "S", "D", "F", "G", "H", "J", "K", "L"),
@@ -74,6 +74,8 @@ internal object SettingsStore {
     fun prefs(c: Context) = c.getSharedPreferences("devboard", Context.MODE_PRIVATE)
     fun theme(c: Context): Palette = themes.firstOrNull { it.name == prefs(c).getString("theme", "Midnight") } ?: themes.first()
     fun language(c: Context) = prefs(c).getString("language", "lt-LT") ?: "lt-LT"
+    fun layoutVariant(c: Context): String = prefs(c).getString("variant_${language(c)}", if (language(c) == "lt-LT") "pc" else "qwerty") ?: "pc"
+    private fun variantKey(c: Context, profile: String, language: String = language(c), variant: String = layoutVariant(c)) = "rows_v3_${profile}_${language}_${variant}"
     fun font(c: Context) = prefs(c).getInt("font", 14)
     fun keyHeight(c: Context) = prefs(c).getInt("height", 39)
     fun gap(c: Context) = prefs(c).getInt("gap", 2)
@@ -89,7 +91,7 @@ internal object SettingsStore {
     }
     fun copyDefault() = defaultRows.map { it.toMutableList() }.toMutableList()
 
-    private fun parseRows(array: JSONArray): MutableList<MutableList<String>>? {
+    private fun parseRows(array: JSONArray, migrateLegacy: Boolean = true): MutableList<MutableList<String>>? {
         if (array.length() != defaultRows.size) return null
         return try {
             val parsed = MutableList(array.length()) { i ->
@@ -105,7 +107,8 @@ internal object SettingsStore {
                         "esc" -> "Esc"
                         "tab" -> "Tab"
                         "home" -> "Home"
-                        "end", "del", "delete" -> "Del"
+                        "end" -> "End"
+                        "del", "delete" -> "Del"
                         "pgup" -> "PgUp"
                         "pgdn" -> "PgDn"
                         "enter" -> "Enter"
@@ -116,6 +119,7 @@ internal object SettingsStore {
             }
             // Migrate old layouts without discarding any user-customized key positions.
             // Remove legacy microphone shortcut keys; voice remains in the top toolbar.
+            if (!migrateLegacy) return parsed
             for (row in parsed) row.removeAll { it == "🎙" }
             val bottom = parsed.last()
             // Angle brackets are touch zones inside Space, not separate keys.
@@ -183,7 +187,9 @@ internal object SettingsStore {
     fun rows(c: Context, packageName: String? = null): MutableList<MutableList<String>> {
         val all = profiles(c)
         val name = effectiveProfile(c, packageName)
-        return all[name]?.map { it.toMutableList() }?.toMutableList() ?: copyDefault()
+        val stored = prefs(c).getString(variantKey(c, name), null)
+        if (stored != null) try { parseRows(JSONArray(stored), false)?.let { return it } } catch (_: Exception) {}
+        return KeyboardMapping.initialRows(all[name] ?: defaultRows, language(c), layoutVariant(c))
     }
 
     private fun rowsArray(rows: List<List<String>>): JSONArray {
@@ -204,14 +210,12 @@ internal object SettingsStore {
     }
 
     fun saveRows(c: Context, rows: List<List<String>>) {
-        require(parseRows(rowsArray(rows)) != null)
-        val all = profiles(c)
-        all[activeProfile(c)] = rows.map { it.toMutableList() }.toMutableList()
-        saveProfiles(c, all)
+        require(parseRows(rowsArray(rows), false) != null)
+        prefs(c).edit().putString(variantKey(c, activeProfile(c)), rowsArray(rows).toString()).apply()
     }
 
     fun resetSelectedRows(c: Context) {
-        saveRows(c, copyDefault())
+        saveRows(c, KeyboardMapping.initialRows(defaultRows, language(c), layoutVariant(c)))
     }
 
     fun setActiveProfile(c: Context, name: String) {
@@ -223,7 +227,15 @@ internal object SettingsStore {
         require(name.isNotBlank() && name.length <= 40)
         val all = profiles(c)
         require(!all.containsKey(name) && all.size < 30)
-        all[name] = rows(c)
+        val sourceName = activeProfile(c)
+        all[name] = (all[sourceName] ?: defaultRows).map { it.toMutableList() }.toMutableList()
+        val edit = prefs(c).edit()
+        for (language in listOf("lt-LT", "en-US")) for (variant in listOf("pc", "qwerty")) {
+            prefs(c).getString(variantKey(c, sourceName, language, variant), null)?.let {
+                edit.putString(variantKey(c, name, language, variant), it)
+            }
+        }
+        edit.apply()
         saveProfiles(c, all)
         setActiveProfile(c, name)
     }
@@ -232,6 +244,9 @@ internal object SettingsStore {
         val all = profiles(c)
         require(all.size > 1)
         all.remove(name)
+        val edit = prefs(c).edit()
+        for (language in listOf("lt-LT", "en-US")) for (variant in listOf("pc", "qwerty")) edit.remove(variantKey(c, name, language, variant))
+        edit.apply()
         saveProfiles(c, all)
         if (activeProfile(c) == name || !all.containsKey(prefs(c).getString("active_profile", ""))) {
             prefs(c).edit().putString("active_profile", all.keys.first()).apply()
@@ -270,6 +285,17 @@ internal object SettingsStore {
         val current = profiles(c)
         current.putAll(imported)
         saveProfiles(c, current)
+        val edit = prefs(c).edit()
+        for (name in imported.keys) {
+            val variants = source.optJSONObject(name)?.optJSONObject("variants")
+            for (language in listOf("lt-LT", "en-US")) for (variant in listOf("pc", "qwerty")) {
+                val key = variantKey(c, name, language, variant)
+                edit.remove(key)
+                val rows = variants?.optJSONObject("$language:$variant")?.optJSONArray("Terminal")?.let { parseRows(it, false) } ?: continue
+                edit.putString(variantKey(c, name, language, variant), rowsArray(rows).toString())
+            }
+        }
+        edit.apply()
         return imported.size
     }
 
@@ -277,7 +303,14 @@ internal object SettingsStore {
         val json = JSONObject()
         val savedProfiles = JSONObject()
         profiles(c).forEach { (name, rows) ->
-            savedProfiles.put(name, JSONObject().put("Terminal", rowsArray(rows)))
+            val variants = JSONObject()
+            for (language in listOf("lt-LT", "en-US")) for (variant in listOf("pc", "qwerty")) {
+                val stored = prefs(c).getString(variantKey(c, name, language, variant), null)
+                val selected = try { stored?.let { parseRows(JSONArray(it), false) } } catch (_: Exception) { null }
+                val effective = selected ?: KeyboardMapping.initialRows(rows, language, variant)
+                variants.put("$language:$variant", JSONObject().put("Terminal", rowsArray(effective)))
+            }
+            savedProfiles.put(name, JSONObject().put("Terminal", rowsArray(rows)).put("variants", variants))
         }
         json.put("version", 2)
         json.put("profiles", savedProfiles)

@@ -160,7 +160,7 @@
 .keyboard .emoji-controls{display:flex;align-items:center;justify-content:space-between;color:var(--kb-text);gap:6px;margin:4px 0 6px}
 .emoji-controls button,.emoji-cats button{background:var(--kb-special,#435575);border:1px solid var(--kb-border);color:var(--kb-text);border-radius:6px;cursor:pointer;padding:6px 12px}
 .emoji-controls span{font-size:12px;font-weight:700}.emoji-cats{display:flex;overflow-x:auto;gap:3px;padding:4px 0 7px;scrollbar-width:thin}.emoji-cats button{padding:5px 8px;font-size:17px}.emoji-cats button.active{outline:2px solid #89b5ff}.emoji-search{width:100%;padding:6px;border-radius:7px;border:1px solid var(--kb-border);background:var(--kb-bg);color:var(--kb-text);margin-bottom:6px}.emoji-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:1px;max-height:228px;overflow-y:auto;overscroll-behavior:contain}.emoji-grid button{font-size:23px;border:0;background:transparent;min-width:0;min-height:38px;cursor:pointer}.emoji-grid button:active{background:var(--kb-special)}.emoji-grid p{color:var(--kb-text);font-size:11px;grid-column:span 8}
-#toolbarMic{white-space:nowrap;min-width:57px;padding:0 5px;font-size:11px;touch-action:manipulation}#toolbarMic.speaking{color:#ff749c;outline:1px solid #ff749c}.space-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:100%;min-width:0;padding:0 3px;gap:2px;white-space:nowrap}.space-inner span:first-child{text-align:left}.space-inner span:last-child{text-align:right}.space-inner span:first-child,.space-inner span:last-child{font-weight:800;font-size:1.1em}</style></head><body><main class="shell"><section><div class="top"><div><div class="brand">⌨ Dev<span>Board</span> Studio</div><div class="muted">Interactive Android keyboard prototype · Galaxy A56 preview</div></div><div class="pill">WEB MVP · v1.5</div></div><div class="preview"><div class="phone"><div class="camera"></div><div class="status"><span>12:46</span><span>▴ ▰  ▣ 100%</span></div><div class="docbar" id="docbar"><strong>Untitled document</strong><div class="doc-actions"><button id="attachFile" title="Attach any file" aria-label="Attach file">📎</button><button id="newDoc">+ New</button></div></div><input id="attachmentFile" type="file" hidden><div class="image-preview file-preview" id="filePreview" hidden><div class="image-actions"><strong>📎 Selected file</strong><button id="closeFile" type="button" aria-label="Close attachment preview">✕</button></div><div class="file-summary"><img id="fileThumb" alt="Selected file thumbnail" hidden><div id="fileIcon" class="file-icon" aria-hidden="true">📄</div><div class="file-details"><strong id="fileName"></strong><small id="fileMeta"></small></div></div><div class="image-actions"><span>Local preview only; file is not uploaded</span><button id="insertFileLink" type="button">Insert link</button></div></div><div class="apphome" id="apphome" hidden></div><div class="paper" id="paper" contenteditable="true" spellcheck="false" aria-label="Document"></div><div class="accent-popup" id="accentPopup" hidden></div><div class="keyboard" id="keyboard"><div class="clipbar"><button id="fnOpen" type="button" title="Toggle F1-F8 keys" aria-pressed="false">Fn</button><button id="clipOpen" title="Clipboard history">📋</button><button id="snippetOpen" title="Saved snippets">⭐</button><div class="cliprecent" id="clipRecent"></div><button id="toolbarMic" type="button" title="Tap to dictate; hold to select language" aria-label="Voice dictation, long press for language">LT 🎙</button><button id="settingsOpen" title="Keyboard settings" aria-label="Settings">⚙️</button><button id="comboOpen" title="Add or manage key combinations">＋ Combo</button></div><div id="swapTip" class="swap-tip" hidden></div><div id="fnBar" class="fn-bar" hidden></div><div id="comboBar" class="combo-bar" hidden></div><div id="keys"></div></div><div class="layout-key-popup" id="layoutKeyPopup" hidden><strong id="layoutKeyTitle">Key options</strong><div class="layout-key-actions"><button type="button" id="layoutDelete">Delete</button><button type="button" id="layoutReset">Reset to defaults</button><button type="button" id="layoutCancel">Cancel</button></div></div><div class="combo-pop" id="comboPop" hidden><div class="combo-head"><strong>⌨ Add Combo</strong><button id="comboClose" type="button" aria-label="Close combo editor">✕</button></div><p class="combo-help">Save a reusable keyboard shortcut. It will appear on the shortcut bar above the keys.</p><label>Button name<input id="comboName" placeholder="e.g. Copy" maxlength="20" autocomplete="off"></label><label>Action<input id="comboAction" readonly placeholder="Tap Action, then press keys" aria-label="Record keyboard shortcut"></label><div id="comboCaptureKeys" class="combo-capture-keys" aria-label="Shortcut recorder keypad"></div><p class="combo-help">Press Ctrl, Alt, Shift and a key on the keyboard to record the shortcut.</p><div class="combo-actions"><button id="comboSave" type="button">Save combo</button><button id="comboCancel" type="button">Cancel</button></div><p class="combo-help" id="comboHelp">Some Android shortcuts cannot be simulated in a browser. This demo supports common text-editing shortcuts.</p><div class="combo-items-title">Saved combos</div><div id="comboList"></div></div><div class="voice-pop" id="voicePop" hidden aria-live="polite"><div class="voice-heading"><span class="voice-indicator" id="voiceTitle">Listening… LT</span><button class="stop" id="voiceStop">■ Stop</button></div><div class="voice-activity" id="voiceActivity">Waiting for microphone permission</div><div class="voice-meter" id="voiceMeter" aria-label="Microphone volume level"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="voice-preview" id="voicePreview">Speak now. Recognized text will appear in the document.</div></div><div class="lang-pop" id="langPop" hidden><strong>Typing and dictation language</strong><button data-lang="lt-LT">🇱🇹 Lithuanian (LT)</button><button data-lang="en-US">🇬🇧 English (EN)</button></div><div class="phone-settings" id="phoneSettings" hidden><div class="settings-head"><button id="settingsClose">←</button><strong>⚙️ DevBoard Settings</strong><span>v1.5</span></div><div class="settings-live" id="settingsLive">
+#toolbarMic{white-space:nowrap;min-width:57px;padding:0 5px;font-size:11px;touch-action:manipulation}#toolbarMic.speaking{color:#ff749c;outline:1px solid #ff749c}.space-inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:100%;min-width:0;padding:0 3px;gap:2px;white-space:nowrap}.space-inner span:first-child{text-align:left}.space-inner span:last-child{text-align:right}.space-inner span:first-child,.space-inner span:last-child{font-weight:800;font-size:1.1em}</style></head><body><main class="shell"><section><div class="top"><div><div class="brand">⌨ Dev<span>Board</span> Studio</div><div class="muted">Interactive Android keyboard prototype · Galaxy A56 preview</div></div><div class="pill">WEB PREVIEW · v0.2.6</div></div><div class="preview"><div class="phone"><div class="camera"></div><div class="status"><span>12:46</span><span>▴ ▰  ▣ 100%</span></div><div class="docbar" id="docbar"><strong>Untitled document</strong><div class="doc-actions"><button id="attachFile" title="Attach any file" aria-label="Attach file">📎</button><button id="newDoc">+ New</button></div></div><input id="attachmentFile" type="file" hidden><div class="image-preview file-preview" id="filePreview" hidden><div class="image-actions"><strong>📎 Selected file</strong><button id="closeFile" type="button" aria-label="Close attachment preview">✕</button></div><div class="file-summary"><img id="fileThumb" alt="Selected file thumbnail" hidden><div id="fileIcon" class="file-icon" aria-hidden="true">📄</div><div class="file-details"><strong id="fileName"></strong><small id="fileMeta"></small></div></div><div class="image-actions"><span>Local preview only; file is not uploaded</span><button id="insertFileLink" type="button">Insert link</button></div></div><div class="apphome" id="apphome" hidden></div><div class="paper" id="paper" contenteditable="true" spellcheck="false" aria-label="Document"></div><div class="accent-popup" id="accentPopup" hidden></div><div class="keyboard" id="keyboard"><div class="clipbar"><button id="fnOpen" type="button" title="Toggle F1-F8 keys" aria-pressed="false">Fn</button><button id="clipOpen" title="Clipboard history">📋</button><button id="snippetOpen" title="Saved snippets">⭐</button><div class="cliprecent" id="clipRecent"></div><button id="toolbarMic" type="button" title="Tap to dictate; hold to select language" aria-label="Voice dictation, long press for language">LT 🎙</button><button id="settingsOpen" title="Keyboard settings" aria-label="Settings">⚙️</button><button id="comboOpen" title="Add or manage key combinations">＋ Combo</button></div><div id="swapTip" class="swap-tip" hidden></div><div id="fnBar" class="fn-bar" hidden></div><div id="comboBar" class="combo-bar" hidden></div><div id="keys"></div></div><div class="layout-key-popup" id="layoutKeyPopup" hidden><strong id="layoutKeyTitle">Key options</strong><div class="layout-key-actions"><button type="button" id="layoutDelete">Delete</button><button type="button" id="layoutReset">Reset to defaults</button><button type="button" id="layoutCancel">Cancel</button></div></div><div class="combo-pop" id="comboPop" hidden><div class="combo-head"><strong>⌨ Add Combo</strong><button id="comboClose" type="button" aria-label="Close combo editor">✕</button></div><p class="combo-help">Save a reusable keyboard shortcut. It will appear on the shortcut bar above the keys.</p><label>Button name<input id="comboName" placeholder="e.g. Copy" maxlength="20" autocomplete="off"></label><label>Action<input id="comboAction" readonly placeholder="Tap Action, then press keys" aria-label="Record keyboard shortcut"></label><div id="comboCaptureKeys" class="combo-capture-keys" aria-label="Shortcut recorder keypad"></div><p class="combo-help">Press Ctrl, Alt, Shift and a key on the keyboard to record the shortcut.</p><div class="combo-actions"><button id="comboSave" type="button">Save combo</button><button id="comboCancel" type="button">Cancel</button></div><p class="combo-help" id="comboHelp">Some Android shortcuts cannot be simulated in a browser. This demo supports common text-editing shortcuts.</p><div class="combo-items-title">Saved combos</div><div id="comboList"></div></div><div class="voice-pop" id="voicePop" hidden aria-live="polite"><div class="voice-heading"><span class="voice-indicator" id="voiceTitle">Listening… LT</span><button class="stop" id="voiceStop">■ Stop</button></div><div class="voice-activity" id="voiceActivity">Waiting for microphone permission</div><div class="voice-meter" id="voiceMeter" aria-label="Microphone volume level"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="voice-preview" id="voicePreview">Speak now. Recognized text will appear in the document.</div></div><div class="lang-pop" id="langPop" hidden><strong>Typing and dictation language</strong><button data-lang="lt-LT">🇱🇹 Lithuanian (LT)</button><button data-lang="en-US">🇬🇧 English (EN)</button></div><div class="phone-settings" id="phoneSettings" hidden><div class="settings-head"><button id="settingsClose">←</button><strong>⚙️ DevBoard Settings</strong><span>v0.2.6</span></div><div class="settings-live" id="settingsLive">
  <div class="live-title"><span>LIVE KEYBOARD PREVIEW</span><span class="live-language" id="liveLanguage">LT · Terminal</span></div>
  <div class="live-preview-wrap"><button type="button" class="theme-navigate live-prev" id="themePrev" aria-label="Previous theme" title="Previous theme">‹</button>
  <div class="live-keyboard" id="liveKeyboard" aria-label="Live keyboard theme preview"></div>
@@ -172,23 +172,37 @@
 <div class="theme-counter" id="themeCounter">1 / 19 · Colorful ASCII</div><button class="settings-action" id="saveSettings">💾 Save settings</button><button class="settings-action" id="openLayout">▦ Edit key layout</button><button class="settings-action" id="resetSettings">↺ Reset appearance</button></div></div><div class="clipdrawer" id="clipDrawer" hidden><header><strong id="drawerTitle">📋 Clipboard</strong><button id="clipClose">✕</button></header><div class="snippet-actions"><button class="cliptab active" id="tabHistory">📋 History</button><button class="cliptab" id="tabSaved">⭐ Saved snippets</button></div><div class="clipnote" id="clipNote">Tap an entry to insert it. 📌 pins; ✕ deletes.</div><div class="snippet-form" id="snippetForm" hidden><textarea id="snippetText" placeholder="Text to insert with one tap"></textarea><div class="snippet-actions"><button id="snippetSave">💾 Save</button><button id="snippetCancel">Cancel</button></div></div><div id="clipItems"></div><button id="snippetAdd" hidden>＋ New saved snippet</button><button id="clipClear">Clear unpinned</button></div><div class="navbar"></div></div><div class="foot">Galaxy A56 proportions · 360 × 780 CSS px · web preview</div></div></section><aside class="panel"><h2>Keyboard controls</h2><p>Terminal mode is always available. 📋 opens clipboard history; ⭐ lets you save and insert reusable snippets. Lithuanian letters appear above numbers 1–9 (hold a number to type its letter). Hold comma or period for punctuation alternatives. Hold Space to choose LT / EN. The top-right LT 🎙 button opens the voice dictation window (hold to change language); the bottom 😀 key opens emojis. Test the keyboard in the white document. 📎 selects any file and inserts a temporary local link.</p><p>Space inserts a space from every touch point; hold it to choose the language. The arrows inside Space are decorative. Tap the virtual keys to type in the white document. In Configure, tap two keys to swap positions. Use + Combo to add keyboard shortcuts.</p><div class="field"><label>Profile</label><select id="profiles"></select></div><div class="row"><button class="action secondary" id="saveProfile">Save profile</button><button class="action secondary" id="newProfile">New profile</button></div><button class="action" id="configure">⚙ Configure</button><div class="editor" id="editor" hidden><h2>Editing mode</h2><p><strong>Tap a key, then tap its new location to swap them.</strong> Works across rows. Tap the selected key again to cancel. You can also drag keys on desktop.</p><div class="field"><label>Selected key</label><input type="text" id="keyValue" placeholder="Select a key" maxlength="16"></div><button class="action secondary" id="applyKey">Update key</button><div class="field"><label class="check"><input type="checkbox" id="extraRows" checked> Show extra keys</label></div><button class="action secondary" id="resetLayout">Reset Terminal layout</button></div><div class="editor"><h2>Export</h2><p>Keyboard profiles are stored in this browser. Export JSON for a future Android build.</p><div class="row"><button class="action secondary" id="exportJson">↓ JSON</button><button class="action secondary" id="importJson">↑ Import</button></div><input id="file" type="file" accept="application/json" hidden></div><p class="hint" id="status">Ready. Try the keys in the phone preview.</p><p class="hint">Note: this is an interactive web prototype, not an Android OS emulator. Physical key sizes depend on your screen density.</p><p class="hint"><a href="https://github.com/Krutas/Android-keyboard-for-developers" target="_blank" rel="noopener noreferrer" style="color:#9fd7ff">Android source, README and APK on GitHub</a></p></aside></main><script>
 const defaults={Normal:[['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['123','😀',',','space','.','↵']],Code:[['Esc','Tab','{','}','[',']','/','\\','|','~'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['Ctrl','Alt','<','>','space','↵']],Terminal:[['Esc','Ctrl','Alt','Tab','Delete','End','PgUp','PgDn'],['←','↓','↑','→','Home','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['⇧','z','x','c','v','b','n','m','⌫'],['123','😀',',','space','.','↵']]};
 // Upgrade previously stored layouts so that older saved profiles also have a microphone.
-const clone=x=>JSON.parse(JSON.stringify(x));let profiles;try{profiles=JSON.parse(localStorage.getItem('devboard-profiles'))||{Default:clone(defaults)}}catch{profiles={Default:clone(defaults)}};let profile='Default',mode='Terminal',editing=false,selected=null,shift=true,capsLock=false,lastShiftTap=0,ctrl=false,alt=false,extras=true,dragFrom=null,functionKeys=localStorage.getItem('devboard-function-keys')==='true';const $=id=>document.getElementById(id),paper=$('paper');function persist(){localStorage.setItem('devboard-profiles',JSON.stringify(profiles))}function layout(){return profiles[profile][mode]}
+const clone=x=>JSON.parse(JSON.stringify(x));let profiles;try{profiles=JSON.parse(localStorage.getItem('devboard-profiles'))||{Default:clone(defaults)}}catch{profiles={Default:clone(defaults)}};let profile='Default',mode='Terminal',editing=false,selected=null,shift=true,capsLock=false,lastShiftTap=0,ctrl=false,alt=false,extras=true,dragFrom=null,functionKeys=localStorage.getItem('devboard-function-keys')==='true';const $=id=>document.getElementById(id),paper=$('paper');function persist(){localStorage.setItem('devboard-profiles',JSON.stringify(profiles))}function layout(){
+ const container=profiles[profile];
+ container.variants??={};
+ const key=pref.lang+':'+currentLayoutVariant();
+ container.variants[key]??={};
+ if(!container.variants[key][mode]){
+  const rows=clone(container[mode]||defaults[mode]);
+  if(pref.lang==='lt-LT'&&currentLayoutVariant()==='qwerty'){
+   const indices=mode==='Terminal'?[3,4,5]:mode==='Code'?[1,2,3]:[0,1,2];
+   const lt=[['ą','ž','e','r','t','y','u','i','o','p','į','w'],['a','s','d','š','g','h','j','k','l','ų','ė','q'],['⇧','z','ū','c','v','b','n','m','č','f','x','ę','⌫']];
+   indices.forEach((r,i)=>{rows[r]=lt[i].slice()});
+  }
+  container.variants[key][mode]=rows;
+ }
+ return container.variants[key][mode];
+}
 function currentLayoutVariant(){
  return pref?.layoutVariants?.[pref.lang]==='qwerty'?'qwerty':'pc';
 }
-const pcShiftedSymbols={'1':'!','2':'@','3':'#','4':'$','5':'%','6':'^','7':'&','8':'*','9':'(','0':')','-':'_','=':'+',',':'<','.':'>','/':'?',';':':',"'":'"','[':'{',']':'}'};
-function effectiveLayoutRows(){
- const rows=layout().map(row=>row.slice());
- if(editing||pref.lang!=='lt-LT'||currentLayoutVariant()!=='qwerty')return rows;
- // Lithuanian Windows standard LST 1582:
- // Q→ą, W→ž, F→š, X→ū, ;→ų, '→ė, ,→č, /→ę.
- const indices=mode==='Terminal'?[3,4,5]:mode==='Code'?[1,2,3]:[0,1,2];
- if(rows.length>indices[2]){
-  rows[indices[0]]=['ą','ž','e','r','t','y','u','i','o','p','į','w'];
-  rows[indices[1]]=['a','s','d','š','g','h','j','k','l','ų','ė','q'];
-  rows[indices[2]]=['⇧','z','ū','c','v','b','n','m','č','f','ę','⌫'];
- }
- return rows;
+const pcShiftedSymbols={'1':'!','2':'@','3':'#','4':'$','5':'%','6':'^','7':'&','8':'*','9':'(','0':')','-':'_','=':'+',',':'<','.':'>','/':'?',';':':',"'":'"','[':'{',']':'}','\\':'|','`':'~'};
+function resetCurrentLayout(){
+ const key=pref.lang+':'+currentLayoutVariant();
+ delete profiles[profile].variants?.[key]?.[mode];
+ const original=profiles[profile][mode];profiles[profile][mode]=clone(defaults[mode]);
+ layout();profiles[profile][mode]=original;
+}
+function effectiveLayoutRows(){return layout().map(row=>row.slice())}
+function displayedKey(key){
+ if(key==='⇧')return capsLock?'⇪':'⇧';
+ if(key.length===1&&/^\p{L}$/u.test(key))return shift||capsLock?key.toUpperCase():key.toLowerCase();
+ return !symbolPage&&currentLayoutVariant()==='pc'&&shift?(pcShiftedSymbols[key]||key):key;
 }
 const symbolPages=[
  [ ['Esc','Ctrl','Alt','Tab','Home','PgUp','PgDn'],['←','↓','↑','→','Delete','/','⌫'],['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','-','+','(',')','/'],['*','\"',"'",':',';','!','?','=','_','\\'],['{','}','[',']','<','>','|','~','^','`'],['ABC','😀',',','space','.','1/2','↵'] ],
@@ -278,6 +292,8 @@ if(!profiles[profile]||!profiles[profile].Terminal){profile='Default';profiles.D
 let longTimer=null,longTriggered=false,skipClick=false,spaceTimer=null,shiftTimer=null;
 let layoutLongTimer=null,layoutKeyTarget=null,arrowRepeatTimeout=null,arrowRepeatInterval=null;
 const arrowKeys=new Set(['←','→','↑','↓']);
+window.addEventListener('blur',()=>stopArrowRepeat());
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopArrowRepeat()});
 function stopArrowRepeat(){
  clearTimeout(arrowRepeatTimeout);clearInterval(arrowRepeatInterval);
  arrowRepeatTimeout=null;arrowRepeatInterval=null;
@@ -286,7 +302,7 @@ function moveArrowOnce(key){
  focusPaper();
  const selection=window.getSelection();
  if(selection&&selection.modify){
-  try{selection.modify('move',key==='←'||key==='↑'?'backward':'forward',key==='↑'||key==='↓'?'line':'character')}catch{}
+  try{selection.modify(shift?'extend':'move',key==='←'||key==='↑'?'backward':'forward',key==='↑'||key==='↓'?'line':'character')}catch{}
  }
 }
 function closeLayoutOptions(){$('layoutKeyPopup').hidden=true;layoutKeyTarget=null}
@@ -307,7 +323,7 @@ $('layoutDelete').onclick=()=>{
 };
 $('layoutReset').onclick=()=>{
  if(!confirm('Reset this layout to defaults? Custom key positions will be lost.'))return;
- profiles[profile][mode]=clone(defaults[mode]);
+ resetCurrentLayout();
  persist();selected=null;closeLayoutOptions();render();renderLiveKeyboard();setStatus('Layout reset to defaults');
 };
 $('layoutCancel').onclick=closeLayoutOptions;
@@ -407,9 +423,9 @@ function render(){
   r.forEach((key,ki)=>{
    const btn=document.createElement('button');btn.type='button';
    btn.className='key'+(key==='space'?' space':'')+(key.length>1?' special':'')+(ri<2&&mode==='Terminal'||ri===0&&mode==='Code'?' small':'')+(selected&&selected[0]===ri&&selected[1]===ki?' selected':'')+(key==='🎙️'&&listening?' speaking':'')+(['123','ABC','1/2','2/2'].includes(key)?' symbol-switch':'');
-   const displayed=key==='⇧'&&capsLock?'⇪':key.length===1&&/^\p{L}$/u.test(key)?((shift||capsLock)?key.toUpperCase():key.toLowerCase()):key;
+   const displayed=displayedKey(key);
    if(key==='⇧'){btn.title=capsLock?'Caps Lock on':'Shift (double tap or hold for Caps Lock)';btn.setAttribute('aria-pressed',String(capsLock))}
-   if(pref.lang==='lt-LT'&&currentLayoutVariant()==='pc'&&accents[key.toLowerCase()]){btn.innerHTML='<span class="hintchar">'+accents[key.toLowerCase()].join(' ')+'</span><span class="mainchar">'+displayed+'</span>'}
+   if(!symbolPage&&pref.lang==='lt-LT'&&currentLayoutVariant()==='pc'&&accents[key.toLowerCase()]){btn.innerHTML='<span class="hintchar">'+accents[key.toLowerCase()].join(' ')+'</span><span class="mainchar">'+displayed+'</span>'}
    else if(key==='space')btn.innerHTML='<span class="space-inner"><span>&lt;</span><span>Space</span><span>&gt;</span></span>';
    else btn.textContent=displayed;
    
@@ -421,7 +437,7 @@ function render(){
      clearTimeout(layoutLongTimer);
      layoutLongTimer=setTimeout(()=>showLayoutOptions(ri,ki,btn),520);
     }else{
-     if(accents[key.toLowerCase()]||punctuation[key]){
+     if((!symbolPage&&pref.lang==='lt-LT'&&currentLayoutVariant()==='pc'&&accents[key.toLowerCase()])||punctuation[key]){
       clearTimeout(longTimer);longTimer=setTimeout(()=>showAccents(key,btn),450);
      }
      if(key==='space'){clearTimeout(spaceTimer);spaceTimer=setTimeout(()=>openLangPopup(),520)}
@@ -435,7 +451,7 @@ function render(){
      if(key==='⇧'){
       clearTimeout(shiftTimer);
       shiftTimer=setTimeout(()=>{
-       capsLock=!capsLock;shift=capsLock;lastShiftTap=0;longTriggered=true;
+       capsLock=!capsLock;shift=false;lastShiftTap=0;longTriggered=true;
        render();renderLiveKeyboard();setStatus(capsLock?'Caps Lock on':'Caps Lock off')
       },520);
      }
@@ -516,7 +532,7 @@ function press(k){
  if(k==='123'||k==='ABC'){symbolPage=k==='123';symbolsSecondPage=false;render();renderLiveKeyboard();setStatus(symbolPage?'Symbol keyboard open. Tap ABC to return.':'Letter keyboard open.');return}
  if(k==='1/2'||k==='2/2'){symbolPage=true;symbolsSecondPage=k==='1/2';render();renderLiveKeyboard();setStatus('Symbol page '+(symbolsSecondPage?'2':'1')+'/2');return}
  if(ctrl){const c=k.toLowerCase();if(c==='a')command('selectAll');else if(c==='c')copySelection(false);else if(c==='x')copySelection(true);else if(c==='v')pasteLatest();else if(c==='z')command('undo');else if(c==='y')command('redo');else setStatus('Ctrl+'+k+' may not be supported in the browser');ctrl=false;render();return}
- if(currentLayoutVariant()==='pc'&&shift&&pcShiftedSymbols[k]){
+ if(!symbolPage&&currentLayoutVariant()==='pc'&&shift&&pcShiftedSymbols[k]){
   insert(pcShiftedSymbols[k]);shift=false;updateAutoShift();return;
  }
  if(k==='⌫'){command('delete');updateAutoShift();return}
@@ -529,14 +545,14 @@ function press(k){
   if(sel&&sel.modify){
    const direction=['←','↑','Home','PgUp'].includes(k)?'backward':'forward';
    const granularity=['Home','End'].includes(k)?'lineboundary':['PgUp','PgDn'].includes(k)?'paragraph':['↑','↓'].includes(k)?'line':'character';
-   try{sel.modify('move',direction,granularity)}catch{}
+   try{sel.modify(shift?'extend':'move',direction,granularity)}catch{}
   }
   updateAutoShift();return;
  }
  insert(shift||capsLock?k.toUpperCase():k);
  ctrl=false;alt=false;updateAutoShift();
 }
-$('configure').onclick=()=>{editing=!editing;if(editing){symbolPage=false;symbolsSecondPage=false;$('comboPop').hidden=true} $('editor').hidden=!editing;$('configure').textContent=editing?'✓ Finish configuring':'⚙ Configure';selected=null;render();setStatus(editing?'Tap a key, then tap a second key to swap positions.':'Test mode enabled')};$('applyKey').onclick=()=>{if(!selected)return setStatus('Select a key first');let v=$('keyValue').value.trim();if(!v)return;layout()[selected[0]][selected[1]]=v;selected=null;persist();render();renderLiveKeyboard();setStatus('Key updated')};$('extraRows').onchange=e=>{extras=e.target.checked;render()};$('resetLayout').onclick=()=>{profiles[profile][mode]=clone(defaults[mode]);persist();selected=null;render()};$('profiles').onchange=e=>{profile=e.target.value;render()};$('saveProfile').onclick=()=>{persist();setStatus('Profile saved')};$('newProfile').onclick=()=>{const name=prompt('New profile name');if(!name||!name.trim())return;profile=name.trim();profiles[profile]=clone(profiles.Default);persist();render()};$('newDoc').onclick=()=>{if(paper.textContent&&!confirm('Start a new blank document?'))return;paper.innerHTML='';focusPaper()};$('exportJson').onclick=()=>{const blob=new Blob([JSON.stringify({version:2,profiles,combosByProfile},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='devboard-layouts.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};$('importJson').onclick=()=>$('file').click();$('file').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!data.profiles||typeof data.profiles!=='object')throw Error('Invalid JSON');profiles=data.profiles;profile=Object.keys(profiles)[0];if(data.combosByProfile&&typeof data.combosByProfile==='object')combosByProfile=data.combosByProfile;persist();storeCombos();render();setStatus('JSON imported')}catch(err){setStatus('Import error: '+err.message)}};
+$('configure').onclick=()=>{editing=!editing;if(editing){symbolPage=false;symbolsSecondPage=false;$('comboPop').hidden=true} $('editor').hidden=!editing;$('configure').textContent=editing?'✓ Finish configuring':'⚙ Configure';selected=null;render();renderLiveKeyboard();setStatus(editing?'Tap a key, then tap a second key to swap positions.':'Test mode enabled')};$('applyKey').onclick=()=>{if(!selected)return setStatus('Select a key first');let v=$('keyValue').value.trim();if(!v)return;layout()[selected[0]][selected[1]]=v;selected=null;persist();render();renderLiveKeyboard();setStatus('Key updated')};$('extraRows').onchange=e=>{extras=e.target.checked;render()};$('resetLayout').onclick=()=>{if(!confirm('Reset this layout to defaults? Custom key positions and deletions will be lost.'))return;resetCurrentLayout();persist();selected=null;render();renderLiveKeyboard()};$('profiles').onchange=e=>{profile=e.target.value;render();renderLiveKeyboard()};$('saveProfile').onclick=()=>{persist();setStatus('Profile saved')};$('newProfile').onclick=()=>{const name=prompt('New profile name');if(!name||!name.trim())return;profile=name.trim();profiles[profile]=clone(profiles.Default);persist();render()};$('newDoc').onclick=()=>{if(paper.textContent&&!confirm('Start a new blank document?'))return;paper.innerHTML='';focusPaper()};$('exportJson').onclick=()=>{const blob=new Blob([JSON.stringify({version:2,profiles,combosByProfile},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='devboard-layouts.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};$('importJson').onclick=()=>$('file').click();$('file').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(!data.profiles||typeof data.profiles!=='object')throw Error('Invalid JSON');profiles=data.profiles;profile=Object.keys(profiles)[0];if(data.combosByProfile&&typeof data.combosByProfile==='object')combosByProfile=data.combosByProfile;persist();storeCombos();render();setStatus('JSON imported')}catch(err){setStatus('Import error: '+err.message)}};
 let screen='test',appTab='home';
 function setScreen(next){
  screen=next;
@@ -597,7 +613,7 @@ function renderLiveKeyboard(){
    key.className='mini-key'+(val==='space'?' space':'')+(val.length>1||['⇧','⌫','↵'].includes(val)?' special':'')+
     (extraClass==='preview-toolbar'||extraClass==='preview-fn'||extraClass==='preview-combo'?' terminal':'');
    if(val==='space')key.innerHTML='<span class="space-inner"><span>&lt;</span><span>Space</span><span>&gt;</span></span>';
-   else key.textContent=val.length===1&&/^\p{L}$/u.test(val)?((shift||capsLock)?val.toUpperCase():val.toLowerCase()):val;
+   else key.textContent=displayedKey(val);
    if(accents[val]&&pref.lang==='lt-LT'&&currentLayoutVariant()==='pc'){
     const hint=document.createElement('span');hint.className='mini-accent';hint.textContent=accents[val][0];key.appendChild(hint);
    }
@@ -805,10 +821,10 @@ let combosByProfile={};
 try{const saved=JSON.parse(localStorage.getItem(comboStorageKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))combosByProfile=saved}catch{}
 function currentCombos(){return Array.isArray(combosByProfile[profile])?combosByProfile[profile]:[]}
 function storeCombos(){try{localStorage.setItem(comboStorageKey,JSON.stringify(combosByProfile))}catch{}renderComboBar();renderComboList();renderLiveKeyboard()}
-const comboKeyOptions=[...Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ'),...Array.from('0123456789'),'Tab','Enter','Escape','Space','Backspace','Delete','Home','End','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','PageUp','PageDown','/','\\','[',']','{','}','-','=','.',',',';'];
+const comboKeyOptions=[...Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ'),...Array.from('0123456789'),'Tab','Enter','Escape','Space','Backspace','Delete','Home','End','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','PageUp','PageDown',...Array.from({length:8},(_,i)=>'F'+(i+1)),'/','\\','[',']','{','}','-','=','.',',',';'];
 let comboEditIndex=-1,comboRecording=false,comboDraft={ctrl:false,alt:false,shift:false,key:''};
 const capturePad=$('comboCaptureKeys');
-for(const name of ['Ctrl','Alt','Shift',...'ABCDEFGHIJKLMNOPQRSTUVWXYZ','1','2','3','4','5','6','7','8','9','0','Tab','Enter','Escape','Space','Backspace','Delete','Home','End','←','→','↑','↓']){
+for(const name of ['Ctrl','Alt','Shift',...'ABCDEFGHIJKLMNOPQRSTUVWXYZ','1','2','3','4','5','6','7','8','9','0','Tab','Enter','Escape','Space','Backspace','Delete','Home','End','←','→','↑','↓',...Array.from({length:8},(_,i)=>'F'+(i+1))]){
  const b=document.createElement('button');b.type='button';b.textContent=name;
  b.onpointerdown=e=>e.preventDefault();b.onclick=()=>recordComboKey(name);
  capturePad.append(b);
@@ -909,7 +925,7 @@ function runCombo(combo){
   if(key==='Space'){insert(' ');setStatus('Combo: '+chord);return}
   if(key.length===1){insert(combo.shift?key.toUpperCase():key.toLowerCase());setStatus('Combo: '+chord);return}
   const lookup={ArrowLeft:'←',ArrowRight:'→',ArrowUp:'↑',ArrowDown:'↓',PageUp:'PgUp',PageDown:'PgDn',Escape:'Esc',Backspace:'⌫'};
-  if(lookup[key]){press(lookup[key]);setStatus('Combo: '+chord);return}
+  if(lookup[key]||['Home','End','Delete'].includes(key)){const oldShift=shift;shift=!!combo.shift;press(lookup[key]||key);shift=oldShift;render();renderLiveKeyboard();setStatus('Combo: '+chord);return}
  }
  setStatus(chord+' saved. OS-level shortcuts will work only in the Android app when supported by the target.');
 }

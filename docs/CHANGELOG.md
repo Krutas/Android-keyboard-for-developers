@@ -1,5 +1,14 @@
 # DevBoard release notes
 
+## 0.2.6 developer preview (source; release verification pending)
+
+- Native LT/EN PC/QWERTY, PC Shift symbols and independent Caps Lock. Added missing Latin x to LT QWERTY.
+- Native Fn/Combo previews, Android shortcut recorder/validation, iOS companion Combo editor and enabled shortcut strip.
+- iOS snippet list, layout editor, held-arrow/backspace repeat and press-animation control. Space brackets are decorative on all platforms.
+- Fixed Android End import, per-variant layout persistence/profile JSON, clipboard-listener lifetime and repeat cleanup. Fixed iOS forward Delete at the end of text.
+- Added Android JUnit, browser interaction tests and macOS Swift mapping tests. Android 0.2.6 (8), iOS 0.2.6 (4).
+- **Unfinished:** iOS clipboard requires approval for optional Full Access. Device testing and Apple signing remain. See [audit and limitations](PARITY-0.2.6.md). Local Android JUnit/build/lint, APK signature/version, browser regression and five publication-gate checks passed. No successful iOS build or published 0.2.6 packages are claimed here yet.
+
 ## Android 0.2.4 / iOS 0.2 (2026-11-11)
 
 **Fixed:** The `<`, Space and `>` legends previously relied on whitespace in the Android button label, which could wrap on narrow screens. Android now draws the brackets as independent glyphs at the edges of a single Space button, while the normal Space title stays centered.

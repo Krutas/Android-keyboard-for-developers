@@ -42,7 +42,7 @@ class LayoutEditorActivity : Activity() {
             .setMessage("Restore the default layout for this profile? Your custom key positions and deletions will be lost.")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Reset") { _, _ ->
-                keys = SettingsStore.copyDefault()
+                keys = KeyboardMapping.initialRows(SettingsStore.defaultRows, SettingsStore.language(this), SettingsStore.layoutVariant(this))
                 SettingsStore.saveRows(this, keys)
                 selected = null
                 render()
@@ -68,7 +68,7 @@ class LayoutEditorActivity : Activity() {
         val theme = SettingsStore.theme(this)
         root.removeAllViews()
         root.addView(TextView(this).apply {
-            text = "EDIT LAYOUT · Tap two keys to swap · Hold a key for options"
+            text = "EDIT ${SettingsStore.layoutVariant(this@LayoutEditorActivity).uppercase()} · Tap two keys to swap · Hold for options"
             textSize = 16f; setTextColor(Color.WHITE); setPadding(dp(9), dp(6), dp(9), dp(13))
         })
         keys.forEachIndexed { ri, row ->

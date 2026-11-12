@@ -1,99 +1,51 @@
 # DevBoard ⌨️
 
-A customizable developer keyboard for Android. Built for Termux, terminals, SSH and everyday typing.
+A native developer keyboard for Android and iOS, with an interactive web simulator. Built for terminals and everyday typing.
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Android:** 0.2.4 · **iOS:** 0.2 · [Android APK](releases/DevBoard-v0.2.4.apk) · [iOS v0.2 packages](https://github.com/Krutas/Android-keyboard-for-developers/releases/tag/ios-v0.2) · [Try the simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
+**Source version: 0.2.6 developer preview.** [Try the web simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html) · [Existing downloads](https://github.com/Krutas/Android-keyboard-for-developers/releases) · [0.2.6 audit and limitations](docs/PARITY-0.2.6.md)
 
-## What it does
+0.2.6 adds native LT/EN PC and QWERTY variants, PC Shift symbol mapping, Fn/Combo previews and editors, snippets, held-arrow repeat, layout editing and press-animation controls. Android exposes real microphone permission status; web uses browser permission APIs. iOS microphone access is unavailable to third-party keyboards.
 
-- Terminal keys: Esc, Ctrl, Alt, Tab, arrows, Home, PgUp/PgDn, Delete and optional F1–F12.
-- Lithuanian/English typing, numbers, symbols and a popup for punctuation.
-- 19 themes, keyboard sizes, spacing and customizable layouts.
-- Named profiles, snippets, JSON layout import/export and optional per-app profiles.
-- Clipboard history (off by default), 3,963 Unicode 18.0 emojis in nine categories, recent emojis and speech-to-text controls.
-- Attach any file using Android's file picker and share sheet.
-- Switch to any enabled installed keyboard through Android's system picker.
+**Full parity is not yet complete:** iOS clipboard access requires optional Full Access, and approval to enable that capability is pending. iOS hardware shortcuts also have platform restrictions. Build success and device validation are separate; see the [verification record](docs/PARITY-0.2.6.md).
 
-## Fixed in 0.2.0
+Space is one key with decorative `<` and `>` labels: every position inserts a normal space. Hold Space for language selection. PC layouts use Shift for number/punctuation symbols and LT number holds for accented letters; LT QWERTY has dedicated Lithuanian letters. Each language remembers its variant; Caps Lock changes letters only.
 
-- Restored Lithuanian letters on the number row.
-- Fixed the slightly clipped bottom row.
-- Replaced **End** with **Delete**.
-- Shift returns to lowercase after one capital letter; Caps Lock stays on when selected.
-- Added sentence capitalization after a period and space.
-- Long-press **,** or **.** to pick extra symbols.
-- Moved 🎙️ voice input beside **Alt**, with Finish/Cancel controls.
-- Replaced the bottom microphone key with an 😀 emoji panel.
+## Features
 
-Emoji appearance depends on OS font support; newly released Unicode 18.0 symbols may not render on older devices. Emoji data is bundled offline from [Unicode](https://www.unicode.org/Public/emoji/latest/emoji-test.txt) under the [Unicode License](https://www.unicode.org/license.txt).
+- Esc, Ctrl, Alt, Tab, arrows, Home, End, Delete, PgUp/PgDn and optional F1–F8.
+- Separate snippet and clipboard menus; Android clipboard history is opt-in and excluded from password fields.
+- Native layout editors: tap two keys to swap, hold for Delete, confirm Reset. Web and Android preserve variants in profile JSON.
+- Android: 19 themes, appearance controls, named profiles, JSON import/export and per-app profiles.
+- iOS: native SwiftUI companion settings, three themes, two profiles, App Group preferences and a UIKit keyboard extension.
+- Offline emoji picker and recent emoji. Rendering depends on OS fonts.
+- Android file chooser/share sheet and iOS companion Share Sheet. Web file links are local previews.
 
-## New in 0.2.1
+## Android build and install
 
-- Emoji picker expanded to 3,963 Unicode emoji variants in 9 categories, plus recent emoji.
-- APK filename changed to `DevBoard-v0.2.1.apk`.
-
-## New in 0.2.2
-
-- Fixed overlapping keyboard rows: added bottom spacing so lower key edges remain visible.
-- Android version updated to 0.2.2 (versionCode 4).
-- iOS version tracked separately as 0.1; its unsigned CI build is available as an Actions artifact.
-
-## New in 0.2.3
-
-- Removed the microphone key from the terminal shortcut row. The top-right toolbar shows `LT 🎙` (or `EN 🎙`) in one button: tap for dictation, long-press to switch language.
-- Embedded `<` and `>` touch zones inside the Space key: tap the left/right edge to type the bracket, or the center for a space. Existing saved layouts also hide the old microphone key.
-- Added tactile press animations to Android keyboard buttons and the web simulator.
-- Updated the Android app icon to the RGB mechanical keyboard design.
-
-## Fixed in Android 0.2.4 / New in iOS 0.2
-
-- **Space is now a single-line key on both platforms:** the `<` character is painted on the left, `Space` remains centered, and `>` sits on the right. No text padding or wrapping, including narrow layouts.
-- **Three distinct tap zones:** tapping the left 22% inserts `<`, the center inserts a space, and the right 22% inserts `>`. Normal text entry remains unchanged.
-- **Android:** the existing long-press on Space still selects the keyboard language. Native press animation, microphone control, clipboard, profiles and emoji picker are preserved.
-- **iOS:** added the same three-zone Space key to the native keyboard extension across letter, number, symbol and emoji modes. Updated `CFBundleShortVersionString` to `0.2` and build number to `2`.
-- **Web simulator:** keeps all three labels on one line by using a three-column layout for the Space key.
-- **Testing:** added a width/orientation regression checklist for bracket placement and touch targets.
-
-The emoji catalog includes Unicode 18.0 entries, but **some emoji can appear as boxes or incomplete sequences when the device OS lacks matching glyphs**. This release does not ship an emoji font or claim to fix that device-dependent limitation.
-
-## Unreleased fixes (source after v0.2.4 / iOS v0.2)
-
-- Raised the Android punctuation choices for long-press `.` and `,` by an additional key height so the holding finger cannot cover the menu; the web simulator now uses the same clearance.
-- Added long-press Shift to toggle Caps Lock on Android, iOS and the simulator. Double-tap Shift remains available, with `⇪` visibly indicating the locked state.
-- Reduced extra spacing inside the simulator's one-line `< Space >` label.
-
-These changes are in source control but are **not included in the v0.2.4 Android APK or the existing iOS v0.2 packages**. A new build and on-device verification are required.
-
-See [release history](docs/CHANGELOG.md) and [test checklist](docs/TESTING.md).
-
-## Install on Android
-
-1. [Download the APK](releases/DevBoard-v0.2.4.apk) and install it.
-2. Open **DevBoard**, enable it in Android keyboard settings, and select it as your keyboard.
-3. Open any text field. Use **Settings** to customize it or **Profiles** to import layouts.
-
-Despite the cleaner filename, this remains a **debug-signed developer build**, not an app-store release. It needs on-device testing. Some terminal shortcuts depend on the receiving app. Files are shared through Android's chooser, not directly uploaded to an active chat.
-
-## Build
-
-Requires JDK 17, Android SDK 35 and its build tools.
+Requires JDK 17, Android SDK 35 and build tools.
 
 ```bash
-export JAVA_HOME="/path/to/jdk17"
-export ANDROID_HOME="/path/to/android-sdk"
-./gradlew :app:assembleDebug :app:lintDebug
+./gradlew :app:testDebugUnitTest :app:assembleDebug :app:lintDebug
 ```
 
-Built APK: `app/build/outputs/apk/debug/app-debug.apk`, distributed as `releases/DevBoard-v0.2.4.apk`.
+APK: `app/build/outputs/apk/debug/app-debug.apk`. Successful developer-preview builds are debug-signed. Enable DevBoard in Android input settings, then select it through the system keyboard picker. Install only an artifact whose build results have been verified.
 
-## Privacy
+## iOS and browser verification
 
-Preferences are local. Clipboard recording is opt-in and disabled in password fields. Speech recognition uses the Android system service and may require internet access. The web simulator uses temporary local file links and does **not** upload files to a server.
+See [iOS build/install instructions](ios/README.md). macOS CI creates a simulator ZIP and an **unsigned** IPA. The IPA needs Apple signing/provisioning before installation on a physical iPhone.
 
-See [testing checklist](docs/TESTING.md) and [source code](app/src/main/java/lt/krutas/devboard/). License: [MIT](LICENSE).
+Browser regression tests use Playwright and Chromium:
 
-## iPhone version
+```bash
+PLAYWRIGHT_MODULE=/path/to/playwright node tests/web-parity.cjs
+```
 
-The native iOS keyboard extension and SwiftUI companion app are in [ios/](ios/README.md). **iOS v0.2** adds a single-line `<  space  >` key with three touch zones. Its [macOS CI run](https://github.com/Krutas/Android-keyboard-for-developers/actions/runs/43094577722) **successfully built** an [iOS Simulator ZIP](https://github.com/Krutas/Android-keyboard-for-developers/releases/download/ios-v0.2/DevBoard-iOS-v0.2-Simulator.zip) and an [**unsigned** iPhone IPA](https://github.com/Krutas/Android-keyboard-for-developers/releases/download/ios-v0.2/DevBoard-iOS-v0.2-unsigned.ipa). Both archives were verified to contain app **and** keyboard extension with version `0.2` (build `2`). The latter requires Apple signing/provisioning to install on a real iPhone. Android-only features (native voice input and unrestricted file selection from the keyboard) are restricted by iOS.
+CI runs the same tests and captures a screenshot. For interactive microphone tests, use HTTPS or localhost in a supported browser.
+
+## Privacy and limits
+
+Settings and snippets are local. DevBoard makes no custom keystroke network requests. Speech recognition may use the system/browser provider's cloud service. iOS Full Access remains disabled in the current configuration; the clipboard feature is unavailable there until that change is approved. Password fields may use the system keyboard. Terminal key support depends on the receiving app.
+
+[Release history](docs/CHANGELOG.md) · [Test checklist](docs/TESTING.md) · [License](LICENSE)

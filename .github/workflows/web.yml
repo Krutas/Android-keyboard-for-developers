@@ -1,0 +1,30 @@
+name: Web parity tests
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', 'tests/web-parity.cjs', '.github/workflows/web.yml']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/devboard-web" playwright@1.57.0
+          "$RUNNER_TEMP/devboard-web/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Run browser parity tests
+        env:
+          PLAYWRIGHT_MODULE: ${{ runner.temp }}/devboard-web/node_modules/playwright
+          WEB_SCREENSHOT: ${{ runner.temp }}/devboard-web.png
+        run: node tests/web-parity.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DevBoard-web-preview
+          path: ${{ runner.temp }}/devboard-web.png

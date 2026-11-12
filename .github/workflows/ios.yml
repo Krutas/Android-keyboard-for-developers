@@ -6,6 +6,7 @@ on:
     paths:
       - "ios/**"
       - ".github/workflows/ios.yml"
+      - "tests/MappingTests.swift"
   workflow_dispatch:
 
 permissions:
@@ -18,6 +19,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install XcodeGen
         run: brew install xcodegen
+      - name: Test shared keyboard mapping
+        run: |
+          swiftc ios/Shared/KeyboardMapping.swift tests/MappingTests.swift -o "$RUNNER_TEMP/mapping-tests"
+          "$RUNNER_TEMP/mapping-tests"
       - name: Generate Xcode project
         run: |
           cd ios
@@ -31,7 +36,7 @@ jobs:
           mkdir -p releases
           ditto -c -k --sequesterRsrc --keepParent \
             "$RUNNER_TEMP/DevBoardSimulator/Build/Products/Release-iphonesimulator/DevBoard.app" \
-            "releases/DevBoard-iOS-v0.2.5-Simulator.zip"
+            "releases/DevBoard-iOS-v0.2.6-Simulator.zip"
       - name: Build and package unsigned iPhone IPA
         run: |
           set -euo pipefail
@@ -43,28 +48,29 @@ jobs:
           mkdir -p "$RUNNER_TEMP/DevBoardPayload/Payload"
           ditto "$app" "$RUNNER_TEMP/DevBoardPayload/Payload/DevBoard.app"
           (cd "$RUNNER_TEMP/DevBoardPayload" && zip -q -r \
-            "$GITHUB_WORKSPACE/releases/DevBoard-iOS-v0.2.5-unsigned.ipa" Payload)
-          unzip -l releases/DevBoard-iOS-v0.2.5-unsigned.ipa | grep -F \
+            "$GITHUB_WORKSPACE/releases/DevBoard-iOS-v0.2.6-unsigned.ipa" Payload)
+          unzip -l releases/DevBoard-iOS-v0.2.6-unsigned.ipa | grep -F \
             "Payload/DevBoard.app/PlugIns/DevBoardKeyboard.appex/Info.plist"
       - name: Verify iOS app and extension versions
         run: |
           python3 - <<'PY'
           import os, plistlib
           from pathlib import Path
-          root = Path(os.environ['RUNNER_TEMP']) / 'DevBoardDevice/Build/Products/Release-iphoneos/DevBoard.app'
-          for target in [root / 'Info.plist', root / 'PlugIns/DevBoardKeyboard.appex/Info.plist']:
+          roots = [Path(os.environ['RUNNER_TEMP']) / folder / 'Build/Products' / product / 'DevBoard.app'
+                   for folder, product in [('DevBoardDevice', 'Release-iphoneos'), ('DevBoardSimulator', 'Release-iphonesimulator')]]
+          for target in [p for root in roots for p in [root / 'Info.plist', root / 'PlugIns/DevBoardKeyboard.appex/Info.plist']]:
               metadata = plistlib.loads(target.read_bytes())
               version = metadata.get('CFBundleShortVersionString')
               build = metadata.get('CFBundleVersion')
               print(f'{target}: {version} ({build})')
-              assert version == '0.2.5' and build == '3', f'Wrong iOS metadata: {target}: {version} ({build})'
+              assert version == '0.2.6' and build == '4', f'Wrong iOS metadata: {target}: {version} ({build})'
           PY
       - name: Upload iOS packages
         uses: actions/upload-artifact@v4
         with:
-          name: DevBoard-iOS-v0.2.5
+          name: DevBoard-iOS-v0.2.6
           path: |
-            releases/DevBoard-iOS-v0.2.5-Simulator.zip
-            releases/DevBoard-iOS-v0.2.5-unsigned.ipa
+            releases/DevBoard-iOS-v0.2.6-Simulator.zip
+            releases/DevBoard-iOS-v0.2.6-unsigned.ipa
           if-no-files-found: error
           retention-days: 30
