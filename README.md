@@ -4,17 +4,11 @@ A native developer keyboard for Android and iOS, with an interactive web simulat
 
 ![DevBoard preview](docs/devboard-demo.gif)
 
-**Android and web source: 3.1 test preview.** [Previously published web simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html) · [Existing downloads](https://github.com/Krutas/Android-keyboard-for-developers/releases) · [0.3 audit and limitations](docs/PARITY-0.3.md)
+**DevBoard 3.1** · [Android APK](https://github.com/Krutas/Android-keyboard-for-developers/releases/download/v3.1/DevBoard-v3.1.apk) · [Web simulator](https://krutas.github.io/Android-keyboard-for-developers/simulator.html)
 
-The 3.1 work in this branch improves Android and web settings, profile import/export, shortcut recording, Space labels and narrow-screen Fn visibility. The published simulator and existing releases do not yet contain these branch changes. The side-by-side Android preview uses a separate application ID and separate settings; it has not been verified on a physical device. See the [3.1 function specification](docs/superpowers/plans/2026-11-12-v31-android-web.md).
+If DevBoard is already installed, uninstall it before installing 3.1. The signing certificate changed. Uninstalling clears the previous installation's local settings and profiles. After installation, enable DevBoard in Android input settings and select it in the keyboard picker.
 
-0.3 adds native LT/EN PC and QWERTY variants, PC Shift symbol mapping, Fn/Combo previews and editors, snippets, held-arrow repeat, layout editing and press-animation controls. Android exposes real microphone permission status; web uses browser permission APIs. iOS microphone access is unavailable to third-party keyboards.
-
-**Full parity is not yet complete:** v0.3 keeps iOS Full Access disabled, so clipboard access is unavailable. iOS hardware shortcuts also have platform restrictions. Build success and device validation are separate; see the [verification record](docs/PARITY-0.3.md).
-
-Space is one key with decorative `<` and `>` labels: every position inserts a normal space. Hold Space for language selection. PC layouts use Shift for number/punctuation symbols and LT number holds for accented letters; LT QWERTY has dedicated Lithuanian letters. Each language remembers its variant; Caps Lock changes letters only.
-
-Previous verified downloads remain available: [Android 0.2.5 APK](releases/DevBoard-v0.2.5.apk), [unsigned iOS IPA](releases/DevBoard-iOS-v0.2.5-unsigned.ipa), [iOS Simulator ZIP](releases/DevBoard-iOS-v0.2.5-Simulator.zip). These do not include the 0.3 changes.
+3.1 updates the Android keyboard, its settings and the web simulator. See the [release notes](docs/CHANGELOG.md) and the [3.1 specification](docs/superpowers/plans/2026-11-12-v31-android-web.md). The Space key has decorative angle brackets. Tap anywhere to insert one space or hold it to choose the language.
 
 ## Features
 
@@ -34,7 +28,7 @@ Requires JDK 17, Android SDK 35 and build tools.
 ./gradlew :app:testDebugUnitTest :app:testPreviewUnitTest :app:assembleDebug :app:assemblePreview :app:lintDebug
 ```
 
-APK: `app/build/outputs/apk/debug/app-debug.apk`. The separately installable test APK is `app/build/outputs/apk/preview/app-preview.apk`, shown as **DevBoard Test**. Successful developer-preview builds are debug-signed. Enable DevBoard in Android input settings, then select it through the system keyboard picker. Install only an artifact whose build results have been verified.
+The developer build is debug-signed. The Android APK is produced at `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## iOS and browser verification
 

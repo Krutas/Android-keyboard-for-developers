@@ -1,13 +1,11 @@
 # DevBoard release notes
 
-## Android and web 3.1 test preview
+## 3.1 · Android and web simulator
 
-- Space labels and Fn text adapt to narrow layouts; Fn stays visible when the keyboard scrolls and in emoji mode. Shift state and layout-reset confirmation have been corrected.
-- Profiles and app assignments can be exchanged between Android and the simulator; conflicts require confirmation before replacement. Shortcut recording displays the pressed keys.
-- The web Settings page now has profile controls and honestly reports browser limitations for installed keyboards and per-app selection.
-- Added a side-by-side Android preview application named DevBoard Test with its own package ID, settings and permissions.
-- Android view and unit tests (24 per variant), preview/debug builds, lint and Chromium browser regression tests passed locally. The Android keyboard has not been tested on a physical phone, including touch behavior, microphone and system shortcuts. This is a test build, not a published final release.
-
+- Single-line Space legends, including in emoji mode. Fn keeps F1–F8 visible while the keyboard scrolls. Updated one-shot Shift, Caps Lock and reset confirmation.
+- Profile import/export and app assignments with conflict confirmation, improved shortcut recording and live preview, plus clearer keyboard selection and microphone permission states.
+- Android unit and view tests, lint and APK builds passed. Web interaction tests passed in Chromium, including narrow layouts. Physical Android testing follows publication.
+- The signing certificate changed. Uninstall the previous version before installing 3.1. Android clears the previous installation's local data on uninstall.
 
 ## 0.3 developer preview (source; release verification pending)
 
