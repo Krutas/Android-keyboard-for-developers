@@ -218,6 +218,7 @@ let emojiRows=[
  ['❤️','✅','❌','⭐','🎉','💯','👀','💻','🚀']
 ];
 // Full offline catalog served alongside the simulator; 32-emoji fallback for file:// previews.
+const emojiSpaceRow=['space'];
 const emojiIcons=['🕘','😀','🧑','🐻','🍔','🚗','⚽','💡','❤️','🏳️'];
 let emojiCatalog=[], emojiCategory=1, emojiSearch='';
 let emojiRecent=[];try{emojiRecent=JSON.parse(localStorage.getItem('devboard-recent-emojis'))||[]}catch{}
@@ -414,12 +415,14 @@ function render(){
  renderProfiles();
  $('keys').replaceChildren();
  // Preserve original row indices even when extra rows are hidden.
- let rows=(emojiOpen?emojiRows:symbolPage?symbolPages[symbolsSecondPage?1:0]:effectiveLayoutRows()).map((r,index)=>({row:r,index}));
+ const hasEmojiPicker=emojiOpen&&emojiCatalog.length>0;
+ const displayedEmojiRows=hasEmojiPicker?[emojiSpaceRow]:[...emojiRows,emojiSpaceRow];
+ let rows=(emojiOpen?displayedEmojiRows:symbolPage?symbolPages[symbolsSecondPage?1:0]:effectiveLayoutRows()).map((r,index)=>({row:r,index}));
  if(!emojiOpen&&!extras&&mode!=='Normal'&&!editing)rows=rows.filter(({index})=>mode==='Code'?index!==0:index>1);
  const tip=$('swapTip');tip.hidden=!editing;
  if(editing)tip.textContent=selected?`Selected: ${layout()[selected[0]][selected[1]]}  ·  Tap the destination key to swap  ·  Tap again to cancel`:'Swap keys: tap the first key, then tap its new location';
- if(emojiOpen && emojiCatalog.length){emojiPicker($('keys'));renderComboBar();return}
- $('keys').classList.remove('emoji-mode');
+ if(hasEmojiPicker)emojiPicker($('keys'));
+ else $('keys').classList.remove('emoji-mode');
  rows.forEach(({row:r,index:ri})=>{
   const div=document.createElement('div');div.className='keyrow'+(r.join('')==='1234567890'?' numbers':'');
   r.forEach((key,ki)=>{
@@ -528,7 +531,7 @@ function press(k){
  if(k==='🎙️'||k==='🎙'||k==='🌐'){toggleVoice();return}
  if(emojiOpen){
   if(k==='ABC'){emojiOpen=false;render();renderLiveKeyboard();setStatus('Letter keyboard restored');return}
-  insert(k);updateAutoShift();return;
+  insert(k==='space'?' ':k);updateAutoShift();return;
  }
  if(k==='😀'||k==='Emoji'){emojiOpen=true;render();renderLiveKeyboard();setStatus('Emoji picker open');return}
  if(k==='123'||k==='ABC'){symbolPage=k==='123';symbolsSecondPage=false;render();renderLiveKeyboard();setStatus(symbolPage?'Symbol keyboard open. Tap ABC to return.':'Letter keyboard open.');return}
@@ -659,7 +662,7 @@ function renderLiveKeyboard(){
  const activeCombos=currentCombos().filter(c=>c.enabled!==false);
  for(let i=0;i<activeCombos.length;i+=4)
   miniRow(activeCombos.slice(i,i+4).map(c=>c.name||comboSummary(c)),'preview-combo');
- const rows=emojiOpen?(emojiCatalog.length?Array.from({length:4},(_,i)=>emojiOptions().slice(i*8,i*8+8).map(x=>x[0])):emojiRows):
+ const rows=emojiOpen?[...(emojiCatalog.length?Array.from({length:4},(_,i)=>emojiOptions().slice(i*8,i*8+8).map(x=>x[0])):emojiRows),emojiSpaceRow]:
   symbolPage?symbolPages[symbolsSecondPage?1:0]:effectiveLayoutRows();
  const content=(extras||emojiOpen||mode==='Normal')?rows:rows.filter((_,i)=>mode==='Code'?i!==0:i>1);
  for(const row of content)miniRow(row,row.join('')==='1234567890'?'numbers':'');

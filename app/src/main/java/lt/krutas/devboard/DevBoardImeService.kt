@@ -359,6 +359,16 @@ class DevBoardImeService : InputMethodService(), RecognitionListener {
             lastShiftTap = 0L
         }
         panel.addView(grid, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(239)))
+        val space = button("Space", true, 0).apply {
+            setOnClickListener { keyPressed("Space") }
+            setOnLongClickListener { showLanguagePopup(it); true }
+        }
+        panel.addView(space, LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, dp(SettingsStore.keyHeight(this))
+        ).apply {
+            val margin = dp(SettingsStore.gap(this@DevBoardImeService))
+            setMargins(margin, margin, margin, margin)
+        })
         show(if (emojiCategory == 0 && EmojiCatalog.recent(this).isEmpty()) 1 else emojiCategory)
         return panel
     }

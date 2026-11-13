@@ -1,0 +1,12 @@
+Android 0.3 baseline diagnostic run, 2026-11-12
+Source: 4f7e61c0a887e2fefc51c6bdd70037fb43d4cbc6
+Robolectric 4.17, API 35, native graphics, attached view hierarchy.
+Both regressions failed before production fixes.
+functionKeysStayVisibleAfterScrollingAndToggling: FAIL
+java.lang.AssertionError: F1 is above the scrolled viewport
+spaceBracketsAreVisible: FAIL
+java.lang.AssertionError: Left < must be visible
+Fn scroll=290
+F1 37x31, lines=1, rowTop=43
+Space 148x39, scroll=524214,0
+The baseline harness dispatched pre-draw and applied each view's scroll translation when capturing pixels, matching parent drawing.

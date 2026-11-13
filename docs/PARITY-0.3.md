@@ -34,6 +34,8 @@ This is a developer preview, not a claim of verified device or store readiness. 
 
 ## Verification record
 
+Android follow-up on 2026-11-12: [Space/Fn visibility audit](ANDROID-0.3-AUDIT.md), with native-rendered before/after evidence, Android interaction regressions and remaining checklist gaps. The original mapping-only test record below predates these additional tests.
+
 - Android: JUnit mapping/variant/shortcut-parser tests and Gradle `testDebugUnitTest`, `assembleDebug`, `lintDebug`. **Passed locally on 2026-11-12:** all three JUnit tests, debug APK build and lint (0 errors, 43 warnings). Verified local APK metadata is 0.3 (9), package lt.krutas.devboard; APK Signature Scheme v2 verification passed. Lint warnings include localization, accessibility heuristics and resources; a successful task does not mean zero warnings.
 - Web: Chromium browser regression script `tests/web-parity.cjs` checks actual insertion, Shift/Caps, four variants, persistent swaps, long-press deletion and reset confirmation, Fn, combo enable state, multiline snippets, Space positions, held arrows, animation toggle and permission status. **Passed locally on 2026-11-12**, including long-press Caps Lock; a screenshot was inspected. CI captures the same screenshot as an artifact.
 - iOS: `tests/MappingTests.swift` tests the pure mapping and ANSI encodings in macOS CI. The workflow builds app plus extension for simulator and device and verifies **both** bundle versions in both builds before uploading. No Xcode is available in the Linux workspace; CI success must be checked before publishing packages.

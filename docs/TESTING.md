@@ -2,6 +2,8 @@
 
 Automated checks: `:app:testDebugUnitTest :app:assembleDebug :app:lintDebug`, `node tests/web-parity.cjs` (Playwright), and `tests/MappingTests.swift` in macOS CI. Read [the audit](PARITY-0.3.md) for actual results and remaining gaps.
 
+Android follow-up: [Space/Fn diagnosis, before/after renders and checklist evidence](ANDROID-0.3-AUDIT.md). Android view tests now exercise native drawing and interactions with Robolectric; they do not certify the manual device checks below.
+
 Manual acceptance still required:
 
 - [ ] Android and iPhone: select LT PC, LT QWERTY, EN PC, EN QWERTY; switch languages and confirm remembered variants.
